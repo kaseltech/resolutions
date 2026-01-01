@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Resolution, Category } from '@/types';
 import { ResolutionCard } from '@/components/ResolutionCard';
 import { ResolutionForm } from '@/components/ResolutionForm';
@@ -12,19 +13,10 @@ import { Logo } from '@/components/Logo';
 
 type SortOption = 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
-// Cloud Dancer theme - serene whites and soft neutrals
-const colors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-  accent: '#8A9A80',
-};
-
 export default function Home() {
   const { resolutions, loading, getResolutionsByCategory } = useResolutions();
   const { signOut } = useAuth();
+  const { theme, toggleTheme, colors } = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
@@ -100,13 +92,13 @@ export default function Home() {
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: '#8A9A80', borderTopColor: 'transparent' }} />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: colors.accent, borderTopColor: 'transparent' }} />
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: colors.bg, paddingBottom: '5rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: colors.bg, paddingBottom: '5rem', transition: 'background-color 0.3s ease' }}>
       {/* Header - Mobile Optimized */}
       <header style={{
         backgroundColor: colors.cardBg,
@@ -114,7 +106,8 @@ export default function Home() {
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+        boxShadow: theme === 'light' ? '0 1px 3px rgba(0,0,0,0.05)' : '0 1px 3px rgba(0,0,0,0.2)',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease'
       }}>
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -125,6 +118,33 @@ export default function Home() {
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {/* Dark mode toggle */}
+              <button
+                onClick={toggleTheme}
+                style={{
+                  padding: '0.5rem',
+                  backgroundColor: 'transparent',
+                  color: colors.textMuted,
+                  borderRadius: '0.5rem',
+                  border: `1px solid ${colors.border}`,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s',
+                }}
+                title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              >
+                {theme === 'light' ? (
+                  <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                ) : (
+                  <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                )}
+              </button>
               {/* Desktop: New Resolution button */}
               <button
                 onClick={handleOpenForm}

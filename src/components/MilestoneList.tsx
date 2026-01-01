@@ -3,16 +3,7 @@
 import { useState } from 'react';
 import { Resolution } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
-
-// Cloud Dancer theme - serene whites and soft neutrals
-const colors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-  accent: '#8A9A80',
-};
+import { useTheme } from '@/context/ThemeContext';
 
 interface MilestoneListProps {
   resolution: Resolution;
@@ -21,6 +12,7 @@ interface MilestoneListProps {
 export function MilestoneList({ resolution }: MilestoneListProps) {
   const [newMilestone, setNewMilestone] = useState('');
   const { addMilestone, toggleMilestone, deleteMilestone } = useResolutions();
+  const { colors } = useTheme();
 
   const handleAddMilestone = (e: React.FormEvent) => {
     e.preventDefault();

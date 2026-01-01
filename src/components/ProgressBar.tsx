@@ -1,5 +1,7 @@
 'use client';
 
+import { useTheme } from '@/context/ThemeContext';
+
 interface ProgressBarProps {
   progress: number;
   size?: 'sm' | 'md' | 'lg';
@@ -8,26 +10,38 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ progress, size = 'md', showLabel = true }: ProgressBarProps) {
+  const { theme, colors } = useTheme();
+
   const heights = {
     sm: '0.5rem',
     md: '0.75rem',
     lg: '1rem',
   };
 
-  // Cloud Dancer inspired progress colors - soft, muted tones
+  // Progress colors - softer for light mode, more vibrant for dark mode
   const getProgressColor = (p: number) => {
-    if (p === 100) return '#8A9A80'; // Sage green for complete
-    if (p >= 75) return '#A0B4A0';   // Light sage
-    if (p >= 50) return '#B4B4A0';   // Neutral
-    if (p >= 25) return '#C4B0A0';   // Warm neutral
-    return '#C4A0A0';                // Soft muted rose for low progress
+    if (theme === 'light') {
+      // Soft, muted tones for Cloud Dancer light theme
+      if (p === 100) return '#8A9A80';
+      if (p >= 75) return '#A0B4A0';
+      if (p >= 50) return '#B4B4A0';
+      if (p >= 25) return '#C4B0A0';
+      return '#C4A0A0';
+    } else {
+      // More vibrant colors for dark mode
+      if (p === 100) return '#4ade80';
+      if (p >= 75) return '#34d399';
+      if (p >= 50) return '#a3e635';
+      if (p >= 25) return '#fbbf24';
+      return '#f87171';
+    }
   };
 
   return (
     <div style={{ width: '100%' }}>
       <div style={{
         width: '100%',
-        backgroundColor: '#E0E0DB',
+        backgroundColor: colors.border,
         borderRadius: '9999px',
         height: heights[size],
         overflow: 'hidden',
@@ -43,7 +57,7 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
         />
       </div>
       {showLabel && (
-        <p style={{ fontSize: '0.875rem', color: '#8A8A85', marginTop: '0.25rem', textAlign: 'right', marginBottom: 0 }}>
+        <p style={{ fontSize: '0.875rem', color: colors.textMuted, marginTop: '0.25rem', textAlign: 'right', marginBottom: 0 }}>
           {progress}%
         </p>
       )}

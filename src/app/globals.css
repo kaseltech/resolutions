@@ -1,14 +1,29 @@
 @import "tailwindcss";
 
 :root {
+  /* Cloud Dancer Light Theme (default) */
+  --background: #F5F5F0;
+  --foreground: #4A4A45;
+  --card-bg: #FFFFFF;
+  --card-border: #E0E0DB;
+  --input-bg: #FFFFFF;
+  --input-border: #E0E0DB;
+  --muted: #8A8A85;
+  --accent: #8A9A80;
+  --accent-hover: #7A8A70;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme */
   --background: #0f172a;
   --foreground: #e2e8f0;
   --card-bg: #1e293b;
   --card-border: #334155;
-  --input-bg: #0f172a;
+  --input-bg: #1e293b;
   --input-border: #475569;
   --muted: #94a3b8;
-  --accent: #4a6fa5;
+  --accent: #8A9A80;
+  --accent-hover: #9AAA90;
 }
 
 @theme inline {
@@ -23,41 +38,46 @@
 }
 
 html {
-  background-color: #0f172a;
+  background-color: var(--background);
+  transition: background-color 0.3s ease;
 }
 
 body {
-  background-color: #0f172a;
-  color: #e2e8f0;
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Override any white backgrounds */
-.bg-white {
-  background-color: #1e293b !important;
+/* Input styling - theme aware */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--foreground);
 }
 
-/* Dark card styling */
-.dark-card {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-}
-
-/* Dark input styling */
-input, textarea, select {
-  background-color: #0f172a !important;
-  border-color: #475569 !important;
-  color: #e2e8f0 !important;
-}
-
-input::placeholder, textarea::placeholder {
-  color: #64748b !important;
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #64748b;
 }
 
 /* Fix for date/time inputs in dark mode */
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Light mode date/time inputs */
 input[type="date"],
 input[type="time"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"] {
   color-scheme: dark;
 }
 
@@ -67,20 +87,25 @@ input[type="time"] {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--card-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: var(--card-border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--muted);
 }
 
 /* Selection color */
 ::selection {
-  background-color: #4a6fa5;
+  background-color: var(--accent);
   color: white;
+}
+
+/* Smooth transitions for theme changes */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

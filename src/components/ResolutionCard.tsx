@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Resolution, getCategoryInfo, JournalEntry } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
+import { useTheme } from '@/context/ThemeContext';
 import { ProgressBar } from './ProgressBar';
 import { MilestoneList } from './MilestoneList';
 
@@ -11,16 +12,6 @@ const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   good: '🙂',
   okay: '😐',
   struggling: '😔',
-};
-
-// Cloud Dancer theme - serene whites and soft neutrals
-const colors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-  accent: '#8A9A80',
 };
 
 interface ResolutionCardProps {
@@ -34,6 +25,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
   const [journalMood, setJournalMood] = useState<JournalEntry['mood']>(undefined);
   const [showJournalForm, setShowJournalForm] = useState(false);
   const { deleteResolution, updateProgress, addJournalEntry, deleteJournalEntry } = useResolutions();
+  const { theme, colors } = useTheme();
 
   const handleAddJournalEntry = () => {
     if (!journalContent.trim()) return;
@@ -54,16 +46,25 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
   const isOverdue = daysRemaining !== null && daysRemaining < 0;
   const isCompleted = resolution.progress === 100;
 
-  const borderColor = isCompleted ? '#8A9A80' : isOverdue ? '#C4A0A0' : colors.border;
+  const borderColor = isCompleted
+    ? colors.accent
+    : isOverdue
+    ? (theme === 'light' ? '#C4A0A0' : '#f87171')
+    : colors.border;
+
+  const completedBg = theme === 'light' ? '#F0F2EE' : '#1a2e1a';
 
   return (
     <div
       style={{
-        backgroundColor: isCompleted ? '#F0F2EE' : colors.cardBg,
+        backgroundColor: isCompleted ? completedBg : colors.cardBg,
         borderRadius: '0.75rem',
         overflow: 'hidden',
         borderLeft: `4px solid ${borderColor}`,
-        boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.08)',
+        boxShadow: theme === 'light'
+          ? '0 4px 12px -2px rgba(0, 0, 0, 0.08)'
+          : '0 4px 12px -2px rgba(0, 0, 0, 0.3)',
+        transition: 'background-color 0.3s ease',
       }}
     >
       <div style={{ padding: '1.25rem' }}>
@@ -88,8 +89,8 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                   borderRadius: '9999px',
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  backgroundColor: 'rgba(138, 154, 128, 0.2)',
-                  color: '#6A7A60',
+                  backgroundColor: `${colors.accent}30`,
+                  color: theme === 'light' ? '#6A7A60' : '#4ade80',
                 }}>
                   Completed
                 </span>
@@ -197,7 +198,10 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
 
         <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem' }}>
           {resolution.deadline && (
-            <span style={{ color: isOverdue ? '#f87171' : colors.textMuted, fontWeight: isOverdue ? 500 : 400 }}>
+            <span style={{
+              color: isOverdue ? (theme === 'light' ? '#C4A0A0' : '#f87171') : colors.textMuted,
+              fontWeight: isOverdue ? 500 : 400
+            }}>
               {isOverdue
                 ? `${Math.abs(daysRemaining!)} days overdue`
                 : daysRemaining === 0
@@ -344,7 +348,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                         style={{
                           padding: '0.25rem 0.5rem',
                           fontSize: '1rem',
-                          backgroundColor: journalMood === mood ? 'rgba(138, 154, 128, 0.3)' : 'transparent',
+                          backgroundColor: journalMood === mood ? `${colors.accent}30` : 'transparent',
                           border: journalMood === mood ? `1px solid ${colors.accent}` : `1px solid ${colors.border}`,
                           borderRadius: '0.375rem',
                           cursor: 'pointer',

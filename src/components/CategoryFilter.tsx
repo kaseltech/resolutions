@@ -3,15 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Category, CATEGORIES, getCategoryInfo } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
-
-// Cloud Dancer theme - serene whites and soft neutrals
-const colors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-};
+import { useTheme } from '@/context/ThemeContext';
 
 interface CategoryFilterProps {
   selected: Category | 'all';
@@ -22,6 +14,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { getUsedCategories, resolutions } = useResolutions();
+  const { colors } = useTheme();
 
   const usedCategories = getUsedCategories();
   const categoriesWithCounts = CATEGORIES
@@ -70,6 +63,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
           fontSize: '0.875rem',
           minWidth: '200px',
           justifyContent: 'space-between',
+          transition: 'background-color 0.3s ease, border-color 0.3s ease',
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -110,7 +104,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
             backgroundColor: colors.cardBg,
             border: `1px solid ${colors.border}`,
             borderRadius: '0.5rem',
-            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
             zIndex: 50,
             minWidth: '220px',
             overflow: 'hidden',
@@ -128,7 +122,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '0.75rem 1rem',
-              backgroundColor: selected === 'all' ? 'rgba(74, 111, 165, 0.2)' : 'transparent',
+              backgroundColor: selected === 'all' ? `${colors.accent}20` : 'transparent',
               border: 'none',
               cursor: 'pointer',
               color: colors.text,
@@ -168,7 +162,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0.75rem 1rem',
-                backgroundColor: selected === cat.value ? 'rgba(74, 111, 165, 0.2)' : 'transparent',
+                backgroundColor: selected === cat.value ? `${colors.accent}20` : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 color: colors.text,

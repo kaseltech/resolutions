@@ -3,16 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Resolution, Category, CATEGORIES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
-
-// Cloud Dancer theme - serene whites and soft neutrals
-const colors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-  accent: '#8A9A80',
-};
+import { useTheme } from '@/context/ThemeContext';
 
 interface ResolutionFormProps {
   resolution?: Resolution | null;
@@ -21,6 +12,7 @@ interface ResolutionFormProps {
 
 export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   const { addResolution, updateResolution } = useResolutions();
+  const { theme, colors } = useTheme();
   const isEditing = !!resolution;
   const formRef = useRef<HTMLFormElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -104,7 +96,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '0.75rem 1rem',
-    backgroundColor: colors.bg,
+    backgroundColor: colors.inputBg,
     border: `1px solid ${colors.border}`,
     borderRadius: '0.5rem',
     color: colors.text,
@@ -232,7 +224,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               value={formData.deadline}
               onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
               min={new Date().toISOString().split('T')[0]}
-              style={{ ...inputStyle, colorScheme: 'light' }}
+              style={{ ...inputStyle, colorScheme: theme }}
             />
           </div>
 
@@ -299,7 +291,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     type="time"
                     value={formData.reminderTime}
                     onChange={(e) => setFormData(prev => ({ ...prev, reminderTime: e.target.value }))}
-                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: 'light' }}
+                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: theme }}
                   />
                 </div>
               </div>

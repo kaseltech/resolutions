@@ -8,15 +8,16 @@ export type Category =
   | 'creativity'
   | 'other';
 
+// Softer, muted colors for Cloud Dancer light theme
 export const CATEGORIES: { value: Category; label: string; color: string; icon: string }[] = [
-  { value: 'health', label: 'Health & Fitness', color: '#2d6a4f', icon: '💪' },
-  { value: 'career', label: 'Career & Work', color: '#1e4976', icon: '💼' },
-  { value: 'finance', label: 'Finance & Money', color: '#806b2a', icon: '💰' },
-  { value: 'relationships', label: 'Relationships', color: '#7d4466', icon: '❤️' },
-  { value: 'personal', label: 'Personal Growth', color: '#5b4b8a', icon: '🌱' },
-  { value: 'learning', label: 'Learning & Education', color: '#3d4a7a', icon: '📚' },
-  { value: 'creativity', label: 'Creativity & Hobbies', color: '#8b5a3c', icon: '🎨' },
-  { value: 'other', label: 'Other', color: '#4a5568', icon: '✨' },
+  { value: 'health', label: 'Health & Fitness', color: '#7A9A78', icon: '💪' },
+  { value: 'career', label: 'Career & Work', color: '#7A8A9A', icon: '💼' },
+  { value: 'finance', label: 'Finance & Money', color: '#9A9078', icon: '💰' },
+  { value: 'relationships', label: 'Relationships', color: '#9A7A88', icon: '❤️' },
+  { value: 'personal', label: 'Personal Growth', color: '#8A7A9A', icon: '🌱' },
+  { value: 'learning', label: 'Learning & Education', color: '#7A7A9A', icon: '📚' },
+  { value: 'creativity', label: 'Creativity & Hobbies', color: '#9A8070', icon: '🎨' },
+  { value: 'other', label: 'Other', color: '#8A8A88', icon: '✨' },
 ];
 
 export interface Milestone {
