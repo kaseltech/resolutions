@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Resolution, Category, CATEGORIES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 
@@ -22,6 +22,8 @@ interface ResolutionFormProps {
 export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   const { addResolution, updateResolution } = useResolutions();
   const isEditing = !!resolution;
+  const formRef = useRef<HTMLFormElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -49,8 +51,10 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     }
   }, [resolution]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback((e?: React.FormEvent) => {
+    e?.preventDefault();
+
+    if (!formData.title.trim()) return;
 
     const data: Partial<Resolution> = {
       title: formData.title,
@@ -75,16 +79,37 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     }
 
     onClose();
+  }, [formData, isEditing, resolution, addResolution, updateResolution, onClose]);
+
+  // Keyboard shortcut: Ctrl+Enter to save
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleSubmit();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSubmit]);
+
+  // Click outside to close
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '0.5rem 1rem',
+    padding: '0.75rem 1rem',
     backgroundColor: colors.bg,
     border: `1px solid ${colors.border}`,
     borderRadius: '0.5rem',
-    color: 'white',
+    color: colors.text,
     fontSize: '1rem',
+    boxSizing: 'border-box',
   };
 
   const labelStyle: React.CSSProperties = {
@@ -92,33 +117,40 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     fontSize: '0.875rem',
     fontWeight: 500,
     color: colors.text,
-    marginBottom: '0.25rem',
+    marginBottom: '0.375rem',
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem',
-      zIndex: 50,
-    }}>
-      <div style={{
-        backgroundColor: colors.cardBg,
-        borderRadius: '1rem',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-        width: '100%',
-        maxWidth: '32rem',
-        maxHeight: '90vh',
+    <div
+      onClick={handleBackdropClick}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        padding: '1rem',
+        paddingTop: '5vh',
+        zIndex: 50,
         overflowY: 'auto',
-        border: `1px solid ${colors.border}`,
-      }}>
-        <div style={{ padding: '1.5rem', borderBottom: `1px solid ${colors.border}` }}>
+      }}
+    >
+      <div
+        ref={modalRef}
+        style={{
+          backgroundColor: colors.cardBg,
+          borderRadius: '1rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          width: '100%',
+          maxWidth: '28rem',
+          border: `1px solid ${colors.border}`,
+          marginBottom: '2rem',
+        }}
+      >
+        <div style={{ padding: '1rem 1.25rem', borderBottom: `1px solid ${colors.border}` }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'white', margin: 0 }}>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, margin: 0 }}>
               {isEditing ? 'Edit Resolution' : 'New Resolution'}
             </h2>
             <button
@@ -130,7 +162,11 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                 border: 'none',
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
+              title="Close (Esc)"
             >
               <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -139,12 +175,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form ref={formRef} onSubmit={handleSubmit} style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={labelStyle}>Title *</label>
             <input
               type="text"
               required
+              autoFocus
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               placeholder="What do you want to achieve?"
@@ -157,8 +194,8 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Add more details about your resolution..."
-              rows={3}
+              placeholder="Add more details..."
+              rows={2}
               style={{ ...inputStyle, resize: 'none' }}
             />
           </div>
@@ -172,9 +209,9 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, category: cat.value }))}
                   style={{
-                    padding: '0.5rem 0.75rem',
+                    padding: '0.625rem 0.75rem',
                     borderRadius: '0.5rem',
-                    fontSize: '0.875rem',
+                    fontSize: '0.8125rem',
                     fontWeight: 500,
                     border: 'none',
                     cursor: 'pointer',
@@ -195,7 +232,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               value={formData.deadline}
               onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
               min={new Date().toISOString().split('T')[0]}
-              style={{ ...inputStyle, colorScheme: 'dark' }}
+              style={{ ...inputStyle, colorScheme: 'light' }}
             />
           </div>
 
@@ -204,13 +241,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             <textarea
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Any additional notes, motivation, or strategies..."
-              rows={3}
+              placeholder="Motivation, strategies, etc..."
+              rows={2}
               style={{ ...inputStyle, resize: 'none' }}
             />
           </div>
 
-          <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: '1.25rem' }}>
+          <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
               <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Reminder</span>
               <button
@@ -222,7 +259,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   borderRadius: '9999px',
                   border: 'none',
                   cursor: 'pointer',
-                  backgroundColor: formData.reminderEnabled ? colors.accent : '#475569',
+                  backgroundColor: formData.reminderEnabled ? colors.accent : colors.border,
                   position: 'relative',
                 }}
               >
@@ -235,7 +272,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     height: '1.25rem',
                     backgroundColor: 'white',
                     borderRadius: '9999px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                     transition: 'left 0.2s',
                   }}
                 />
@@ -262,25 +299,27 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     type="time"
                     value={formData.reminderTime}
                     onChange={(e) => setFormData(prev => ({ ...prev, reminderTime: e.target.value }))}
-                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: 'dark' }}
+                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: 'light' }}
                   />
                 </div>
               </div>
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.5rem' }}>
             <button
               type="button"
               onClick={onClose}
               style={{
                 flex: 1,
-                padding: '0.5rem 1rem',
+                padding: '0.75rem 1rem',
                 border: `1px solid ${colors.border}`,
                 color: colors.text,
                 borderRadius: '0.5rem',
                 backgroundColor: 'transparent',
                 cursor: 'pointer',
+                fontSize: '0.875rem',
+                fontWeight: 500,
               }}
             >
               Cancel
@@ -289,17 +328,44 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               type="submit"
               style={{
                 flex: 1,
-                padding: '0.5rem 1rem',
+                padding: '0.75rem 1rem',
                 backgroundColor: colors.accent,
                 color: 'white',
                 borderRadius: '0.5rem',
                 border: 'none',
                 cursor: 'pointer',
+                fontSize: '0.875rem',
+                fontWeight: 500,
               }}
+              title="Save (Ctrl+Enter)"
             >
-              {isEditing ? 'Save Changes' : 'Create Resolution'}
+              {isEditing ? 'Save' : 'Create'}
             </button>
           </div>
+
+          <p style={{
+            fontSize: '0.6875rem',
+            color: colors.textMuted,
+            textAlign: 'center',
+            margin: 0,
+            opacity: 0.7,
+          }}>
+            Press <kbd style={{
+              padding: '0.125rem 0.25rem',
+              backgroundColor: colors.bg,
+              borderRadius: '0.25rem',
+              border: `1px solid ${colors.border}`,
+              fontFamily: 'inherit',
+              fontSize: '0.625rem',
+            }}>Ctrl</kbd>+<kbd style={{
+              padding: '0.125rem 0.25rem',
+              backgroundColor: colors.bg,
+              borderRadius: '0.25rem',
+              border: `1px solid ${colors.border}`,
+              fontFamily: 'inherit',
+              fontSize: '0.625rem',
+            }}>Enter</kbd> to save
+          </p>
         </form>
       </div>
     </div>

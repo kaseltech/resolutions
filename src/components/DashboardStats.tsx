@@ -62,24 +62,37 @@ export function DashboardStats() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Main Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+      <div className="stats-grid">
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#7A8A90' }}>{totalCount}</div>
-          <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Total Resolutions</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: '#7A8A90' }}>{totalCount}</div>
+          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Total</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#8A9A80' }}>{completedCount}</div>
-          <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Completed</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: '#8A9A80' }}>{completedCount}</div>
+          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Done</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#9A8A80' }}>{overallProgress}%</div>
-          <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Overall Progress</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: '#9A8A80' }}>{overallProgress}%</div>
+          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Progress</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#A09080' }}>{daysRemaining}</div>
-          <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Days Remaining</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: '#A09080' }}>{daysRemaining}</div>
+          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Days Left</div>
         </div>
       </div>
+      <style jsx>{`
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem;
+        }
+        @media (min-width: 640px) {
+          .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+          }
+        }
+      `}</style>
 
       {/* Overall Progress Bar */}
       <div style={cardStyle}>
