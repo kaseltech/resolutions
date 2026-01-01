@@ -10,6 +10,7 @@ interface ResolutionContextType {
   addResolution: (resolution: Partial<Resolution>) => Promise<void>;
   updateResolution: (id: string, updates: Partial<Resolution>) => Promise<void>;
   deleteResolution: (id: string) => Promise<void>;
+  reorderResolutions: (fromIndex: number, toIndex: number) => void;
   addMilestone: (resolutionId: string, milestone: Partial<Milestone>) => Promise<void>;
   updateMilestone: (resolutionId: string, milestoneId: string, updates: Partial<Milestone>) => Promise<void>;
   deleteMilestone: (resolutionId: string, milestoneId: string) => Promise<void>;
@@ -34,7 +35,27 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
     async function load() {
       try {
         const data = await loadResolutions();
-        setResolutions(data);
+        // Restore saved order from localStorage
+        const savedOrder = localStorage.getItem('resolutions-order');
+        if (savedOrder) {
+          try {
+            const orderIds = JSON.parse(savedOrder) as string[];
+            const orderedData = [...data].sort((a, b) => {
+              const aIndex = orderIds.indexOf(a.id);
+              const bIndex = orderIds.indexOf(b.id);
+              // Items not in saved order go to the end
+              if (aIndex === -1 && bIndex === -1) return 0;
+              if (aIndex === -1) return 1;
+              if (bIndex === -1) return -1;
+              return aIndex - bIndex;
+            });
+            setResolutions(orderedData);
+          } catch {
+            setResolutions(data);
+          }
+        } else {
+          setResolutions(data);
+        }
       } catch (error) {
         console.error('Failed to load resolutions:', error);
       } finally {
@@ -69,6 +90,18 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
   const deleteResolution = useCallback(async (id: string) => {
     setResolutions(prev => prev.filter(r => r.id !== id));
     await deleteResolutionFromDb(id);
+  }, []);
+
+  const reorderResolutions = useCallback((fromIndex: number, toIndex: number) => {
+    setResolutions(prev => {
+      const newResolutions = [...prev];
+      const [removed] = newResolutions.splice(fromIndex, 1);
+      newResolutions.splice(toIndex, 0, removed);
+      // Save the order to localStorage
+      const orderIds = newResolutions.map(r => r.id);
+      localStorage.setItem('resolutions-order', JSON.stringify(orderIds));
+      return newResolutions;
+    });
   }, []);
 
   const addMilestone = useCallback(async (resolutionId: string, milestone: Partial<Milestone>) => {
@@ -272,6 +305,7 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
         addResolution,
         updateResolution,
         deleteResolution,
+        reorderResolutions,
         addMilestone,
         updateMilestone,
         deleteMilestone,

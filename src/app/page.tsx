@@ -11,38 +11,73 @@ import { DashboardStats } from '@/components/DashboardStats';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { Logo } from '@/components/Logo';
 
-type SortOption = 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
+type SortOption = 'custom' | 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
 export default function Home() {
-  const { resolutions, loading, getResolutionsByCategory } = useResolutions();
+  const { resolutions, loading, getResolutionsByCategory, reorderResolutions } = useResolutions();
   const { signOut } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [sortBy, setSortBy] = useState<SortOption>('custom');
   const [view, setView] = useState<'dashboard' | 'list'>('dashboard');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const filteredResolutions = getResolutionsByCategory(selectedCategory);
 
-  const sortedResolutions = [...filteredResolutions].sort((a, b) => {
-    switch (sortBy) {
-      case 'newest':
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case 'oldest':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      case 'progress-high':
-        return b.progress - a.progress;
-      case 'progress-low':
-        return a.progress - b.progress;
-      case 'deadline':
-        if (!a.deadline) return 1;
-        if (!b.deadline) return -1;
-        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
-      default:
-        return 0;
+  const sortedResolutions = sortBy === 'custom'
+    ? filteredResolutions
+    : [...filteredResolutions].sort((a, b) => {
+        switch (sortBy) {
+          case 'newest':
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          case 'oldest':
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          case 'progress-high':
+            return b.progress - a.progress;
+          case 'progress-low':
+            return a.progress - b.progress;
+          case 'deadline':
+            if (!a.deadline) return 1;
+            if (!b.deadline) return -1;
+            return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+          default:
+            return 0;
+        }
+      });
+
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
     }
-  });
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex !== null && draggedIndex !== index && sortBy === 'custom' && selectedCategory === 'all') {
+      reorderResolutions(draggedIndex, index);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const isDragEnabled = sortBy === 'custom' && selectedCategory === 'all';
 
   const handleEdit = (resolution: Resolution) => {
     setEditingResolution(resolution);
@@ -241,7 +276,7 @@ export default function Home() {
             </button>
           </div>
 
-          {view === 'list' && resolutions.length > 0 && (
+          {resolutions.length > 0 && (
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -255,6 +290,7 @@ export default function Home() {
                 flex: '0 0 auto',
               }}
             >
+              <option value="custom">Custom Order</option>
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="progress-high">Most Progress</option>
@@ -276,15 +312,90 @@ export default function Home() {
           </div>
         )}
 
+        {/* Drag hint */}
+        {isDragEnabled && sortedResolutions.length > 1 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.5rem 0.75rem',
+            backgroundColor: theme === 'light' ? '#f0fdf4' : '#052e16',
+            border: `1px solid ${theme === 'light' ? '#bbf7d0' : '#166534'}`,
+            borderRadius: '0.5rem',
+            marginBottom: '1rem',
+            fontSize: '0.8125rem',
+            color: theme === 'light' ? '#166534' : '#86efac',
+          }}>
+            <svg style={{ width: 16, height: 16, flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="5 9 2 12 5 15" />
+              <polyline points="9 5 12 2 15 5" />
+              <polyline points="15 19 12 22 9 19" />
+              <polyline points="19 9 22 12 19 15" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
+            Drag cards to reorder
+          </div>
+        )}
+
         {/* Resolutions List - Responsive Grid */}
         {sortedResolutions.length > 0 ? (
           <div className="resolution-grid">
-            {sortedResolutions.map((resolution) => (
-              <ResolutionCard
+            {sortedResolutions.map((resolution, index) => (
+              <div
                 key={resolution.id}
-                resolution={resolution}
-                onEdit={handleEdit}
-              />
+                draggable={isDragEnabled}
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={() => handleDrop(index)}
+                onDragEnd={handleDragEnd}
+                style={{
+                  cursor: isDragEnabled ? 'grab' : 'default',
+                  opacity: draggedIndex === index ? 0.5 : 1,
+                  transform: dragOverIndex === index ? 'scale(1.02)' : 'scale(1)',
+                  transition: 'transform 0.15s ease, opacity 0.15s ease',
+                  position: 'relative',
+                }}
+              >
+                {/* Drop indicator */}
+                {dragOverIndex === index && draggedIndex !== index && (
+                  <div style={{
+                    position: 'absolute',
+                    top: -4,
+                    left: 0,
+                    right: 0,
+                    height: 4,
+                    backgroundColor: colors.accent,
+                    borderRadius: 2,
+                    zIndex: 10,
+                  }} />
+                )}
+                {isDragEnabled && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '0.75rem',
+                    right: '3.5rem',
+                    color: colors.textMuted,
+                    opacity: 0.5,
+                    zIndex: 5,
+                    pointerEvents: 'none',
+                  }}>
+                    <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="9" cy="6" r="1.5" />
+                      <circle cx="15" cy="6" r="1.5" />
+                      <circle cx="9" cy="12" r="1.5" />
+                      <circle cx="15" cy="12" r="1.5" />
+                      <circle cx="9" cy="18" r="1.5" />
+                      <circle cx="15" cy="18" r="1.5" />
+                    </svg>
+                  </div>
+                )}
+                <ResolutionCard
+                  resolution={resolution}
+                  onEdit={handleEdit}
+                />
+              </div>
             ))}
           </div>
         ) : resolutions.length > 0 ? (
