@@ -195,25 +195,38 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           <div>
             <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Category</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.value}
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, category: cat.value }))}
-                  style={{
-                    padding: '0.625rem 0.75rem',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.8125rem',
-                    fontWeight: 500,
-                    border: 'none',
-                    cursor: 'pointer',
-                    backgroundColor: formData.category === cat.value ? cat.color : colors.border,
-                    color: formData.category === cat.value ? 'white' : colors.text,
-                  }}
-                >
-                  {cat.icon} {cat.label}
-                </button>
-              ))}
+              {CATEGORIES.map((cat) => {
+                const isSelected = formData.category === cat.value;
+                const catColor = theme === 'light' ? cat.color : cat.darkColor;
+                return (
+                  <button
+                    key={cat.value}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, category: cat.value }))}
+                    style={{
+                      padding: '0.625rem 0.75rem',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      border: isSelected
+                        ? `2px solid ${catColor}`
+                        : `1px solid ${colors.border}`,
+                      cursor: 'pointer',
+                      backgroundColor: isSelected
+                        ? (theme === 'light' ? cat.bgLight : cat.bgDark)
+                        : colors.cardBg,
+                      color: isSelected ? catColor : colors.textMuted,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>{cat.icon}</span>
+                    {cat.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

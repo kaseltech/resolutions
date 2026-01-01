@@ -142,17 +142,37 @@ export function DashboardStats() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {categoryStats.map(cat => (
               <div key={cat.value}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>
-                    {cat.icon} {cat.label}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: theme === 'light' ? cat.color : cat.darkColor,
+                      backgroundColor: theme === 'light' ? cat.bgLight : cat.bgDark,
+                      padding: '0.25rem 0.625rem',
+                      borderRadius: '0.375rem',
+                      border: `1px solid ${theme === 'light' ? `${cat.color}25` : `${cat.darkColor}35`}`,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.875rem' }}>{cat.icon}</span>
+                    {cat.label}
                   </span>
-                  <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
-                    {cat.count} resolution{cat.count !== 1 ? 's' : ''} - {cat.avgProgress}% avg
+                  <span style={{ fontSize: '0.8rem', color: colors.textMuted, fontWeight: 500 }}>
+                    {cat.count} resolution{cat.count !== 1 ? 's' : ''} · {cat.avgProgress}%
                   </span>
                 </div>
-                <div style={{ width: '100%', backgroundColor: colors.border, borderRadius: '9999px', height: '0.5rem', overflow: 'hidden' }}>
+                <div style={{ width: '100%', backgroundColor: colors.border, borderRadius: '0.375rem', height: '0.5rem', overflow: 'hidden' }}>
                   <div
-                    style={{ height: '100%', borderRadius: '9999px', transition: 'all 0.5s', width: `${cat.avgProgress}%`, backgroundColor: cat.color }}
+                    style={{
+                      height: '100%',
+                      borderRadius: '0.375rem',
+                      transition: 'all 0.5s',
+                      width: `${cat.avgProgress}%`,
+                      backgroundColor: theme === 'light' ? cat.color : cat.darkColor
+                    }}
                   />
                 </div>
               </div>

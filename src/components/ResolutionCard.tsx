@@ -70,18 +70,24 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
       <div style={{ padding: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <span
                 style={{
-                  padding: '0.25rem 0.5rem',
-                  borderRadius: '9999px',
+                  padding: '0.375rem 0.75rem',
+                  borderRadius: '0.5rem',
                   fontSize: '0.75rem',
-                  fontWeight: 500,
-                  color: 'white',
-                  backgroundColor: categoryInfo.color,
+                  fontWeight: 600,
+                  letterSpacing: '0.01em',
+                  color: theme === 'light' ? categoryInfo.color : categoryInfo.darkColor,
+                  backgroundColor: theme === 'light' ? categoryInfo.bgLight : categoryInfo.bgDark,
+                  border: `1px solid ${theme === 'light' ? `${categoryInfo.color}30` : `${categoryInfo.darkColor}40`}`,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.375rem',
                 }}
               >
-                {categoryInfo.icon} {categoryInfo.label}
+                <span style={{ fontSize: '0.875rem' }}>{categoryInfo.icon}</span>
+                {categoryInfo.label}
               </span>
               {isCompleted && (
                 <span style={{
