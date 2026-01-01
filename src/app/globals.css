@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #0f172a;
+  --input-border: #475569;
+  --muted: #94a3b8;
+  --accent: #4a6fa5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #0f172a;
+}
+
+body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Override any white backgrounds */
+.bg-white {
+  background-color: #1e293b !important;
+}
+
+/* Dark card styling */
+.dark-card {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* Dark input styling */
+input, textarea, select {
+  background-color: #0f172a !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Fix for date/time inputs in dark mode */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Selection color */
+::selection {
+  background-color: #4a6fa5;
+  color: white;
+}
