@@ -184,7 +184,7 @@ export function AuthForm() {
             className="flex justify-center mb-4"
             style={{ animation: 'pulse-glow 4s ease-in-out infinite' }}
           >
-            <Logo size={90} />
+            <Logo size={110} />
           </div>
           <h1 style={{
             fontSize: '2.5rem',

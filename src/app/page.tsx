@@ -112,7 +112,7 @@ export default function Home() {
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Logo size={36} />
+              <Logo size={44} />
               <div>
                 <h1 style={{ fontSize: '1.125rem', fontWeight: '500', color: colors.text, margin: 0 }}>2026 Resolutions</h1>
               </div>
