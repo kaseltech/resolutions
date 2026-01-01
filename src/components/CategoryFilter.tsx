@@ -4,12 +4,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Category, CATEGORIES, getCategoryInfo } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#475569',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
 };
 
 interface CategoryFilterProps {

@@ -15,31 +15,37 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Background circle with gradient */}
+      {/* Cloud Dancer inspired palette - serene whites and soft neutrals */}
       <defs>
         <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#5a5a8a" />
-          <stop offset="100%" stopColor="#7a6a9a" />
+          <stop offset="0%" stopColor="#F5F5F0" />
+          <stop offset="100%" stopColor="#E8E8E3" />
         </linearGradient>
         <linearGradient id="targetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3d7a57" />
-          <stop offset="100%" stopColor="#3d7a6a" />
+          <stop offset="0%" stopColor="#A8B5A0" />
+          <stop offset="100%" stopColor="#8FA085" />
         </linearGradient>
         <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#9a7a4a" />
-          <stop offset="100%" stopColor="#a85454" />
+          <stop offset="0%" stopColor="#C4B5A0" />
+          <stop offset="100%" stopColor="#B0A090" />
         </linearGradient>
+        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000015"/>
+        </filter>
       </defs>
 
       {/* Main circle background */}
-      <circle cx="50" cy="50" r="48" fill="url(#bgGradient)" />
+      <circle cx="50" cy="50" r="48" fill="url(#bgGradient)" filter="url(#softShadow)" />
 
-      {/* Target rings */}
-      <circle cx="50" cy="50" r="35" stroke="rgba(255,255,255,0.3)" strokeWidth="3" fill="none" />
-      <circle cx="50" cy="50" r="25" stroke="rgba(255,255,255,0.4)" strokeWidth="3" fill="none" />
-      <circle cx="50" cy="50" r="15" stroke="rgba(255,255,255,0.5)" strokeWidth="3" fill="none" />
+      {/* Subtle outer ring */}
+      <circle cx="50" cy="50" r="46" stroke="#D5D5D0" strokeWidth="1" fill="none" />
 
-      {/* Bullseye center */}
+      {/* Target rings - soft grays */}
+      <circle cx="50" cy="50" r="35" stroke="#C8C8C3" strokeWidth="2" fill="none" />
+      <circle cx="50" cy="50" r="25" stroke="#BEBEB9" strokeWidth="2" fill="none" />
+      <circle cx="50" cy="50" r="15" stroke="#B4B4AF" strokeWidth="2" fill="none" />
+
+      {/* Bullseye center - muted sage */}
       <circle cx="50" cy="50" r="8" fill="url(#targetGradient)" />
 
       {/* Arrow hitting target */}
@@ -49,15 +55,15 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
         {/* Arrow head */}
         <polygon points="52,10 46,20 58,20" fill="url(#arrowGradient)" />
         {/* Arrow fletching */}
-        <polygon points="48,42 52,48 56,42" fill="#a59a5a" />
+        <polygon points="48,42 52,48 56,42" fill="#B5C4A5" />
       </g>
 
-      {/* 2026 text */}
+      {/* 2026 text - soft charcoal */}
       <text
         x="50"
         y="92"
         textAnchor="middle"
-        fill="white"
+        fill="#5A5A55"
         fontSize="14"
         fontWeight="bold"
         fontFamily="Arial, sans-serif"
@@ -65,10 +71,10 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
         2026
       </text>
 
-      {/* Sparkle effects */}
-      <circle cx="25" cy="30" r="2" fill="white" opacity="0.8" />
-      <circle cx="75" cy="25" r="1.5" fill="white" opacity="0.6" />
-      <circle cx="80" cy="70" r="2" fill="white" opacity="0.7" />
+      {/* Subtle cloud-like highlights */}
+      <circle cx="30" cy="35" r="3" fill="white" opacity="0.6" />
+      <circle cx="70" cy="30" r="2" fill="white" opacity="0.5" />
+      <circle cx="75" cy="65" r="2.5" fill="white" opacity="0.4" />
     </svg>
   );
 }

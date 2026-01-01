@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { Resolution } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#475569',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
+  accent: '#8A9A80',
 };
 
 interface MilestoneListProps {
@@ -45,8 +47,8 @@ export function MilestoneList({ resolution }: MilestoneListProps) {
                 width: '1.25rem',
                 height: '1.25rem',
                 borderRadius: '0.25rem',
-                border: `2px solid ${milestone.completed ? '#3d7a57' : colors.border}`,
-                backgroundColor: milestone.completed ? '#3d7a57' : 'transparent',
+                border: `2px solid ${milestone.completed ? colors.accent : colors.border}`,
+                backgroundColor: milestone.completed ? colors.accent : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -106,7 +108,7 @@ export function MilestoneList({ resolution }: MilestoneListProps) {
             backgroundColor: colors.bg,
             border: `1px solid ${colors.border}`,
             borderRadius: '0.5rem',
-            color: 'white',
+            color: colors.text,
           }}
         />
         <button
@@ -115,7 +117,7 @@ export function MilestoneList({ resolution }: MilestoneListProps) {
           style={{
             padding: '0.5rem 0.75rem',
             fontSize: '0.875rem',
-            backgroundColor: '#4a6fa5',
+            backgroundColor: colors.accent,
             color: 'white',
             borderRadius: '0.5rem',
             border: 'none',

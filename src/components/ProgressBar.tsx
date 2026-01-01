@@ -14,19 +14,20 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
     lg: '1rem',
   };
 
+  // Cloud Dancer inspired progress colors - soft, muted tones
   const getProgressColor = (p: number) => {
-    if (p === 100) return '#3d7a57';
-    if (p >= 75) return '#3d7a6a';
-    if (p >= 50) return '#9a8a4a';
-    if (p >= 25) return '#a5724a';
-    return '#a85454';
+    if (p === 100) return '#8A9A80'; // Sage green for complete
+    if (p >= 75) return '#A0B4A0';   // Light sage
+    if (p >= 50) return '#B4B4A0';   // Neutral
+    if (p >= 25) return '#C4B0A0';   // Warm neutral
+    return '#C4A0A0';                // Soft muted rose for low progress
   };
 
   return (
     <div style={{ width: '100%' }}>
       <div style={{
         width: '100%',
-        backgroundColor: '#334155',
+        backgroundColor: '#E0E0DB',
         borderRadius: '9999px',
         height: heights[size],
         overflow: 'hidden',
@@ -42,7 +43,7 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
         />
       </div>
       {showLabel && (
-        <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginTop: '0.25rem', textAlign: 'right', marginBottom: 0 }}>
+        <p style={{ fontSize: '0.875rem', color: '#8A8A85', marginTop: '0.25rem', textAlign: 'right', marginBottom: 0 }}>
           {progress}%
         </p>
       )}

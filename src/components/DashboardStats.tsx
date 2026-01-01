@@ -4,12 +4,13 @@ import { useResolutions } from '@/context/ResolutionContext';
 import { CATEGORIES } from '@/types';
 import { ProgressBar } from './ProgressBar';
 
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#334155',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
 };
 
 export function DashboardStats() {
@@ -50,7 +51,7 @@ export function DashboardStats() {
         border: `1px solid ${colors.border}`,
       }}>
         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎯</div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>Start Your 2026 Journey</h2>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: '500', color: colors.text, marginBottom: '0.5rem' }}>Start Your 2026 Journey</h2>
         <p style={{ color: colors.textMuted }}>
           Create your first resolution and begin tracking your progress toward your goals!
         </p>
@@ -63,19 +64,19 @@ export function DashboardStats() {
       {/* Main Stats Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#7a9ec4' }}>{totalCount}</div>
+          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#7A8A90' }}>{totalCount}</div>
           <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Total Resolutions</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#6ba57a' }}>{completedCount}</div>
+          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#8A9A80' }}>{completedCount}</div>
           <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Completed</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#9a7ab5' }}>{overallProgress}%</div>
+          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#9A8A80' }}>{overallProgress}%</div>
           <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Overall Progress</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#b5845a' }}>{daysRemaining}</div>
+          <div style={{ fontSize: '1.875rem', fontWeight: '500', color: '#A09080' }}>{daysRemaining}</div>
           <div style={{ fontSize: '0.875rem', color: colors.textMuted }}>Days Remaining</div>
         </div>
       </div>
@@ -83,7 +84,7 @@ export function DashboardStats() {
       {/* Overall Progress Bar */}
       <div style={cardStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-          <h3 style={{ fontWeight: 600, color: 'white', margin: 0 }}>Overall Progress</h3>
+          <h3 style={{ fontWeight: 500, color: colors.text, margin: 0 }}>Overall Progress</h3>
           <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>{completedCount} of {totalCount} complete</span>
         </div>
         <ProgressBar progress={overallProgress} size="lg" showLabel={false} />
@@ -96,21 +97,21 @@ export function DashboardStats() {
 
       {/* Year Progress */}
       <div style={{
-        background: 'linear-gradient(to right, #4a4a7a, #6a5a8a)',
+        background: 'linear-gradient(135deg, #E8E8E3 0%, #D8D8D3 100%)',
         borderRadius: '0.75rem',
         padding: '1.25rem',
-        color: 'white',
+        border: `1px solid ${colors.border}`,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-          <h3 style={{ fontWeight: 600, margin: 0 }}>Year Progress</h3>
-          <span style={{ fontSize: '0.875rem', opacity: 0.8 }}>{yearProgress}% of 2026</span>
+          <h3 style={{ fontWeight: 500, margin: 0, color: colors.text }}>Year Progress</h3>
+          <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>{yearProgress}% of 2026</span>
         </div>
-        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '9999px', height: '0.75rem', overflow: 'hidden' }}>
+        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: '9999px', height: '0.75rem', overflow: 'hidden' }}>
           <div
-            style={{ height: '100%', backgroundColor: 'white', borderRadius: '9999px', transition: 'all 0.5s', width: `${yearProgress}%` }}
+            style={{ height: '100%', backgroundColor: '#8A9A80', borderRadius: '9999px', transition: 'all 0.5s', width: `${yearProgress}%` }}
           />
         </div>
-        <p style={{ fontSize: '0.875rem', marginTop: '0.75rem', opacity: 0.9, marginBottom: 0 }}>
+        <p style={{ fontSize: '0.875rem', marginTop: '0.75rem', color: colors.textMuted, marginBottom: 0 }}>
           {daysRemaining > 0
             ? `${daysRemaining} days left to achieve your goals!`
             : 'The year has ended. How did you do?'}
@@ -120,7 +121,7 @@ export function DashboardStats() {
       {/* Category Breakdown */}
       {categoryStats.length > 0 && (
         <div style={cardStyle}>
-          <h3 style={{ fontWeight: 600, color: 'white', marginBottom: '1rem', marginTop: 0 }}>Progress by Category</h3>
+          <h3 style={{ fontWeight: 500, color: colors.text, marginBottom: '1rem', marginTop: 0 }}>Progress by Category</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {categoryStats.map(cat => (
               <div key={cat.value}>
@@ -145,14 +146,14 @@ export function DashboardStats() {
 
       {/* Progress Distribution Chart */}
       <div style={cardStyle}>
-        <h3 style={{ fontWeight: 600, color: 'white', marginBottom: '1rem', marginTop: 0 }}>Progress Distribution</h3>
+        <h3 style={{ fontWeight: 500, color: colors.text, marginBottom: '1rem', marginTop: 0 }}>Progress Distribution</h3>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '8rem', gap: '0.5rem' }}>
           {[
-            { label: '0-25%', min: 0, max: 25, color: '#a85454' },
-            { label: '26-50%', min: 26, max: 50, color: '#a5724a' },
-            { label: '51-75%', min: 51, max: 75, color: '#9a8a4a' },
-            { label: '76-99%', min: 76, max: 99, color: '#3d7a6a' },
-            { label: '100%', min: 100, max: 100, color: '#3d7a57' },
+            { label: '0-25%', min: 0, max: 25, color: '#C4A0A0' },
+            { label: '26-50%', min: 26, max: 50, color: '#C4B0A0' },
+            { label: '51-75%', min: 51, max: 75, color: '#B4B4A0' },
+            { label: '76-99%', min: 76, max: 99, color: '#A0B4A0' },
+            { label: '100%', min: 100, max: 100, color: '#8A9A80' },
           ].map(bucket => {
             const count = resolutions.filter(
               r => r.progress >= bucket.min && r.progress <= bucket.max

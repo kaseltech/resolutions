@@ -12,14 +12,14 @@ import { Logo } from '@/components/Logo';
 
 type SortOption = 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
-// Dark theme colors
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#334155',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
-  accent: '#4a6fa5',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
+  accent: '#8A9A80',
 };
 
 export default function Home() {
@@ -65,7 +65,7 @@ export default function Home() {
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: '#8A9A80', borderTopColor: 'transparent' }} />
       </div>
     );
   }
@@ -79,7 +79,7 @@ export default function Home() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <Logo size={48} />
               <div>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', margin: 0 }}>2026 Resolutions</h1>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: '500', color: colors.text, margin: 0 }}>2026 Resolutions</h1>
                 <p style={{ fontSize: '0.875rem', color: colors.textMuted, margin: 0 }}>Track your journey to a better you</p>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function Home() {
                 fontWeight: 500,
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor: view === 'dashboard' ? '#334155' : 'transparent',
+                backgroundColor: view === 'dashboard' ? colors.accent : 'transparent',
                 color: view === 'dashboard' ? 'white' : colors.textMuted,
               }}
             >
@@ -156,7 +156,7 @@ export default function Home() {
                 fontWeight: 500,
                 border: 'none',
                 cursor: 'pointer',
-                backgroundColor: view === 'list' ? '#334155' : 'transparent',
+                backgroundColor: view === 'list' ? colors.accent : 'transparent',
                 color: view === 'list' ? 'white' : colors.textMuted,
               }}
             >
@@ -218,7 +218,7 @@ export default function Home() {
         ) : view === 'list' ? (
           <div style={{ textAlign: 'center', padding: '3rem 0' }}>
             <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎯</div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'white', marginBottom: '0.5rem' }}>No resolutions yet</h2>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: colors.text, marginBottom: '0.5rem' }}>No resolutions yet</h2>
             <p style={{ color: colors.textMuted, marginBottom: '1rem' }}>
               Start by adding your first resolution for 2026!
             </p>

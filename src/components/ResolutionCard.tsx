@@ -13,12 +13,14 @@ const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   struggling: '😔',
 };
 
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#334155',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
+  accent: '#8A9A80',
 };
 
 interface ResolutionCardProps {
@@ -52,16 +54,16 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
   const isOverdue = daysRemaining !== null && daysRemaining < 0;
   const isCompleted = resolution.progress === 100;
 
-  const borderColor = isCompleted ? '#3d7a57' : isOverdue ? '#a85454' : colors.border;
+  const borderColor = isCompleted ? '#8A9A80' : isOverdue ? '#C4A0A0' : colors.border;
 
   return (
     <div
       style={{
-        backgroundColor: isCompleted ? 'rgba(30, 41, 59, 0.8)' : colors.cardBg,
+        backgroundColor: isCompleted ? '#F0F2EE' : colors.cardBg,
         borderRadius: '0.75rem',
         overflow: 'hidden',
         borderLeft: `4px solid ${borderColor}`,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+        boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.08)',
       }}
     >
       <div style={{ padding: '1.25rem' }}>
@@ -86,8 +88,8 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                   borderRadius: '9999px',
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  backgroundColor: 'rgba(61, 122, 87, 0.2)',
-                  color: '#6ba57a',
+                  backgroundColor: 'rgba(138, 154, 128, 0.2)',
+                  color: '#6A7A60',
                 }}>
                   Completed
                 </span>
@@ -96,7 +98,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
             <h3 style={{
               fontSize: '1.125rem',
               fontWeight: 600,
-              color: isCompleted ? colors.textMuted : 'white',
+              color: isCompleted ? colors.textMuted : colors.text,
               textDecoration: isCompleted ? 'line-through' : 'none',
               margin: 0,
             }}>
@@ -215,7 +217,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
           style={{
             marginTop: '0.75rem',
             fontSize: '0.875rem',
-            color: '#7a9ec4',
+            color: colors.accent,
             display: 'flex',
             alignItems: 'center',
             gap: '0.25rem',
@@ -293,7 +295,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                 style={{
                   padding: '0.375rem 0.75rem',
                   fontSize: '0.75rem',
-                  backgroundColor: showJournalForm ? colors.border : '#4a6fa5',
+                  backgroundColor: showJournalForm ? colors.border : colors.accent,
                   color: 'white',
                   border: 'none',
                   borderRadius: '0.375rem',
@@ -342,8 +344,8 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                         style={{
                           padding: '0.25rem 0.5rem',
                           fontSize: '1rem',
-                          backgroundColor: journalMood === mood ? 'rgba(74, 111, 165, 0.3)' : 'transparent',
-                          border: journalMood === mood ? '1px solid #4a6fa5' : `1px solid ${colors.border}`,
+                          backgroundColor: journalMood === mood ? 'rgba(138, 154, 128, 0.3)' : 'transparent',
+                          border: journalMood === mood ? `1px solid ${colors.accent}` : `1px solid ${colors.border}`,
                           borderRadius: '0.375rem',
                           cursor: 'pointer',
                         }}
@@ -359,7 +361,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                     style={{
                       padding: '0.5rem 1rem',
                       fontSize: '0.875rem',
-                      backgroundColor: journalContent.trim() ? '#3d7a57' : colors.border,
+                      backgroundColor: journalContent.trim() ? colors.accent : colors.border,
                       color: 'white',
                       border: 'none',
                       borderRadius: '0.375rem',
@@ -382,7 +384,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                       backgroundColor: colors.bg,
                       padding: '0.75rem',
                       borderRadius: '0.5rem',
-                      borderLeft: '3px solid #4a6fa5',
+                      borderLeft: `3px solid ${colors.accent}`,
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>

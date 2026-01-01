@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { Resolution, Category, CATEGORIES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 
+// Cloud Dancer theme - serene whites and soft neutrals
 const colors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#475569',
-  text: '#e2e8f0',
-  textMuted: '#94a3b8',
-  accent: '#4a6fa5',
+  bg: '#F5F5F0',
+  cardBg: '#FFFFFF',
+  border: '#E0E0DB',
+  text: '#4A4A45',
+  textMuted: '#8A8A85',
+  accent: '#8A9A80',
 };
 
 interface ResolutionFormProps {
@@ -177,7 +178,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     fontWeight: 500,
                     border: 'none',
                     cursor: 'pointer',
-                    backgroundColor: formData.category === cat.value ? cat.color : '#334155',
+                    backgroundColor: formData.category === cat.value ? cat.color : colors.border,
                     color: formData.category === cat.value ? 'white' : colors.text,
                   }}
                 >
