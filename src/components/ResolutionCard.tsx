@@ -121,9 +121,10 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
               </p>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.25rem' }}>
             <button
               onClick={() => onEdit(resolution)}
+              className="action-btn"
               style={{
                 padding: '0.5rem',
                 color: colors.textMuted,
@@ -131,6 +132,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                 border: 'none',
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
               title="Edit"
             >
@@ -140,6 +142,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
             </button>
             <button
               onClick={() => setShowDeleteModal(true)}
+              className="action-btn action-btn-danger"
               style={{
                 padding: '0.5rem',
                 color: colors.textMuted,
@@ -147,6 +150,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                 border: 'none',
                 borderRadius: '0.5rem',
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
               title="Delete"
             >
@@ -161,38 +165,48 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Progress</span>
             {!isCompleted && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 <button
                   onClick={() => updateProgress(resolution.id, Math.max(0, resolution.progress - 10))}
+                  className="action-btn"
                   style={{
-                    width: '1.5rem',
-                    height: '1.5rem',
+                    width: '1.75rem',
+                    height: '1.75rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: colors.textMuted,
                     backgroundColor: 'transparent',
                     border: 'none',
-                    borderRadius: '0.25rem',
+                    borderRadius: '0.375rem',
                     cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    transition: 'all 0.15s ease',
                   }}
+                  title="Decrease progress"
                 >
-                  -
+                  −
                 </button>
                 <button
                   onClick={() => updateProgress(resolution.id, Math.min(100, resolution.progress + 10))}
+                  className="action-btn action-btn-success"
                   style={{
-                    width: '1.5rem',
-                    height: '1.5rem',
+                    width: '1.75rem',
+                    height: '1.75rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: colors.textMuted,
                     backgroundColor: 'transparent',
                     border: 'none',
-                    borderRadius: '0.25rem',
+                    borderRadius: '0.375rem',
                     cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    transition: 'all 0.15s ease',
                   }}
+                  title="Increase progress"
                 >
                   +
                 </button>

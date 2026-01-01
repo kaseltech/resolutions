@@ -109,3 +109,37 @@ input[type="time"] {
 .theme-transition {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+/* Action button hover effects */
+.action-btn {
+  position: relative;
+}
+
+.action-btn:hover {
+  background-color: var(--card-border) !important;
+  color: var(--foreground) !important;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn-danger:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+[data-theme="dark"] .action-btn-danger:hover {
+  background-color: #450a0a !important;
+  color: #f87171 !important;
+}
+
+.action-btn-success:hover {
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
+}
+
+[data-theme="dark"] .action-btn-success:hover {
+  background-color: #052e16 !important;
+  color: #4ade80 !important;
+}

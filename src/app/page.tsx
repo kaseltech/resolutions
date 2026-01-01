@@ -371,30 +371,40 @@ export default function Home() {
                     zIndex: 10,
                   }} />
                 )}
-                {isDragEnabled && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '0.75rem',
-                    right: '3.5rem',
-                    color: colors.textMuted,
-                    opacity: 0.5,
-                    zIndex: 5,
-                    pointerEvents: 'none',
-                  }}>
-                    <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="currentColor">
-                      <circle cx="9" cy="6" r="1.5" />
-                      <circle cx="15" cy="6" r="1.5" />
-                      <circle cx="9" cy="12" r="1.5" />
-                      <circle cx="15" cy="12" r="1.5" />
-                      <circle cx="9" cy="18" r="1.5" />
-                      <circle cx="15" cy="18" r="1.5" />
-                    </svg>
-                  </div>
-                )}
                 <ResolutionCard
                   resolution={resolution}
                   onEdit={handleEdit}
                 />
+                {isDragEnabled && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem',
+                    backgroundColor: theme === 'light' ? '#f8fafc' : '#0f172a',
+                    borderTop: `1px solid ${colors.border}`,
+                    borderBottomLeftRadius: '0.75rem',
+                    borderBottomRightRadius: '0.75rem',
+                    color: colors.textMuted,
+                    fontSize: '0.75rem',
+                    cursor: 'grab',
+                    transition: 'background-color 0.15s ease',
+                    marginTop: '-0.75rem',
+                  }}
+                  className="drag-handle"
+                  >
+                    <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="5" cy="9" r="1.5" />
+                      <circle cx="12" cy="9" r="1.5" />
+                      <circle cx="19" cy="9" r="1.5" />
+                      <circle cx="5" cy="15" r="1.5" />
+                      <circle cx="12" cy="15" r="1.5" />
+                      <circle cx="19" cy="15" r="1.5" />
+                    </svg>
+                    <span>Drag to reorder</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -522,6 +532,14 @@ export default function Home() {
           .keyboard-hints {
             display: block;
           }
+        }
+
+        .drag-handle:hover {
+          background-color: ${theme === 'light' ? '#e2e8f0' : '#1e293b'} !important;
+        }
+
+        .drag-handle:active {
+          cursor: grabbing;
         }
       `}</style>
     </div>
