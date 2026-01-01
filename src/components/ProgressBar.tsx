@@ -18,20 +18,18 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
     lg: '1rem',
   };
 
-  // Progress colors - softer for light mode, more vibrant for dark mode
+  // Rugged, outdoorsy progress colors
   const getProgressColor = (p: number) => {
     if (theme === 'light') {
-      // Soft, muted tones for Cloud Dancer light theme
-      if (p === 100) return '#8A9A80';
-      if (p >= 75) return '#A0B4A0';
-      if (p >= 50) return '#B4B4A0';
-      if (p >= 25) return '#C4B0A0';
-      return '#C4A0A0';
+      if (p === 100) return '#047857';
+      if (p >= 75) return '#059669';
+      if (p >= 50) return '#0369a1';
+      if (p >= 25) return '#b45309';
+      return '#dc2626';
     } else {
-      // More vibrant colors for dark mode
-      if (p === 100) return '#4ade80';
+      if (p === 100) return '#10b981';
       if (p >= 75) return '#34d399';
-      if (p >= 50) return '#a3e635';
+      if (p >= 50) return '#38bdf8';
       if (p >= 25) return '#fbbf24';
       return '#f87171';
     }
@@ -42,7 +40,7 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
       <div style={{
         width: '100%',
         backgroundColor: colors.border,
-        borderRadius: '9999px',
+        borderRadius: '0.375rem',
         height: heights[size],
         overflow: 'hidden',
       }}>
@@ -50,7 +48,7 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
           style={{
             height: '100%',
             backgroundColor: getProgressColor(progress),
-            borderRadius: '9999px',
+            borderRadius: '0.375rem',
             transition: 'all 0.5s ease-out',
             width: `${progress}%`,
           }}

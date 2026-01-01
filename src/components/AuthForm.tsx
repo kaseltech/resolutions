@@ -4,31 +4,6 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Logo } from './Logo';
 
-// Decorative star component for the background
-function Star({ x, y, size, opacity, delay }: { x: string; y: string; size: number; opacity: number; delay: number }) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        left: x,
-        top: y,
-        width: size,
-        height: size,
-        opacity,
-        animation: `twinkle 3s ease-in-out ${delay}s infinite`,
-      }}
-    >
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M12 2L13.5 9L20 10.5L13.5 12L12 19L10.5 12L4 10.5L10.5 9L12 2Z"
-          fill="#C4B898"
-          opacity="0.6"
-        />
-      </svg>
-    </div>
-  );
-}
-
 export function AuthForm() {
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -65,10 +40,10 @@ export function AuthForm() {
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '0.875rem 1rem',
-    borderRadius: '0.75rem',
-    backgroundColor: '#FFFFFF',
-    border: '1px solid #E0E0DB',
-    color: '#4A4A45',
+    borderRadius: '0.5rem',
+    backgroundColor: '#1e293b',
+    border: '1px solid #334155',
+    color: '#f1f5f9',
     fontSize: '1rem',
     outline: 'none',
     transition: 'all 0.2s',
@@ -76,142 +51,88 @@ export function AuthForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(135deg, #F8F8F5 0%, #F0F0EB 50%, #E8E8E3 100%)',
+      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Animated twinkle keyframes */}
-      <style>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.2); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(196, 184, 152, 0.2); }
-          50% { box-shadow: 0 0 40px rgba(196, 184, 152, 0.4); }
-        }
-      `}</style>
-
-      {/* Decorative background stars */}
-      <Star x="5%" y="15%" size={20} opacity={0.4} delay={0} />
-      <Star x="15%" y="70%" size={16} opacity={0.3} delay={0.5} />
-      <Star x="85%" y="20%" size={24} opacity={0.5} delay={1} />
-      <Star x="90%" y="60%" size={18} opacity={0.35} delay={1.5} />
-      <Star x="75%" y="80%" size={14} opacity={0.25} delay={2} />
-      <Star x="25%" y="85%" size={12} opacity={0.3} delay={2.5} />
-      <Star x="10%" y="40%" size={10} opacity={0.2} delay={0.8} />
-      <Star x="95%" y="40%" size={16} opacity={0.4} delay={1.2} />
-
-      {/* Large decorative north star - top left */}
-      <div style={{
-        position: 'absolute',
-        top: '8%',
-        left: '8%',
-        width: '60px',
-        height: '60px',
-        opacity: 0.15,
-        animation: 'float 6s ease-in-out infinite',
-      }}>
-        <svg viewBox="0 0 100 100" fill="none">
-          <polygon points="50,5 52,45 50,50 48,45" fill="#B5A888" />
-          <polygon points="50,95 52,55 50,50 48,55" fill="#B5A888" />
-          <polygon points="5,50 45,48 50,50 45,52" fill="#B5A888" />
-          <polygon points="95,50 55,48 50,50 55,52" fill="#B5A888" />
-        </svg>
+      {/* Stars background */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+        {/* Static stars */}
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 2 + 1}px`,
+              height: `${Math.random() * 2 + 1}px`,
+              backgroundColor: '#e2e8f0',
+              borderRadius: '50%',
+              opacity: Math.random() * 0.7 + 0.3,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Large decorative north star - bottom right */}
-      <div style={{
-        position: 'absolute',
-        bottom: '12%',
-        right: '10%',
-        width: '80px',
-        height: '80px',
-        opacity: 0.12,
-        animation: 'float 8s ease-in-out 1s infinite',
-      }}>
-        <svg viewBox="0 0 100 100" fill="none">
-          <polygon points="50,10 52,45 50,50 48,45" fill="#B5A888" />
-          <polygon points="50,90 52,55 50,50 48,55" fill="#B5A888" />
-          <polygon points="10,50 45,48 50,50 45,52" fill="#B5A888" />
-          <polygon points="90,50 55,48 50,50 55,52" fill="#B5A888" />
-        </svg>
-      </div>
-
-      {/* Subtle radial glow behind form */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '500px',
-        height: '500px',
-        background: 'radial-gradient(ellipse, rgba(196, 184, 152, 0.15) 0%, transparent 60%)',
-        borderRadius: '50%',
-        filter: 'blur(40px)',
-        pointerEvents: 'none',
-      }} />
-
-      {/* Soft cloud-like elements */}
-      <div style={{
-        position: 'absolute',
-        top: '20%',
-        right: '15%',
-        width: '200px',
-        height: '100px',
-        background: 'radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(40px)',
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '25%',
-        left: '10%',
-        width: '180px',
-        height: '90px',
-        background: 'radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(35px)',
-      }} />
+      {/* Mountain silhouette */}
+      <svg
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: '100%',
+          height: '40%',
+        }}
+        viewBox="0 0 1440 400"
+        preserveAspectRatio="none"
+        fill="none"
+      >
+        {/* Back mountains */}
+        <path
+          d="M0 400 L0 280 L180 180 L320 250 L480 120 L600 200 L780 80 L900 180 L1080 100 L1200 200 L1350 140 L1440 220 L1440 400 Z"
+          fill="#1e293b"
+        />
+        {/* Front mountains */}
+        <path
+          d="M0 400 L0 320 L150 240 L280 300 L420 180 L560 280 L720 160 L880 260 L1020 200 L1180 300 L1320 220 L1440 280 L1440 400 Z"
+          fill="#0f172a"
+          opacity="0.8"
+        />
+      </svg>
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div
-            className="flex justify-center mb-4"
-            style={{ animation: 'pulse-glow 4s ease-in-out infinite' }}
-          >
-            <Logo size={110} />
+          <div className="flex justify-center mb-4">
+            <Logo size={120} />
           </div>
           <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: '300',
-            color: '#4A4A45',
-            letterSpacing: '0.05em',
+            fontSize: '2.25rem',
+            fontWeight: '700',
+            color: '#f1f5f9',
+            letterSpacing: '0.02em',
             marginBottom: '0.5rem'
           }}>
             2026 Resolutions
           </h1>
-          <p style={{ color: '#8A8A85', fontSize: '1rem', fontWeight: '300' }}>
-            Let your north star guide your journey
+          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '400' }}>
+            Chart your course for the year ahead
           </p>
         </div>
 
         <div style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '1.5rem',
-          padding: '2.5rem',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), 0 0 60px rgba(196, 184, 152, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.95)',
+          backgroundColor: 'rgba(30, 41, 59, 0.9)',
+          backdropFilter: 'blur(12px)',
+          borderRadius: '1rem',
+          padding: '2rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          border: '1px solid #334155',
         }}>
           <h2 style={{
-            fontSize: '1.5rem',
-            fontWeight: '400',
-            color: '#4A4A45',
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#f1f5f9',
             marginBottom: '1.5rem',
             textAlign: 'center'
           }}>
@@ -225,7 +146,7 @@ export function AuthForm() {
                   display: 'block',
                   fontSize: '0.875rem',
                   fontWeight: '500',
-                  color: '#6A6A65',
+                  color: '#94a3b8',
                   marginBottom: '0.5rem'
                 }}>
                   Username
@@ -246,7 +167,7 @@ export function AuthForm() {
                 display: 'block',
                 fontSize: '0.875rem',
                 fontWeight: '500',
-                color: '#6A6A65',
+                color: '#94a3b8',
                 marginBottom: '0.5rem'
               }}>
                 Email
@@ -266,7 +187,7 @@ export function AuthForm() {
                 display: 'block',
                 fontSize: '0.875rem',
                 fontWeight: '500',
-                color: '#6A6A65',
+                color: '#94a3b8',
                 marginBottom: '0.5rem'
               }}>
                 Password
@@ -285,10 +206,10 @@ export function AuthForm() {
             {error && (
               <div style={{
                 padding: '0.875rem',
-                borderRadius: '0.75rem',
-                backgroundColor: 'rgba(180, 100, 100, 0.1)',
-                border: '1px solid rgba(180, 100, 100, 0.2)',
-                color: '#8B5A5A',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: '#fca5a5',
                 fontSize: '0.875rem',
               }}>
                 {error}
@@ -298,10 +219,10 @@ export function AuthForm() {
             {message && (
               <div style={{
                 padding: '0.875rem',
-                borderRadius: '0.75rem',
-                backgroundColor: 'rgba(138, 154, 128, 0.15)',
-                border: '1px solid rgba(138, 154, 128, 0.3)',
-                color: '#5A7A5A',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#6ee7b7',
                 fontSize: '0.875rem',
               }}>
                 {message}
@@ -314,10 +235,10 @@ export function AuthForm() {
               style={{
                 width: '100%',
                 padding: '0.875rem 1rem',
-                borderRadius: '0.75rem',
-                backgroundColor: '#8A9A80',
+                borderRadius: '0.5rem',
+                backgroundColor: '#047857',
                 color: 'white',
-                fontWeight: '500',
+                fontWeight: '600',
                 fontSize: '1rem',
                 border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -338,7 +259,7 @@ export function AuthForm() {
                 setMessage('');
               }}
               style={{
-                color: '#8A8A85',
+                color: '#94a3b8',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -350,16 +271,6 @@ export function AuthForm() {
             </button>
           </div>
         </div>
-
-        <p style={{
-          textAlign: 'center',
-          marginTop: '2rem',
-          color: '#A0A09B',
-          fontSize: '0.75rem',
-          fontWeight: '300'
-        }}>
-          Inspired by Cloud Dancer — Pantone Color of the Year 2026
-        </p>
       </div>
     </div>
   );

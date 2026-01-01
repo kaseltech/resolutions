@@ -11,45 +11,45 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  // Light theme colors
+  // Light theme - rugged outdoorsy colors
   const lightColors = {
-    skyStart: '#F8F8F5',
-    skyMid: '#F0F0EB',
-    skyEnd: '#E8E8E3',
-    outerRing: '#D8D8D3',
-    distantStars: '#C8C8C0',
-    starStart: '#D4C9A8',
-    starMid: '#C4B898',
-    starEnd: '#B5A888',
-    centerStart: '#FFFEF5',
-    centerEnd: '#F5F0E0',
-    centerCore: '#FFFEF8',
-    accentStart: '#9AAA90',
-    accentEnd: '#8A9A80',
-    text: '#6A6A65',
+    skyStart: '#2d3a3a',
+    skyMid: '#1f2937',
+    skyEnd: '#111827',
+    outerRing: '#4b5563',
+    distantStars: '#9ca3af',
+    starStart: '#f5f5f4',
+    starMid: '#e7e5e4',
+    starEnd: '#d6d3d1',
+    centerCore: '#ffffff',
+    accentStart: '#059669',
+    accentEnd: '#047857',
+    text: '#d1d5db',
+    mountainDark: '#1f2937',
+    mountainMid: '#374151',
+    mountainLight: '#4b5563',
   };
 
-  // Dark theme colors - deeper, richer tones
+  // Dark theme - deeper wilderness night
   const darkColors = {
-    skyStart: '#1e293b',
-    skyMid: '#1a2332',
-    skyEnd: '#0f172a',
-    outerRing: '#475569',
-    distantStars: '#94a3b8',
-    starStart: '#fbbf24',
-    starMid: '#f59e0b',
-    starEnd: '#d97706',
-    centerStart: '#fef3c7',
-    centerEnd: '#fde68a',
-    centerCore: '#fffbeb',
-    accentStart: '#4ade80',
-    accentEnd: '#22c55e',
+    skyStart: '#0c1222',
+    skyMid: '#0a0f1a',
+    skyEnd: '#050810',
+    outerRing: '#334155',
+    distantStars: '#cbd5e1',
+    starStart: '#fafaf9',
+    starMid: '#f5f5f4',
+    starEnd: '#e7e5e4',
+    centerCore: '#ffffff',
+    accentStart: '#10b981',
+    accentEnd: '#059669',
     text: '#e2e8f0',
+    mountainDark: '#1e293b',
+    mountainMid: '#334155',
+    mountainLight: '#475569',
   };
 
   const c = isDark ? darkColors : lightColors;
-
-  // Unique ID suffix to avoid conflicts when multiple logos are rendered
   const idSuffix = isDark ? '-dark' : '-light';
 
   return (
@@ -61,9 +61,8 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* North Star - Guidance, Direction, Hope, Stability */}
       <defs>
-        <linearGradient id={`skyGradient${idSuffix}`} x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={`skyGradient${idSuffix}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={c.skyStart} />
           <stop offset="50%" stopColor={c.skyMid} />
           <stop offset="100%" stopColor={c.skyEnd} />
@@ -73,105 +72,96 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
           <stop offset="50%" stopColor={c.starMid} />
           <stop offset="100%" stopColor={c.starEnd} />
         </linearGradient>
-        <linearGradient id={`starCenterGradient${idSuffix}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={c.centerStart} />
-          <stop offset="100%" stopColor={c.centerEnd} />
+        <linearGradient id={`mountainGradient${idSuffix}`} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={c.mountainLight} />
+          <stop offset="100%" stopColor={c.mountainDark} />
         </linearGradient>
-        <linearGradient id={`accentGradient${idSuffix}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={c.accentStart} />
-          <stop offset="100%" stopColor={c.accentEnd} />
-        </linearGradient>
-        <filter id={`starGlow${idSuffix}`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation={isDark ? "3" : "2"} result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-        <filter id={`softShadow${idSuffix}`} x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor={isDark ? "#00000040" : "#00000010"}/>
+        <filter id={`starGlow${idSuffix}`} x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="1.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
 
-      {/* Main circle background */}
-      <circle cx="50" cy="50" r="48" fill={`url(#skyGradient${idSuffix})`} filter={`url(#softShadow${idSuffix})`} />
+      {/* Main circle - night sky */}
+      <circle cx="50" cy="50" r="48" fill={`url(#skyGradient${idSuffix})`} />
+      <circle cx="50" cy="50" r="47" stroke={c.outerRing} strokeWidth="2" fill="none" />
 
-      {/* Subtle outer ring */}
-      <circle cx="50" cy="50" r="46" stroke={c.outerRing} strokeWidth="1" fill="none" />
+      {/* Distant stars */}
+      <circle cx="20" cy="25" r="0.8" fill={c.distantStars} opacity="0.9" />
+      <circle cx="78" cy="18" r="1" fill={c.distantStars} opacity="0.8" />
+      <circle cx="15" cy="45" r="0.6" fill={c.distantStars} opacity="0.7" />
+      <circle cx="85" cy="35" r="0.7" fill={c.distantStars} opacity="0.6" />
+      <circle cx="25" cy="55" r="0.5" fill={c.distantStars} opacity="0.5" />
+      <circle cx="72" cy="50" r="0.6" fill={c.distantStars} opacity="0.7" />
+      <circle cx="35" cy="15" r="0.7" fill={c.distantStars} opacity="0.8" />
+      <circle cx="65" cy="22" r="0.5" fill={c.distantStars} opacity="0.6" />
 
-      {/* Distant stars - subtle background */}
-      <circle cx="25" cy="30" r="1" fill={c.distantStars} opacity={isDark ? "0.8" : "0.6"} />
-      <circle cx="75" cy="25" r="0.8" fill={c.distantStars} opacity={isDark ? "0.7" : "0.5"} />
-      <circle cx="20" cy="55" r="0.6" fill={c.distantStars} opacity={isDark ? "0.6" : "0.4"} />
-      <circle cx="80" cy="45" r="0.7" fill={c.distantStars} opacity={isDark ? "0.7" : "0.5"} />
-      <circle cx="30" cy="70" r="0.5" fill={c.distantStars} opacity={isDark ? "0.5" : "0.3"} />
-      <circle cx="70" cy="72" r="0.6" fill={c.distantStars} opacity={isDark ? "0.6" : "0.4"} />
+      {/* Mountain range silhouette */}
+      <path
+        d="M 2 85 L 18 60 L 28 70 L 42 52 L 50 62 L 58 48 L 72 65 L 82 55 L 98 85 Z"
+        fill={`url(#mountainGradient${idSuffix})`}
+      />
 
-      {/* North Star - Main 4-point star */}
+      {/* Front mountain */}
+      <path
+        d="M 2 85 L 25 65 L 38 75 L 50 58 L 62 72 L 75 62 L 98 85 Z"
+        fill={c.mountainDark}
+        opacity="0.7"
+      />
+
+      {/* North Star - Sharp, rugged 4-point star */}
       <g filter={`url(#starGlow${idSuffix})`}>
-        {/* Vertical beam */}
+        {/* Main vertical beam - sharp points */}
         <polygon
-          points="50,15 52,45 50,50 48,45"
+          points="50,8 51.5,42 50,50 48.5,42"
           fill={`url(#starGradient${idSuffix})`}
         />
         <polygon
-          points="50,85 52,55 50,50 48,55"
+          points="50,50 51.5,58 50,70 48.5,58"
+          fill={`url(#starGradient${idSuffix})`}
+          opacity="0.6"
+        />
+
+        {/* Main horizontal beam */}
+        <polygon
+          points="8,38 42,36.5 50,38 42,39.5"
+          fill={`url(#starGradient${idSuffix})`}
+        />
+        <polygon
+          points="50,38 58,36.5 92,38 58,39.5"
           fill={`url(#starGradient${idSuffix})`}
         />
 
-        {/* Horizontal beam */}
+        {/* Secondary diagonal beams - shorter */}
         <polygon
-          points="15,50 45,48 50,50 45,52"
+          points="22,18 44,34 50,38 46,36"
           fill={`url(#starGradient${idSuffix})`}
+          opacity="0.5"
         />
         <polygon
-          points="85,50 55,48 50,50 55,52"
+          points="78,18 56,34 50,38 54,36"
           fill={`url(#starGradient${idSuffix})`}
-        />
-
-        {/* Diagonal beams - smaller, for 8-point effect */}
-        <polygon
-          points="26,26 44,46 50,50 46,44"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.7"
-        />
-        <polygon
-          points="74,26 56,46 50,50 54,44"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.7"
-        />
-        <polygon
-          points="26,74 44,54 50,50 46,56"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.7"
-        />
-        <polygon
-          points="74,74 56,54 50,50 54,56"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.7"
+          opacity="0.5"
         />
       </g>
 
       {/* Star center - bright core */}
-      <circle cx="50" cy="50" r="6" fill={`url(#starCenterGradient${idSuffix})`} />
-      <circle cx="50" cy="50" r="3" fill={c.centerCore} />
+      <circle cx="50" cy="38" r="4" fill={c.starMid} />
+      <circle cx="50" cy="38" r="2" fill={c.centerCore} />
 
-      {/* Subtle horizon line at bottom */}
-      <path
-        d="M 10 75 Q 50 70 90 75"
-        stroke={`url(#accentGradient${idSuffix})`}
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.4"
-      />
-
-      {/* 2026 text - grounded below the star */}
+      {/* 2026 text */}
       <text
         x="50"
-        y="93"
+        y="96"
         textAnchor="middle"
         fill={c.text}
-        fontSize="12"
-        fontWeight="600"
+        fontSize="11"
+        fontWeight="700"
         fontFamily="Arial, sans-serif"
-        letterSpacing="0.05em"
+        letterSpacing="0.1em"
       >
         2026
       </text>

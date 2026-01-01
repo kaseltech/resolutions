@@ -10,44 +10,44 @@ interface ThemeContextType {
   colors: typeof lightColors;
 }
 
-// Cloud Dancer light theme
+// Rugged outdoorsy light theme - slate, forest, earth tones
 const lightColors = {
-  bg: '#F5F5F0',
-  cardBg: '#FFFFFF',
-  border: '#E0E0DB',
-  text: '#4A4A45',
-  textMuted: '#8A8A85',
-  accent: '#7A8A70',
-  accentHover: '#6A7A60',
-  inputBg: '#FFFFFF',
-  // Softer category colors for light mode
-  health: '#9DB4A0',
-  career: '#A0A4B4',
-  finance: '#B4A890',
-  personal: '#B49DA0',
-  education: '#A8A0B4',
-  social: '#A0B4B0',
-  creative: '#B4A0A8',
-  other: '#A8A8A0',
+  bg: '#f1f5f9',
+  cardBg: '#ffffff',
+  border: '#cbd5e1',
+  text: '#1e293b',
+  textMuted: '#64748b',
+  accent: '#047857',
+  accentHover: '#065f46',
+  inputBg: '#ffffff',
+  // Earthy category colors
+  health: '#059669',
+  career: '#0369a1',
+  finance: '#b45309',
+  personal: '#7c3aed',
+  education: '#1d4ed8',
+  social: '#0891b2',
+  creative: '#c2410c',
+  other: '#475569',
 };
 
-// Dark theme
+// Dark theme - deep wilderness night
 const darkColors = {
   bg: '#0f172a',
   cardBg: '#1e293b',
   border: '#334155',
-  text: '#e2e8f0',
+  text: '#f1f5f9',
   textMuted: '#94a3b8',
-  accent: '#8A9A80',
-  accentHover: '#9AAA90',
+  accent: '#10b981',
+  accentHover: '#34d399',
   inputBg: '#1e293b',
-  // Richer category colors for dark mode
-  health: '#4ade80',
-  career: '#60a5fa',
+  // Vibrant category colors for dark
+  health: '#34d399',
+  career: '#38bdf8',
   finance: '#fbbf24',
-  personal: '#f472b6',
-  education: '#a78bfa',
-  social: '#2dd4bf',
+  personal: '#a78bfa',
+  education: '#60a5fa',
+  social: '#22d3ee',
   creative: '#fb923c',
   other: '#94a3b8',
 };
