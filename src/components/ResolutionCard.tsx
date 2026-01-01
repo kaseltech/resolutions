@@ -7,6 +7,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { ProgressBar } from './ProgressBar';
 import { MilestoneList } from './MilestoneList';
 import { CategoryIcon } from './CategoryIcon';
+import { ConfirmModal } from './ConfirmModal';
 
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   great: '😄',
@@ -25,6 +26,8 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
   const [journalContent, setJournalContent] = useState('');
   const [journalMood, setJournalMood] = useState<JournalEntry['mood']>(undefined);
   const [showJournalForm, setShowJournalForm] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [journalToDelete, setJournalToDelete] = useState<string | null>(null);
   const { deleteResolution, updateProgress, addJournalEntry, deleteJournalEntry } = useResolutions();
   const { theme, colors } = useTheme();
 
@@ -136,11 +139,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
               </svg>
             </button>
             <button
-              onClick={() => {
-                if (confirm('Are you sure you want to delete this resolution?')) {
-                  deleteResolution(resolution.id);
-                }
-              }}
+              onClick={() => setShowDeleteModal(true)}
               style={{
                 padding: '0.5rem',
                 color: colors.textMuted,
@@ -425,11 +424,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                         </p>
                       </div>
                       <button
-                        onClick={() => {
-                          if (confirm('Delete this journal entry?')) {
-                            deleteJournalEntry(resolution.id, entry.id);
-                          }
-                        }}
+                        onClick={() => setJournalToDelete(entry.id)}
                         style={{
                           padding: '0.25rem',
                           backgroundColor: 'transparent',
@@ -465,6 +460,38 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
           </div>
         </div>
       )}
+
+      {/* Delete Resolution Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Resolution"
+        message={`Are you sure you want to delete "${resolution.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        variant="danger"
+        onConfirm={() => {
+          deleteResolution(resolution.id);
+          setShowDeleteModal(false);
+        }}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+
+      {/* Delete Journal Entry Modal */}
+      <ConfirmModal
+        isOpen={journalToDelete !== null}
+        title="Delete Journal Entry"
+        message="Are you sure you want to delete this journal entry? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        variant="warning"
+        onConfirm={() => {
+          if (journalToDelete) {
+            deleteJournalEntry(resolution.id, journalToDelete);
+          }
+          setJournalToDelete(null);
+        }}
+        onCancel={() => setJournalToDelete(null)}
+      />
     </div>
   );
 }
