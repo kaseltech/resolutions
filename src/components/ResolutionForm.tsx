@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Resolution, Category, CATEGORIES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { CategoryIcon } from './CategoryIcon';
 
 interface ResolutionFormProps {
   resolution?: Resolution | null;
@@ -218,11 +219,11 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       color: isSelected ? catColor : colors.textMuted,
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.375rem',
+                      gap: '0.5rem',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <span style={{ fontSize: '1rem' }}>{cat.icon}</span>
+                    <CategoryIcon category={cat.value} size={16} />
                     {cat.label}
                   </button>
                 );

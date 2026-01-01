@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Category, CATEGORIES, getCategoryInfo } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { CategoryIcon } from './CategoryIcon';
 
 interface CategoryFilterProps {
   selected: Category | 'all';
@@ -35,7 +36,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
   }, []);
 
   const selectedInfo = selected === 'all'
-    ? { icon: '📋', label: 'All Categories', color: '' }
+    ? { label: 'All Categories', color: '' }
     : getCategoryInfo(selected);
 
   const selectedCount = selected === 'all'
@@ -67,7 +68,16 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>{selectedInfo.icon}</span>
+          {selected === 'all' ? (
+            <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+            </svg>
+          ) : (
+            <CategoryIcon category={selected} size={16} />
+          )}
           <span>{selectedInfo.label}</span>
           <span style={{
             backgroundColor: colors.border,
@@ -131,7 +141,12 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
             }}
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>📋</span>
+              <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
               <span>All Categories</span>
             </span>
             <span style={{
@@ -171,7 +186,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
               }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>{cat.icon}</span>
+                <CategoryIcon category={cat.value} size={16} />
                 <span>{cat.label}</span>
               </span>
               <span style={{

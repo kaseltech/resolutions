@@ -4,6 +4,7 @@ import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CATEGORIES } from '@/types';
 import { ProgressBar } from './ProgressBar';
+import { CategoryIcon } from './CategoryIcon';
 
 export function DashboardStats() {
   const { resolutions, getOverallProgress, getCompletedCount } = useResolutions();
@@ -154,10 +155,10 @@ export function DashboardStats() {
                       border: `1px solid ${theme === 'light' ? `${cat.color}25` : `${cat.darkColor}35`}`,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.375rem',
+                      gap: '0.5rem',
                     }}
                   >
-                    <span style={{ fontSize: '0.875rem' }}>{cat.icon}</span>
+                    <CategoryIcon category={cat.value} size={14} />
                     {cat.label}
                   </span>
                   <span style={{ fontSize: '0.8rem', color: colors.textMuted, fontWeight: 500 }}>

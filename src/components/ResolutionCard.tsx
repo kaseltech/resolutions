@@ -6,6 +6,7 @@ import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { ProgressBar } from './ProgressBar';
 import { MilestoneList } from './MilestoneList';
+import { CategoryIcon } from './CategoryIcon';
 
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   great: '😄',
@@ -83,10 +84,10 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
                   border: `1px solid ${theme === 'light' ? `${categoryInfo.color}30` : `${categoryInfo.darkColor}40`}`,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.375rem',
+                  gap: '0.5rem',
                 }}
               >
-                <span style={{ fontSize: '0.875rem' }}>{categoryInfo.icon}</span>
+                <CategoryIcon category={resolution.category} size={14} />
                 {categoryInfo.label}
               </span>
               {isCompleted && (

@@ -9,15 +9,15 @@ export type Category =
   | 'other';
 
 // Rugged, outdoorsy category colors with dark variants for badges
-export const CATEGORIES: { value: Category; label: string; color: string; darkColor: string; bgLight: string; bgDark: string; icon: string }[] = [
-  { value: 'health', label: 'Health & Fitness', color: '#047857', darkColor: '#10b981', bgLight: '#ecfdf5', bgDark: '#064e3b', icon: '💪' },
-  { value: 'career', label: 'Career & Work', color: '#1e40af', darkColor: '#60a5fa', bgLight: '#eff6ff', bgDark: '#1e3a5f', icon: '💼' },
-  { value: 'finance', label: 'Finance & Money', color: '#b45309', darkColor: '#fbbf24', bgLight: '#fffbeb', bgDark: '#78350f', icon: '💰' },
-  { value: 'relationships', label: 'Relationships', color: '#be185d', darkColor: '#f472b6', bgLight: '#fdf2f8', bgDark: '#831843', icon: '❤️' },
-  { value: 'personal', label: 'Personal Growth', color: '#7c3aed', darkColor: '#a78bfa', bgLight: '#f5f3ff', bgDark: '#4c1d95', icon: '🌱' },
-  { value: 'learning', label: 'Learning & Education', color: '#0369a1', darkColor: '#38bdf8', bgLight: '#f0f9ff', bgDark: '#0c4a6e', icon: '📚' },
-  { value: 'creativity', label: 'Creativity & Hobbies', color: '#c2410c', darkColor: '#fb923c', bgLight: '#fff7ed', bgDark: '#7c2d12', icon: '🎨' },
-  { value: 'other', label: 'Other', color: '#475569', darkColor: '#94a3b8', bgLight: '#f8fafc', bgDark: '#334155', icon: '✨' },
+export const CATEGORIES: { value: Category; label: string; color: string; darkColor: string; bgLight: string; bgDark: string }[] = [
+  { value: 'health', label: 'Health & Fitness', color: '#047857', darkColor: '#10b981', bgLight: '#ecfdf5', bgDark: '#064e3b' },
+  { value: 'career', label: 'Career & Work', color: '#1e40af', darkColor: '#60a5fa', bgLight: '#eff6ff', bgDark: '#1e3a5f' },
+  { value: 'finance', label: 'Finance & Money', color: '#b45309', darkColor: '#fbbf24', bgLight: '#fffbeb', bgDark: '#78350f' },
+  { value: 'relationships', label: 'Relationships', color: '#be185d', darkColor: '#f472b6', bgLight: '#fdf2f8', bgDark: '#831843' },
+  { value: 'personal', label: 'Personal Growth', color: '#7c3aed', darkColor: '#a78bfa', bgLight: '#f5f3ff', bgDark: '#4c1d95' },
+  { value: 'learning', label: 'Learning & Education', color: '#0369a1', darkColor: '#38bdf8', bgLight: '#f0f9ff', bgDark: '#0c4a6e' },
+  { value: 'creativity', label: 'Creativity & Hobbies', color: '#c2410c', darkColor: '#fb923c', bgLight: '#fff7ed', bgDark: '#7c2d12' },
+  { value: 'other', label: 'Other', color: '#475569', darkColor: '#94a3b8', bgLight: '#f8fafc', bgDark: '#334155' },
 ];
 
 export interface Milestone {
