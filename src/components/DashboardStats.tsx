@@ -13,16 +13,16 @@ const colors = {
 };
 
 export function DashboardStats() {
-  const { data, getOverallProgress, getCompletedCount } = useResolutions();
+  const { resolutions, getOverallProgress, getCompletedCount } = useResolutions();
   const overallProgress = getOverallProgress();
   const completedCount = getCompletedCount();
-  const totalCount = data.resolutions.length;
+  const totalCount = resolutions.length;
 
   const categoryStats = CATEGORIES.map(cat => ({
     ...cat,
-    count: data.resolutions.filter(r => r.category === cat.value).length,
+    count: resolutions.filter(r => r.category === cat.value).length,
     avgProgress: Math.round(
-      data.resolutions
+      resolutions
         .filter(r => r.category === cat.value)
         .reduce((sum, r, _, arr) => sum + r.progress / (arr.length || 1), 0)
     ),
@@ -154,7 +154,7 @@ export function DashboardStats() {
             { label: '76-99%', min: 76, max: 99, color: '#3d7a6a' },
             { label: '100%', min: 100, max: 100, color: '#3d7a57' },
           ].map(bucket => {
-            const count = data.resolutions.filter(
+            const count = resolutions.filter(
               r => r.progress >= bucket.min && r.progress <= bucket.max
             ).length;
             const height = totalCount > 0 ? (count / totalCount) * 100 : 0;

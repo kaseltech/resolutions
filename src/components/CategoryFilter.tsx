@@ -20,14 +20,14 @@ interface CategoryFilterProps {
 export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { getUsedCategories, data } = useResolutions();
+  const { getUsedCategories, resolutions } = useResolutions();
 
   const usedCategories = getUsedCategories();
   const categoriesWithCounts = CATEGORIES
     .filter(cat => usedCategories.includes(cat.value))
     .map(cat => ({
       ...cat,
-      count: data.resolutions.filter(r => r.category === cat.value).length,
+      count: resolutions.filter(r => r.category === cat.value).length,
     }));
 
   useEffect(() => {
@@ -45,8 +45,8 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
     : getCategoryInfo(selected);
 
   const selectedCount = selected === 'all'
-    ? data.resolutions.length
-    : data.resolutions.filter(r => r.category === selected).length;
+    ? resolutions.length
+    : resolutions.filter(r => r.category === selected).length;
 
   if (categoriesWithCounts.length === 0) {
     return null;
@@ -146,7 +146,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
               padding: '0.125rem 0.5rem',
               borderRadius: '9999px',
             }}>
-              {data.resolutions.length}
+              {resolutions.length}
             </span>
           </button>
 

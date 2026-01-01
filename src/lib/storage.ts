@@ -5,6 +5,11 @@ export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
+export async function getCurrentUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
+
 export function createResolution(partial: Partial<Resolution>): Resolution {
   const now = new Date().toISOString();
   return {
@@ -42,9 +47,10 @@ function rowToResolution(row: Record<string, unknown>): Resolution {
 }
 
 // Convert Resolution to database row format
-function resolutionToRow(resolution: Resolution): Record<string, unknown> {
+function resolutionToRow(resolution: Resolution, userId: string): Record<string, unknown> {
   return {
     id: resolution.id,
+    user_id: userId,
     title: resolution.title,
     description: resolution.description,
     category: resolution.category,
@@ -75,7 +81,13 @@ export async function loadResolutions(): Promise<Resolution[]> {
 }
 
 export async function saveResolution(resolution: Resolution): Promise<void> {
-  const row = resolutionToRow(resolution);
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    console.error('No user logged in');
+    return;
+  }
+
+  const row = resolutionToRow(resolution, userId);
 
   const { error } = await supabase
     .from('resolutions')

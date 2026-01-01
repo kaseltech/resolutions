@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
+import { useAuth } from '@/context/AuthContext';
 import { Resolution, Category } from '@/types';
 import { ResolutionCard } from '@/components/ResolutionCard';
 import { ResolutionForm } from '@/components/ResolutionForm';
@@ -22,7 +23,8 @@ const colors = {
 };
 
 export default function Home() {
-  const { data, loading, getResolutionsByCategory } = useResolutions();
+  const { resolutions, loading, getResolutionsByCategory } = useResolutions();
+  const { user, signOut } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
@@ -81,26 +83,46 @@ export default function Home() {
                 <p style={{ fontSize: '0.875rem', color: colors.textMuted, margin: 0 }}>Track your journey to a better you</p>
               </div>
             </div>
-            <button
-              onClick={() => setShowForm(true)}
-              style={{
-                padding: '0.625rem 1.25rem',
-                backgroundColor: colors.accent,
-                color: 'white',
-                borderRadius: '0.5rem',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              New Resolution
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                {user?.user_metadata?.username || user?.email}
+              </span>
+              <button
+                onClick={() => setShowForm(true)}
+                style={{
+                  padding: '0.625rem 1.25rem',
+                  backgroundColor: colors.accent,
+                  color: 'white',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                New Resolution
+              </button>
+              <button
+                onClick={signOut}
+                style={{
+                  padding: '0.625rem 1rem',
+                  backgroundColor: 'transparent',
+                  color: colors.textMuted,
+                  borderRadius: '0.5rem',
+                  border: `1px solid ${colors.border}`,
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -142,7 +164,7 @@ export default function Home() {
             </button>
           </div>
 
-          {view === 'list' && data.resolutions.length > 0 && (
+          {view === 'list' && resolutions.length > 0 && (
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -172,7 +194,7 @@ export default function Home() {
         )}
 
         {/* Category Filter */}
-        {data.resolutions.length > 0 && (
+        {resolutions.length > 0 && (
           <div style={{ marginBottom: '1.5rem' }}>
             <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
           </div>
@@ -189,7 +211,7 @@ export default function Home() {
               />
             ))}
           </div>
-        ) : data.resolutions.length > 0 ? (
+        ) : resolutions.length > 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: colors.textMuted }}>
             No resolutions in this category yet.
           </div>
