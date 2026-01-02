@@ -444,7 +444,7 @@ export default function Home() {
         className="fab-mobile"
         style={{
           position: 'fixed',
-          bottom: '1.5rem',
+          bottom: 'calc(1.5rem + env(safe-area-inset-bottom))',
           right: '1.5rem',
           width: '3.5rem',
           height: '3.5rem',

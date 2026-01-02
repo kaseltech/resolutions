@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CATEGORIES } from '@/types';
@@ -12,6 +13,29 @@ export function DashboardStats() {
   const overallProgress = getOverallProgress();
   const completedCount = getCompletedCount();
   const totalCount = resolutions.length;
+
+  // Collapsible sections - default collapsed on mobile
+  const [isMobile, setIsMobile] = useState(false);
+  const [showCategories, setShowCategories] = useState(true);
+  const [showDistribution, setShowDistribution] = useState(true);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 640;
+      setIsMobile(mobile);
+      // Collapse by default on mobile
+      if (mobile) {
+        setShowCategories(false);
+        setShowDistribution(false);
+      } else {
+        setShowCategories(true);
+        setShowDistribution(true);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const categoryStats = CATEGORIES.map(cat => ({
     ...cat,
@@ -31,7 +55,7 @@ export function DashboardStats() {
   const cardStyle: React.CSSProperties = {
     backgroundColor: colors.cardBg,
     borderRadius: '0.75rem',
-    padding: '1.25rem',
+    padding: isMobile ? '1rem' : '1.25rem',
     border: `1px solid ${colors.border}`,
     transition: 'background-color 0.3s ease, border-color 0.3s ease',
   };
@@ -57,7 +81,7 @@ export function DashboardStats() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="dashboard-container">
       {/* Main Stats Row */}
       <div className="stats-grid">
         <div style={cardStyle}>
@@ -78,10 +102,20 @@ export function DashboardStats() {
         </div>
       </div>
       <style jsx>{`
+        .dashboard-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        @media (min-width: 640px) {
+          .dashboard-container {
+            gap: 1.5rem;
+          }
+        }
         .stats-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
         @media (min-width: 640px) {
           .stats-grid {
@@ -136,85 +170,151 @@ export function DashboardStats() {
         </p>
       </div>
 
-      {/* Category Breakdown */}
+      {/* Category Breakdown - Collapsible on mobile */}
       {categoryStats.length > 0 && (
         <div style={cardStyle}>
-          <h3 style={{ fontWeight: 500, color: colors.text, marginBottom: '1rem', marginTop: 0 }}>Progress by Category</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {categoryStats.map(cat => (
-              <div key={cat.value}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span
-                    style={{
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: theme === 'light' ? cat.color : cat.darkColor,
-                      backgroundColor: theme === 'light' ? cat.bgLight : cat.bgDark,
-                      padding: '0.25rem 0.625rem',
-                      borderRadius: '0.375rem',
-                      border: `1px solid ${theme === 'light' ? `${cat.color}25` : `${cat.darkColor}35`}`,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                    }}
-                  >
-                    <CategoryIcon category={cat.value} size={14} />
-                    {cat.label}
-                  </span>
-                  <span style={{ fontSize: '0.8rem', color: colors.textMuted, fontWeight: 500 }}>
-                    {cat.count} resolution{cat.count !== 1 ? 's' : ''} · {cat.avgProgress}%
-                  </span>
+          <button
+            onClick={() => isMobile && setShowCategories(!showCategories)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: isMobile ? 'pointer' : 'default',
+              marginBottom: showCategories ? '1rem' : 0,
+            }}
+          >
+            <h3 style={{ fontWeight: 500, color: colors.text, margin: 0 }}>Progress by Category</h3>
+            {isMobile && (
+              <svg
+                style={{
+                  width: 20,
+                  height: 20,
+                  color: colors.textMuted,
+                  transform: showCategories ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s ease',
+                }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </button>
+          {showCategories && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {categoryStats.map(cat => (
+                <div key={cat.value}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span
+                      style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: theme === 'light' ? cat.color : cat.darkColor,
+                        backgroundColor: theme === 'light' ? cat.bgLight : cat.bgDark,
+                        padding: '0.25rem 0.625rem',
+                        borderRadius: '0.375rem',
+                        border: `1px solid ${theme === 'light' ? `${cat.color}25` : `${cat.darkColor}35`}`,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <CategoryIcon category={cat.value} size={14} />
+                      {cat.label}
+                    </span>
+                    <span style={{ fontSize: '0.8rem', color: colors.textMuted, fontWeight: 500 }}>
+                      {cat.count} resolution{cat.count !== 1 ? 's' : ''} · {cat.avgProgress}%
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', backgroundColor: colors.border, borderRadius: '0.375rem', height: '0.5rem', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        borderRadius: '0.375rem',
+                        transition: 'all 0.5s',
+                        width: `${cat.avgProgress}%`,
+                        backgroundColor: theme === 'light' ? cat.color : cat.darkColor
+                      }}
+                    />
+                  </div>
                 </div>
-                <div style={{ width: '100%', backgroundColor: colors.border, borderRadius: '0.375rem', height: '0.5rem', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      borderRadius: '0.375rem',
-                      transition: 'all 0.5s',
-                      width: `${cat.avgProgress}%`,
-                      backgroundColor: theme === 'light' ? cat.color : cat.darkColor
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Progress Distribution Chart */}
+      {/* Progress Distribution Chart - Collapsible on mobile */}
       <div style={cardStyle}>
-        <h3 style={{ fontWeight: 500, color: colors.text, marginBottom: '1rem', marginTop: 0 }}>Progress Distribution</h3>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '8rem', gap: '0.5rem' }}>
-          {[
-            { label: '0-25%', min: 0, max: 25, color: theme === 'light' ? '#C4A0A0' : '#f87171' },
-            { label: '26-50%', min: 26, max: 50, color: theme === 'light' ? '#C4B0A0' : '#fbbf24' },
-            { label: '51-75%', min: 51, max: 75, color: theme === 'light' ? '#B4B4A0' : '#a3e635' },
-            { label: '76-99%', min: 76, max: 99, color: theme === 'light' ? '#A0B4A0' : '#34d399' },
-            { label: '100%', min: 100, max: 100, color: colors.accent },
-          ].map(bucket => {
-            const count = resolutions.filter(
-              r => r.progress >= bucket.min && r.progress <= bucket.max
-            ).length;
-            const height = totalCount > 0 ? (count / totalCount) * 100 : 0;
-            return (
-              <div key={bucket.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>{count}</div>
-                <div
-                  style={{
-                    width: '100%',
-                    backgroundColor: bucket.color,
-                    borderTopLeftRadius: '0.5rem',
-                    borderTopRightRadius: '0.5rem',
-                    transition: 'all 0.5s',
-                    height: `${Math.max(4, height)}%`,
-                  }}
-                />
-                <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.5rem' }}>{bucket.label}</div>
-              </div>
-            );
-          })}
-        </div>
+        <button
+          onClick={() => isMobile && setShowDistribution(!showDistribution)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: isMobile ? 'pointer' : 'default',
+            marginBottom: showDistribution ? '1rem' : 0,
+          }}
+        >
+          <h3 style={{ fontWeight: 500, color: colors.text, margin: 0 }}>Progress Distribution</h3>
+          {isMobile && (
+            <svg
+              style={{
+                width: 20,
+                height: 20,
+                color: colors.textMuted,
+                transform: showDistribution ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease',
+              }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          )}
+        </button>
+        {showDistribution && (
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '8rem', gap: '0.5rem' }}>
+            {[
+              { label: '0-25%', min: 0, max: 25, color: theme === 'light' ? '#C4A0A0' : '#f87171' },
+              { label: '26-50%', min: 26, max: 50, color: theme === 'light' ? '#C4B0A0' : '#fbbf24' },
+              { label: '51-75%', min: 51, max: 75, color: theme === 'light' ? '#B4B4A0' : '#a3e635' },
+              { label: '76-99%', min: 76, max: 99, color: theme === 'light' ? '#A0B4A0' : '#34d399' },
+              { label: '100%', min: 100, max: 100, color: colors.accent },
+            ].map(bucket => {
+              const count = resolutions.filter(
+                r => r.progress >= bucket.min && r.progress <= bucket.max
+              ).length;
+              const height = totalCount > 0 ? (count / totalCount) * 100 : 0;
+              return (
+                <div key={bucket.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>{count}</div>
+                  <div
+                    style={{
+                      width: '100%',
+                      backgroundColor: bucket.color,
+                      borderTopLeftRadius: '0.5rem',
+                      borderTopRightRadius: '0.5rem',
+                      transition: 'all 0.5s',
+                      height: `${Math.max(4, height)}%`,
+                    }}
+                  />
+                  <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.5rem' }}>{bucket.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
