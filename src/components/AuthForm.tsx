@@ -54,6 +54,8 @@ export function AuthForm() {
       background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
       position: 'relative',
       overflow: 'hidden',
+      paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+      paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))',
     }}>
       {/* Stars background */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>

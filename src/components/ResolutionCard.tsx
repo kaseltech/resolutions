@@ -60,15 +60,16 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
 
   return (
     <div
+      className="card-hover animate-fadeIn"
       style={{
         backgroundColor: isCompleted ? completedBg : colors.cardBg,
         borderRadius: '0.75rem',
         overflow: 'hidden',
         borderLeft: `4px solid ${borderColor}`,
         boxShadow: theme === 'light'
-          ? '0 4px 12px -2px rgba(0, 0, 0, 0.08)'
-          : '0 4px 12px -2px rgba(0, 0, 0, 0.3)',
-        transition: 'background-color 0.3s ease',
+          ? '0 2px 8px -2px rgba(0, 0, 0, 0.06)'
+          : '0 2px 8px -2px rgba(0, 0, 0, 0.25)',
+        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease',
       }}
     >
       <div style={{ padding: '1.25rem' }}>

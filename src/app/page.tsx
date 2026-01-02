@@ -77,7 +77,14 @@ export default function Home() {
     setDragOverIndex(null);
   };
 
-  const isDragEnabled = sortBy === 'custom' && selectedCategory === 'all';
+  // Drag only works on desktop (not touch devices)
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  const isDragEnabled = sortBy === 'custom' && selectedCategory === 'all' && !isTouchDevice;
 
   const handleEdit = (resolution: Resolution) => {
     setEditingResolution(resolution);
@@ -134,7 +141,7 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: colors.bg, paddingBottom: '5rem', transition: 'background-color 0.3s ease' }}>
-      {/* Header - Mobile Optimized */}
+      {/* Header - Mobile Optimized with safe area */}
       <header style={{
         backgroundColor: colors.cardBg,
         borderBottom: `1px solid ${colors.border}`,
@@ -142,7 +149,8 @@ export default function Home() {
         top: 0,
         zIndex: 40,
         boxShadow: theme === 'light' ? '0 1px 3px rgba(0,0,0,0.05)' : '0 1px 3px rgba(0,0,0,0.2)',
-        transition: 'background-color 0.3s ease, border-color 0.3s ease'
+        transition: 'background-color 0.3s ease, border-color 0.3s ease',
+        paddingTop: 'env(safe-area-inset-top)',
       }}>
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -312,27 +320,27 @@ export default function Home() {
           </div>
         )}
 
-        {/* Drag hint */}
+        {/* Drag hint - Desktop only */}
         {isDragEnabled && sortedResolutions.length > 1 && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            padding: '0.5rem 0.75rem',
-            backgroundColor: theme === 'light' ? '#f0fdf4' : '#052e16',
-            border: `1px solid ${theme === 'light' ? '#bbf7d0' : '#166534'}`,
+            padding: '0.625rem 1rem',
+            backgroundColor: theme === 'light' ? 'rgba(138, 154, 128, 0.1)' : 'rgba(138, 154, 128, 0.15)',
+            border: `1px solid ${theme === 'light' ? 'rgba(138, 154, 128, 0.3)' : 'rgba(138, 154, 128, 0.25)'}`,
             borderRadius: '0.5rem',
             marginBottom: '1rem',
             fontSize: '0.8125rem',
-            color: theme === 'light' ? '#166534' : '#86efac',
+            color: theme === 'light' ? '#6A7A60' : '#A0B090',
           }}>
-            <svg style={{ width: 16, height: 16, flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="5 9 2 12 5 15" />
-              <polyline points="9 5 12 2 15 5" />
-              <polyline points="15 19 12 22 9 19" />
-              <polyline points="19 9 22 12 19 15" />
-              <line x1="2" y1="12" x2="22" y2="12" />
-              <line x1="12" y1="2" x2="12" y2="22" />
+            <svg style={{ width: 14, height: 14, flexShrink: 0, opacity: 0.8 }} viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="5" cy="9" r="1.5" />
+              <circle cx="12" cy="9" r="1.5" />
+              <circle cx="19" cy="9" r="1.5" />
+              <circle cx="5" cy="15" r="1.5" />
+              <circle cx="12" cy="15" r="1.5" />
+              <circle cx="19" cy="15" r="1.5" />
             </svg>
             Drag cards to reorder
           </div>
@@ -375,36 +383,6 @@ export default function Home() {
                   resolution={resolution}
                   onEdit={handleEdit}
                 />
-                {isDragEnabled && (
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem',
-                    backgroundColor: theme === 'light' ? '#f8fafc' : '#0f172a',
-                    borderTop: `1px solid ${colors.border}`,
-                    borderBottomLeftRadius: '0.75rem',
-                    borderBottomRightRadius: '0.75rem',
-                    color: colors.textMuted,
-                    fontSize: '0.75rem',
-                    cursor: 'grab',
-                    transition: 'background-color 0.15s ease',
-                    marginTop: '-0.75rem',
-                  }}
-                  className="drag-handle"
-                  >
-                    <svg style={{ width: 16, height: 16 }} viewBox="0 0 24 24" fill="currentColor">
-                      <circle cx="5" cy="9" r="1.5" />
-                      <circle cx="12" cy="9" r="1.5" />
-                      <circle cx="19" cy="9" r="1.5" />
-                      <circle cx="5" cy="15" r="1.5" />
-                      <circle cx="12" cy="15" r="1.5" />
-                      <circle cx="19" cy="15" r="1.5" />
-                    </svg>
-                    <span>Drag to reorder</span>
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -534,13 +512,6 @@ export default function Home() {
           }
         }
 
-        .drag-handle:hover {
-          background-color: ${theme === 'light' ? '#e2e8f0' : '#1e293b'} !important;
-        }
-
-        .drag-handle:active {
-          cursor: grabbing;
-        }
       `}</style>
     </div>
   );
