@@ -15,13 +15,16 @@ import {
 } from '@/lib/reminders';
 import { Toggle } from './Toggle';
 import { lightTap } from '@/lib/haptics';
+import { resetOnboarding } from './SpotlightTutorial';
+import { HelpFeedback } from './HelpFeedback';
 
 interface SettingsProps {
   isOpen: boolean;
   onClose: () => void;
+  onShowOnboarding?: () => void;
 }
 
-export function Settings({ isOpen, onClose }: SettingsProps) {
+export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
   const { colors } = useTheme();
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricOn, setBiometricOn] = useState(false);
@@ -29,6 +32,7 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
   const [loading, setLoading] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [testingSent, setTestingSent] = useState(false);
+  const [showHelpFeedback, setShowHelpFeedback] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -76,6 +80,13 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
       setTestingSent(true);
       setTimeout(() => setTestingSent(false), 3000);
     }
+  }
+
+  async function handleShowTutorial() {
+    lightTap();
+    await resetOnboarding();
+    onClose();
+    onShowOnboarding?.();
   }
 
   if (!isOpen) return null;
@@ -307,6 +318,79 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
             )}
           </div>
 
+          {/* Help & Support Section */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: colors.textMuted,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: '0 0 1rem',
+            }}>
+              Help & Support
+            </h3>
+            <div style={{
+              backgroundColor: colors.bg,
+              borderRadius: '0.75rem',
+              overflow: 'hidden',
+            }}>
+              <button
+                onClick={() => { lightTap(); setShowHelpFeedback(true); }}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderBottom: `1px solid ${colors.border}`,
+                }}
+              >
+                <span style={{ fontSize: '1.5rem' }}>❓</span>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontWeight: 500, color: colors.text }}>
+                    Help & FAQ
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
+                    Get answers to common questions
+                  </div>
+                </div>
+                <svg style={{ width: '1.25rem', height: '1.25rem', color: colors.textMuted }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button
+                onClick={handleShowTutorial}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.5rem' }}>📖</span>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontWeight: 500, color: colors.text }}>
+                    View Tutorial
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
+                    See the app introduction again
+                  </div>
+                </div>
+                <svg style={{ width: '1.25rem', height: '1.25rem', color: colors.textMuted }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
           {/* About Section */}
           <div>
             <h3 style={{
@@ -333,6 +417,9 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
             </div>
           </div>
         </div>
+
+        {/* Help & Feedback Modal */}
+        <HelpFeedback isOpen={showHelpFeedback} onClose={() => setShowHelpFeedback(false)} />
 
         <style jsx>{`
           @keyframes slideUp {

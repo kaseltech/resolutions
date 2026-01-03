@@ -13,6 +13,7 @@ import { Logo } from '@/components/Logo';
 import { Confetti } from '@/components/Confetti';
 import { Settings } from '@/components/Settings';
 import { SwipeableCard } from '@/components/SwipeableCard';
+import { SpotlightTutorial, hasSeenOnboarding } from '@/components/SpotlightTutorial';
 
 type SortOption = 'custom' | 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
@@ -26,6 +27,8 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<SortOption>('custom');
   const [view, setView] = useState<'dashboard' | 'list'>('dashboard');
   const [showSettings, setShowSettings] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [openJournalForId, setOpenJournalForId] = useState<string | null>(null);
@@ -89,6 +92,14 @@ export default function Home() {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
     // Reset scroll position on mount (fixes scroll offset after login)
     window.scrollTo(0, 0);
+
+    // Check if user has seen onboarding
+    hasSeenOnboarding().then((seen) => {
+      if (!seen) {
+        setShowOnboarding(true);
+      }
+      setOnboardingChecked(true);
+    });
   }, []);
 
   const isDragEnabled = sortBy === 'custom' && selectedCategory === 'all' && !isTouchDevice;
@@ -109,6 +120,10 @@ export default function Home() {
 
   const handleOpenForm = useCallback(() => {
     setShowForm(true);
+  }, []);
+
+  const handleShowOnboarding = useCallback(() => {
+    setShowOnboarding(true);
   }, []);
 
   // Keyboard shortcuts
@@ -142,7 +157,7 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showForm, handleCloseForm, handleOpenForm]);
 
-  if (loading) {
+  if (loading || !onboardingChecked) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }}>
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent" style={{ borderColor: colors.accent, borderTopColor: 'transparent' }} />
@@ -202,6 +217,7 @@ export default function Home() {
               {/* Settings button */}
               <button
                 onClick={() => setShowSettings(true)}
+                data-tutorial="settings-button"
                 style={{
                   padding: '0.5rem',
                   backgroundColor: 'transparent',
@@ -277,7 +293,9 @@ export default function Home() {
           marginBottom: '1rem',
           flexWrap: 'wrap'
         }}>
-          <div style={{
+          <div
+            data-tutorial="view-toggle"
+            style={{
             display: 'flex',
             backgroundColor: colors.cardBg,
             borderRadius: '0.5rem',
@@ -391,6 +409,7 @@ export default function Home() {
                 onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(index)}
                 onDragEnd={handleDragEnd}
+                {...(index === 0 ? { 'data-tutorial': 'resolution-card' } : {})}
                 style={{
                   cursor: isDragEnabled ? 'grab' : 'default',
                   opacity: draggedIndex === index ? 0.5 : 1,
@@ -465,6 +484,7 @@ export default function Home() {
       <button
         onClick={handleOpenForm}
         className="fab-mobile"
+        data-tutorial="add-button"
         style={{
           position: 'fixed',
           bottom: 'calc(1.5rem + env(safe-area-inset-bottom))',
@@ -552,7 +572,12 @@ export default function Home() {
       )}
 
       {/* Settings Modal */}
-      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} onShowOnboarding={handleShowOnboarding} />
+
+      {/* Spotlight Tutorial */}
+      {showOnboarding && (
+        <SpotlightTutorial onComplete={() => setShowOnboarding(false)} />
+      )}
 
       {/* Mobile-specific styles */}
       <style jsx global>{`
