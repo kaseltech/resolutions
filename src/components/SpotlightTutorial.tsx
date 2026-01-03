@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { Preferences } from '@capacitor/preferences';
 import { lightTap } from '@/lib/haptics';
@@ -71,79 +71,87 @@ interface ElementRect {
   right: number;
 }
 
+function getElementRect(target: string, scrollIntoView = false): ElementRect | null {
+  const element = document.querySelector(`[data-tutorial="${target}"]`);
+  if (!element) return null;
+
+  // Scroll element into view if requested
+  if (scrollIntoView) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  const rect = element.getBoundingClientRect();
+  return {
+    top: rect.top,
+    left: rect.left,
+    width: rect.width,
+    height: rect.height,
+    bottom: rect.bottom,
+    right: rect.right,
+  };
+}
+
 export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
   const { colors } = useTheme();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<ElementRect | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const completeCalledRef = useRef(false);
+  const [ready, setReady] = useState(false);
+  const mountedRef = useRef(true);
 
   const step = tutorialSteps[currentStep];
 
-  // Find the target element for current step
-  useEffect(() => {
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    const findElement = () => {
-      const element = document.querySelector(`[data-tutorial="${step.target}"]`);
-
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        setTargetRect({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-          bottom: rect.bottom,
-          right: rect.right,
-        });
-        setIsAnimating(false);
-        return true;
-      }
-      return false;
-    };
-
-    // Try to find element immediately, then retry a few times
-    if (!findElement()) {
-      const interval = setInterval(() => {
-        attempts++;
-        if (findElement() || attempts >= maxAttempts) {
-          clearInterval(interval);
-
-          // If element still not found after retries, skip to next step
-          if (attempts >= maxAttempts && !document.querySelector(`[data-tutorial="${step.target}"]`)) {
-            if (currentStep < tutorialSteps.length - 1) {
-              setCurrentStep(prev => prev + 1);
-            } else if (!completeCalledRef.current) {
-              completeCalledRef.current = true;
-              handleComplete();
-            }
-          }
-        }
-      }, 100);
-
-      return () => clearInterval(interval);
+  // Find valid step (skip steps with missing elements)
+  const findNextValidStep = useCallback((startStep: number, direction: 1 | -1 = 1): number => {
+    let checkStep = startStep;
+    while (checkStep >= 0 && checkStep < tutorialSteps.length) {
+      const rect = getElementRect(tutorialSteps[checkStep].target);
+      if (rect) return checkStep;
+      checkStep += direction;
     }
-  }, [currentStep, step.target]);
+    return -1; // No valid step found
+  }, []);
 
-  // Update rect on scroll/resize
+  // Initialize and find first valid step
   useEffect(() => {
+    mountedRef.current = true;
+
+    const init = () => {
+      const validStep = findNextValidStep(0);
+      if (validStep === -1) {
+        // No valid steps, complete tutorial
+        markOnboardingComplete().then(() => onComplete());
+        return;
+      }
+
+      setCurrentStep(validStep);
+      const rect = getElementRect(tutorialSteps[validStep].target);
+      setTargetRect(rect);
+      setReady(true);
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(init, 200);
+
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(timer);
+    };
+  }, [findNextValidStep, onComplete]);
+
+  // Update rect when step changes
+  useEffect(() => {
+    if (!ready) return;
+
     const updateRect = () => {
-      const element = document.querySelector(`[data-tutorial="${step.target}"]`);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        setTargetRect({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-          bottom: rect.bottom,
-          right: rect.right,
-        });
+      const rect = getElementRect(step.target);
+      if (rect && mountedRef.current) {
+        setTargetRect(rect);
       }
     };
 
+    updateRect();
+
+    // Also update on scroll/resize
     window.addEventListener('resize', updateRect);
     window.addEventListener('scroll', updateRect);
 
@@ -151,38 +159,60 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
       window.removeEventListener('resize', updateRect);
       window.removeEventListener('scroll', updateRect);
     };
-  }, [step.target]);
+  }, [ready, step.target, currentStep]);
 
-  const handleNext = () => {
-    lightTap();
-    if (currentStep < tutorialSteps.length - 1) {
-      setIsAnimating(true);
-      setTargetRect(null); // Clear old rect
-      setTimeout(() => setCurrentStep(prev => prev + 1), 100);
-    } else {
-      handleComplete();
-    }
-  };
-
-  const handlePrev = () => {
-    lightTap();
-    if (currentStep > 0) {
-      setIsAnimating(true);
-      setTargetRect(null); // Clear old rect
-      setTimeout(() => setCurrentStep(prev => prev - 1), 100);
-    }
-  };
-
-  const handleComplete = async () => {
-    if (completeCalledRef.current) return;
-    completeCalledRef.current = true;
+  const handleComplete = useCallback(async () => {
     lightTap();
     await markOnboardingComplete();
     onComplete();
-  };
+  }, [onComplete]);
 
-  // Show loading overlay while finding element
-  if (!targetRect) {
+  const handleNext = useCallback(() => {
+    lightTap();
+
+    if (currentStep >= tutorialSteps.length - 1) {
+      handleComplete();
+      return;
+    }
+
+    const nextValid = findNextValidStep(currentStep + 1, 1);
+    if (nextValid === -1) {
+      handleComplete();
+      return;
+    }
+
+    // Scroll element into view first
+    getElementRect(tutorialSteps[nextValid].target, true);
+    setCurrentStep(nextValid);
+
+    // Wait for scroll to complete, then update rect
+    setTimeout(() => {
+      const rect = getElementRect(tutorialSteps[nextValid].target);
+      if (rect) setTargetRect(rect);
+    }, 350);
+  }, [currentStep, findNextValidStep, handleComplete]);
+
+  const handlePrev = useCallback(() => {
+    lightTap();
+
+    if (currentStep <= 0) return;
+
+    const prevValid = findNextValidStep(currentStep - 1, -1);
+    if (prevValid === -1) return;
+
+    // Scroll element into view first
+    getElementRect(tutorialSteps[prevValid].target, true);
+    setCurrentStep(prevValid);
+
+    // Wait for scroll to complete, then update rect
+    setTimeout(() => {
+      const rect = getElementRect(tutorialSteps[prevValid].target);
+      if (rect) setTargetRect(rect);
+    }, 350);
+  }, [currentStep, findNextValidStep]);
+
+  // Show loading until ready
+  if (!ready || !targetRect) {
     return (
       <div
         style={{
@@ -214,7 +244,7 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
               margin: '0 auto 1rem',
             }}
           />
-          <p style={{ color: colors.textMuted, margin: 0 }}>Loading...</p>
+          <p style={{ color: colors.textMuted, margin: 0 }}>Loading tutorial...</p>
         </div>
         <style>{`
           @keyframes spin {
@@ -262,15 +292,10 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
   }
 
   const isLastStep = currentStep === tutorialSteps.length - 1;
+  const isFirstStep = currentStep === 0;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 10000,
-      }}
-    >
+    <div style={{ position: 'fixed', inset: 0, zIndex: 10000 }}>
       {/* Dark overlay with spotlight cutout */}
       <div
         style={{
@@ -375,7 +400,7 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
 
         {/* Navigation */}
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          {currentStep > 0 && (
+          {!isFirstStep && (
             <button
               onClick={handlePrev}
               style={{
