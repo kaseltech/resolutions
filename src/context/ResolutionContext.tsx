@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { Resolution, Milestone, Category, JournalEntry } from '@/types';
 import { loadResolutions, saveResolution, deleteResolutionFromDb, generateId, createResolution } from '@/lib/storage';
+import { Preferences } from '@capacitor/preferences';
 import { celebrationHaptic, progressHaptic } from '@/lib/haptics';
 import { scheduleReminder, cancelReminder, syncReminders, initNotificationListeners } from '@/lib/reminders';
 
@@ -55,7 +56,30 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     async function load() {
       try {
-        const data = await loadResolutions();
+        let data = await loadResolutions();
+
+        // Create a sample resolution for new users
+        if (data.length === 0) {
+          const { value: hasCreatedSample } = await Preferences.get({ key: 'hasCreatedSampleResolution' });
+          if (hasCreatedSample !== 'true') {
+            const sampleResolution = createResolution({
+              title: 'Complete my first resolution',
+              description: 'This is a sample resolution to help you get started. Tap this card to edit it, update your progress, or delete it and create your own!',
+              category: 'personal',
+              progress: 25,
+              milestones: [
+                { id: generateId(), title: 'Download the app', completed: true },
+                { id: generateId(), title: 'Create my first real resolution', completed: false },
+                { id: generateId(), title: 'Track my progress regularly', completed: false },
+                { id: generateId(), title: 'Celebrate when I hit 100%!', completed: false },
+              ],
+            });
+            await saveResolution(sampleResolution);
+            await Preferences.set({ key: 'hasCreatedSampleResolution', value: 'true' });
+            data = [sampleResolution];
+          }
+        }
+
         // Restore saved order from localStorage
         const savedOrder = localStorage.getItem('resolutions-order');
         let orderedData = data;
