@@ -71,15 +71,11 @@ interface ElementRect {
   right: number;
 }
 
-function getElementRect(target: string, scrollIntoView = false): ElementRect | null {
-  const element = document.querySelector(`[data-tutorial="${target}"]`);
-  if (!element) return null;
+function getElement(target: string): Element | null {
+  return document.querySelector(`[data-tutorial="${target}"]`);
+}
 
-  // Scroll element into view if requested
-  if (scrollIntoView) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
+function getElementRect(element: Element): ElementRect {
   const rect = element.getBoundingClientRect();
   return {
     top: rect.top,
@@ -91,11 +87,39 @@ function getElementRect(target: string, scrollIntoView = false): ElementRect | n
   };
 }
 
+function scrollElementIntoView(element: Element): Promise<void> {
+  return new Promise((resolve) => {
+    const rect = element.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    // Check if element is already mostly visible
+    const isVisible = rect.top >= 50 && rect.bottom <= viewportHeight - 150;
+
+    if (isVisible) {
+      resolve();
+      return;
+    }
+
+    // Calculate scroll position to center element with room for tooltip
+    const elementCenter = rect.top + window.scrollY + rect.height / 2;
+    const targetScroll = elementCenter - viewportHeight / 2;
+
+    window.scrollTo({
+      top: Math.max(0, targetScroll),
+      behavior: 'smooth'
+    });
+
+    // Wait for scroll to complete
+    setTimeout(resolve, 400);
+  });
+}
+
 export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
   const { colors } = useTheme();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<ElementRect | null>(null);
   const [ready, setReady] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const mountedRef = useRef(true);
 
   const step = tutorialSteps[currentStep];
@@ -104,33 +128,39 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
   const findNextValidStep = useCallback((startStep: number, direction: 1 | -1 = 1): number => {
     let checkStep = startStep;
     while (checkStep >= 0 && checkStep < tutorialSteps.length) {
-      const rect = getElementRect(tutorialSteps[checkStep].target);
-      if (rect) return checkStep;
+      const element = getElement(tutorialSteps[checkStep].target);
+      if (element) return checkStep;
       checkStep += direction;
     }
-    return -1; // No valid step found
+    return -1;
   }, []);
 
   // Initialize and find first valid step
   useEffect(() => {
     mountedRef.current = true;
 
-    const init = () => {
+    const init = async () => {
       const validStep = findNextValidStep(0);
       if (validStep === -1) {
-        // No valid steps, complete tutorial
-        markOnboardingComplete().then(() => onComplete());
+        await markOnboardingComplete();
+        onComplete();
         return;
       }
 
+      const element = getElement(tutorialSteps[validStep].target);
+      if (!element) return;
+
+      await scrollElementIntoView(element);
+
+      if (!mountedRef.current) return;
+
       setCurrentStep(validStep);
-      const rect = getElementRect(tutorialSteps[validStep].target);
-      setTargetRect(rect);
+      setTargetRect(getElementRect(element));
       setReady(true);
     };
 
     // Small delay to ensure DOM is ready
-    const timer = setTimeout(init, 200);
+    const timer = setTimeout(init, 300);
 
     return () => {
       mountedRef.current = false;
@@ -138,20 +168,17 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
     };
   }, [findNextValidStep, onComplete]);
 
-  // Update rect when step changes
+  // Update rect on scroll/resize
   useEffect(() => {
     if (!ready) return;
 
     const updateRect = () => {
-      const rect = getElementRect(step.target);
-      if (rect && mountedRef.current) {
-        setTargetRect(rect);
+      const element = getElement(step.target);
+      if (element && mountedRef.current && !isTransitioning) {
+        setTargetRect(getElementRect(element));
       }
     };
 
-    updateRect();
-
-    // Also update on scroll/resize
     window.addEventListener('resize', updateRect);
     window.addEventListener('scroll', updateRect);
 
@@ -159,7 +186,7 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
       window.removeEventListener('resize', updateRect);
       window.removeEventListener('scroll', updateRect);
     };
-  }, [ready, step.target, currentStep]);
+  }, [ready, step.target, isTransitioning]);
 
   const handleComplete = useCallback(async () => {
     lightTap();
@@ -167,7 +194,22 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
     onComplete();
   }, [onComplete]);
 
-  const handleNext = useCallback(() => {
+  const goToStep = useCallback(async (stepIndex: number) => {
+    const element = getElement(tutorialSteps[stepIndex].target);
+    if (!element) return;
+
+    setIsTransitioning(true);
+
+    await scrollElementIntoView(element);
+
+    if (!mountedRef.current) return;
+
+    setCurrentStep(stepIndex);
+    setTargetRect(getElementRect(element));
+    setIsTransitioning(false);
+  }, []);
+
+  const handleNext = useCallback(async () => {
     lightTap();
 
     if (currentStep >= tutorialSteps.length - 1) {
@@ -181,18 +223,10 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
       return;
     }
 
-    // Scroll element into view first
-    getElementRect(tutorialSteps[nextValid].target, true);
-    setCurrentStep(nextValid);
+    await goToStep(nextValid);
+  }, [currentStep, findNextValidStep, handleComplete, goToStep]);
 
-    // Wait for scroll to complete, then update rect
-    setTimeout(() => {
-      const rect = getElementRect(tutorialSteps[nextValid].target);
-      if (rect) setTargetRect(rect);
-    }, 350);
-  }, [currentStep, findNextValidStep, handleComplete]);
-
-  const handlePrev = useCallback(() => {
+  const handlePrev = useCallback(async () => {
     lightTap();
 
     if (currentStep <= 0) return;
@@ -200,16 +234,8 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
     const prevValid = findNextValidStep(currentStep - 1, -1);
     if (prevValid === -1) return;
 
-    // Scroll element into view first
-    getElementRect(tutorialSteps[prevValid].target, true);
-    setCurrentStep(prevValid);
-
-    // Wait for scroll to complete, then update rect
-    setTimeout(() => {
-      const rect = getElementRect(tutorialSteps[prevValid].target);
-      if (rect) setTargetRect(rect);
-    }, 350);
-  }, [currentStep, findNextValidStep]);
+    await goToStep(prevValid);
+  }, [currentStep, findNextValidStep, goToStep]);
 
   // Show loading until ready
   if (!ready || !targetRect) {
@@ -258,37 +284,35 @@ export function SpotlightTutorial({ onComplete }: SpotlightTutorialProps) {
   // Calculate tooltip position
   const padding = 12;
   const spotlightPadding = 8;
-  const tooltipWidth = 280;
+  const tooltipWidth = Math.min(280, window.innerWidth - padding * 2);
+  const tooltipHeight = 200; // Approximate height
 
   let tooltipStyle: React.CSSProperties = {
     position: 'fixed',
     width: tooltipWidth,
     zIndex: 10002,
+    left: Math.max(padding, Math.min(
+      targetRect.left + targetRect.width / 2 - tooltipWidth / 2,
+      window.innerWidth - tooltipWidth - padding
+    )),
   };
 
-  switch (step.position) {
-    case 'top':
-      tooltipStyle.bottom = `calc(100vh - ${targetRect.top - padding}px)`;
-      tooltipStyle.left = Math.max(padding, Math.min(
-        targetRect.left + targetRect.width / 2 - tooltipWidth / 2,
-        window.innerWidth - tooltipWidth - padding
-      ));
-      break;
-    case 'bottom':
-      tooltipStyle.top = targetRect.bottom + padding;
-      tooltipStyle.left = Math.max(padding, Math.min(
-        targetRect.left + targetRect.width / 2 - tooltipWidth / 2,
-        window.innerWidth - tooltipWidth - padding
-      ));
-      break;
-    case 'left':
-      tooltipStyle.top = targetRect.top + targetRect.height / 2 - 60;
-      tooltipStyle.right = `calc(100vw - ${targetRect.left - padding}px)`;
-      break;
-    case 'right':
-      tooltipStyle.top = targetRect.top + targetRect.height / 2 - 60;
-      tooltipStyle.left = targetRect.right + padding;
-      break;
+  // Determine if tooltip should go above or below the element
+  const spaceAbove = targetRect.top;
+  const spaceBelow = window.innerHeight - targetRect.bottom;
+
+  // Prefer the position specified, but flip if not enough room
+  let position = step.position;
+  if (position === 'bottom' && spaceBelow < tooltipHeight + padding && spaceAbove > spaceBelow) {
+    position = 'top';
+  } else if (position === 'top' && spaceAbove < tooltipHeight + padding && spaceBelow > spaceAbove) {
+    position = 'bottom';
+  }
+
+  if (position === 'top') {
+    tooltipStyle.bottom = window.innerHeight - targetRect.top + padding;
+  } else {
+    tooltipStyle.top = Math.min(targetRect.bottom + padding, window.innerHeight - tooltipHeight - padding);
   }
 
   const isLastStep = currentStep === tutorialSteps.length - 1;
