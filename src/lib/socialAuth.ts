@@ -163,3 +163,25 @@ export async function signInWithGoogle(): Promise<{ error?: string }> {
 export function isSocialLoginAvailable(): boolean {
   return Capacitor.isNativePlatform();
 }
+
+// Logout from social providers (clears cached sessions)
+export async function logoutFromSocialProviders(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) {
+    return;
+  }
+
+  // Try to logout from both providers - won't error if not logged in
+  try {
+    await SocialLogin.logout({ provider: 'google' });
+    console.log('Logged out from Google');
+  } catch (e) {
+    // Ignore - user might not have been logged in with Google
+  }
+
+  try {
+    await SocialLogin.logout({ provider: 'apple' });
+    console.log('Logged out from Apple');
+  } catch (e) {
+    // Ignore - user might not have been logged in with Apple
+  }
+}

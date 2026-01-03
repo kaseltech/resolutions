@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
+import { logoutFromSocialProviders } from '@/lib/socialAuth';
 
 interface AuthContextType {
   user: User | null;
@@ -61,6 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    // Clear social provider sessions (so user can pick different account next time)
+    await logoutFromSocialProviders();
     await supabase.auth.signOut();
   };
 
