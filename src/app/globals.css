@@ -129,9 +129,113 @@ input[type="time"] {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* ============================================
+   Apple-style Button Designs
+   ============================================ */
+
+/* Primary button - filled with gradient */
+.btn-primary {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3), 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4), 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.3);
+}
+
+/* Secondary button - subtle with border */
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  font-weight: 500;
+  border: 1px solid var(--card-border);
+  border-radius: 0.625rem;
+  padding: 0.875rem 1.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: var(--card-border);
+  border-color: transparent;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Glass-style button */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Icon button - circular */
+.btn-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: var(--card-border);
+  color: var(--foreground);
+}
+
+.btn-icon:active {
+  transform: scale(0.9);
+}
+
 /* Action button hover effects */
 .action-btn {
   position: relative;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .action-btn:hover {
@@ -140,7 +244,7 @@ input[type="time"] {
 }
 
 .action-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .action-btn-danger:hover {
@@ -149,7 +253,7 @@ input[type="time"] {
 }
 
 [data-theme="dark"] .action-btn-danger:hover {
-  background-color: #450a0a !important;
+  background-color: rgba(239, 68, 68, 0.1) !important;
   color: #f87171 !important;
 }
 
@@ -159,7 +263,7 @@ input[type="time"] {
 }
 
 [data-theme="dark"] .action-btn-success:hover {
-  background-color: #052e16 !important;
+  background-color: rgba(16, 185, 129, 0.1) !important;
   color: #4ade80 !important;
 }
 
@@ -191,19 +295,183 @@ input[type="time"] {
   animation: scaleIn 0.2s ease-out;
 }
 
-/* Card interactions */
+/* ============================================
+   Card Styles - Premium Polish
+   ============================================ */
+
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="dark"] .card-hover:hover {
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+@media (hover: hover) {
+  .card-hover:hover {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08), 0 8px 32px -8px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme="dark"] .card-hover:hover {
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3), 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+  }
 }
+
+/* Touch-optimized active state */
+@media (hover: none) {
+  .card-hover:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}
+
+/* Premium card style */
+.card-premium {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .card-premium {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Glass card style */
+.card-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+}
+
+[data-theme="dark"] .card-glass {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   Input Styles - Clean & Modern
+   ============================================ */
+
+.input-modern {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 0.625rem;
+  font-size: 1rem;
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.input-modern:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(138, 154, 128, 0.15);
+}
+
+.input-modern::placeholder {
+  color: var(--muted);
+}
+
+/* ============================================
+   Toggle Switch - iOS Style
+   ============================================ */
+
+.toggle-switch {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  background: var(--card-border);
+  border-radius: 31px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.toggle-switch[data-active="true"] {
+  background: #10b981;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch[data-active="true"]::after {
+  transform: translateX(20px);
+}
+
+/* ============================================
+   Progress Bar - Polished
+   ============================================ */
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--card-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+}
+
+/* ============================================
+   Badge Styles
+   ============================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  letter-spacing: 0.01em;
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.badge-warning {
+  background: rgba(251, 191, 36, 0.15);
+  color: #f59e0b;
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* ============================================
+   Animations - Smooth & Premium
+   ============================================ */
 
 /* Button interactions */
 .btn-press:active {
@@ -214,4 +482,47 @@ input[type="time"] {
 *:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Subtle pulse for attention */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--card-bg) 25%, var(--card-border) 50%, var(--card-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Spring animation for modals */
+@keyframes spring-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-spring-in {
+  animation: spring-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Slide up for bottom sheets */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

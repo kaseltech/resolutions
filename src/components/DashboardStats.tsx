@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CATEGORIES } from '@/types';
 import { ProgressBar } from './ProgressBar';
 import { CategoryIcon } from './CategoryIcon';
+import { AchievementProgress } from './AchievementBadges';
+import { getMotivationalQuote } from '@/lib/messages';
 
 export function DashboardStats() {
   const { resolutions, getOverallProgress, getCompletedCount } = useResolutions();
@@ -51,6 +53,12 @@ export function DashboardStats() {
   const today = new Date();
   const daysRemaining = Math.max(0, Math.ceil((endOfYear.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
   const yearProgress = Math.round(((365 - daysRemaining) / 365) * 100);
+
+  // Daily inspiration quote - changes based on overall progress
+  const [quoteKey, setQuoteKey] = useState(0);
+  const dailyQuote = useMemo(() => getMotivationalQuote(overallProgress), [overallProgress, quoteKey]);
+
+  const refreshQuote = () => setQuoteKey(k => k + 1);
 
   const cardStyle: React.CSSProperties = {
     backgroundColor: colors.cardBg,
@@ -125,6 +133,54 @@ export function DashboardStats() {
         }
       `}</style>
 
+      {/* Daily Inspiration */}
+      <div style={{
+        ...cardStyle,
+        background: theme === 'light'
+          ? 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)'
+          : 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
+        borderColor: theme === 'light' ? '#bbf7d0' : '#10b981',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+          <span style={{ fontSize: '1.5rem' }}>💡</span>
+          <div style={{ flex: 1 }}>
+            <p style={{
+              fontSize: '0.9375rem',
+              fontStyle: 'italic',
+              color: colors.text,
+              margin: 0,
+              lineHeight: 1.5,
+            }}>
+              "{dailyQuote.text}"
+            </p>
+            <p style={{
+              fontSize: '0.75rem',
+              color: colors.textMuted,
+              margin: '0.5rem 0 0',
+            }}>
+              — {dailyQuote.author}
+            </p>
+          </div>
+          <button
+            onClick={refreshQuote}
+            style={{
+              padding: '0.5rem',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: colors.textMuted,
+              borderRadius: '0.375rem',
+              transition: 'all 0.2s',
+            }}
+            title="New quote"
+          >
+            <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
       {/* Overall Progress Bar */}
       <div style={cardStyle}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
@@ -168,6 +224,11 @@ export function DashboardStats() {
             ? `${daysRemaining} days left to achieve your goals!`
             : 'The year has ended. How did you do?'}
         </p>
+      </div>
+
+      {/* Achievements Progress */}
+      <div style={cardStyle}>
+        <AchievementProgress />
       </div>
 
       {/* Category Breakdown - Collapsible on mobile */}

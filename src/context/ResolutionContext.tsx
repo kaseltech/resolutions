@@ -1,12 +1,17 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { Resolution, Milestone, Category, JournalEntry } from '@/types';
 import { loadResolutions, saveResolution, deleteResolutionFromDb, generateId, createResolution } from '@/lib/storage';
+import { celebrationHaptic, progressHaptic } from '@/lib/haptics';
+import { scheduleReminder, cancelReminder, syncReminders, initNotificationListeners } from '@/lib/reminders';
 
 interface ResolutionContextType {
   resolutions: Resolution[];
   loading: boolean;
+  showCelebration: boolean;
+  celebrationMessage: string | null;
+  dismissCelebration: () => void;
   addResolution: (resolution: Partial<Resolution>) => Promise<void>;
   updateResolution: (id: string, updates: Partial<Resolution>) => Promise<void>;
   deleteResolution: (id: string) => Promise<void>;
@@ -29,6 +34,22 @@ const ResolutionContext = createContext<ResolutionContextType | null>(null);
 export function ResolutionProvider({ children }: { children: React.ReactNode }) {
   const [resolutions, setResolutions] = useState<Resolution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationMessage, setCelebrationMessage] = useState<string | null>(null);
+
+  const triggerCelebration = useCallback((title: string) => {
+    setShowCelebration(true);
+    setCelebrationMessage(`You completed "${title}"!`);
+    celebrationHaptic();
+  }, []);
+
+  const dismissCelebration = useCallback(() => {
+    setShowCelebration(false);
+    setCelebrationMessage(null);
+  }, []);
+
+  // Track if reminders have been synced
+  const remindersSynced = useRef(false);
 
   // Load resolutions from Supabase on mount
   useEffect(() => {
@@ -37,10 +58,11 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
         const data = await loadResolutions();
         // Restore saved order from localStorage
         const savedOrder = localStorage.getItem('resolutions-order');
+        let orderedData = data;
         if (savedOrder) {
           try {
             const orderIds = JSON.parse(savedOrder) as string[];
-            const orderedData = [...data].sort((a, b) => {
+            orderedData = [...data].sort((a, b) => {
               const aIndex = orderIds.indexOf(a.id);
               const bIndex = orderIds.indexOf(b.id);
               // Items not in saved order go to the end
@@ -49,13 +71,30 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
               if (bIndex === -1) return -1;
               return aIndex - bIndex;
             });
-            setResolutions(orderedData);
           } catch {
-            setResolutions(data);
+            orderedData = data;
           }
-        } else {
-          setResolutions(data);
         }
+        setResolutions(orderedData);
+
+        // Sync reminders on initial load (only once)
+        if (!remindersSynced.current && orderedData.length > 0) {
+          remindersSynced.current = true;
+          syncReminders(orderedData).catch(console.error);
+        }
+
+        // Initialize notification listeners
+        initNotificationListeners(
+          // On notification received while app is open
+          (resolutionId) => {
+            console.log('Reminder received for resolution:', resolutionId);
+          },
+          // On notification tapped
+          (resolutionId) => {
+            console.log('User tapped reminder for resolution:', resolutionId);
+            // Could navigate to the resolution or show it
+          }
+        );
       } catch (error) {
         console.error('Failed to load resolutions:', error);
       } finally {
@@ -69,13 +108,20 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
     const newResolution = createResolution(partial);
     setResolutions(prev => [newResolution, ...prev]);
     await saveResolution(newResolution);
+
+    // Schedule reminder if enabled
+    if (newResolution.reminder?.enabled) {
+      scheduleReminder(newResolution).catch(console.error);
+    }
   }, []);
 
   const updateResolution = useCallback(async (id: string, updates: Partial<Resolution>) => {
     let updatedResolution: Resolution | null = null;
+    let previousReminder: Resolution['reminder'] | undefined;
 
     setResolutions(prev => prev.map(r => {
       if (r.id === id) {
+        previousReminder = r.reminder;
         updatedResolution = { ...r, ...updates, updatedAt: new Date().toISOString() };
         return updatedResolution;
       }
@@ -83,13 +129,31 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
     }));
 
     if (updatedResolution) {
-      await saveResolution(updatedResolution);
+      const resolution = updatedResolution as Resolution;
+      await saveResolution(resolution);
+
+      // Handle reminder changes
+      const reminderChanged =
+        updates.reminder !== undefined ||
+        previousReminder?.enabled !== resolution.reminder?.enabled ||
+        previousReminder?.frequency !== resolution.reminder?.frequency ||
+        previousReminder?.time !== resolution.reminder?.time;
+
+      if (reminderChanged) {
+        if (resolution.reminder?.enabled && resolution.progress < 100) {
+          scheduleReminder(resolution).catch(console.error);
+        } else {
+          cancelReminder(id).catch(console.error);
+        }
+      }
     }
   }, []);
 
   const deleteResolution = useCallback(async (id: string) => {
     setResolutions(prev => prev.filter(r => r.id !== id));
     await deleteResolutionFromDb(id);
+    // Cancel any scheduled reminder
+    cancelReminder(id).catch(console.error);
   }, []);
 
   const reorderResolutions = useCallback((fromIndex: number, toIndex: number) => {
@@ -175,9 +239,15 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
 
   const toggleMilestone = useCallback(async (resolutionId: string, milestoneId: string) => {
     let updatedResolution: Resolution | null = null;
+    let wasAlreadyComplete = false;
+    let title = '';
+    let newProgress = 0;
 
     setResolutions(prev => prev.map(r => {
       if (r.id !== resolutionId) return r;
+
+      wasAlreadyComplete = r.progress === 100;
+      title = r.title;
 
       const updatedMilestones = r.milestones.map(m => {
         if (m.id !== milestoneId) return m;
@@ -189,7 +259,7 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
       });
 
       const completedCount = updatedMilestones.filter(m => m.completed).length;
-      const newProgress = updatedMilestones.length > 0
+      newProgress = updatedMilestones.length > 0
         ? Math.round((completedCount / updatedMilestones.length) * 100)
         : r.progress;
 
@@ -205,14 +275,25 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
 
     if (updatedResolution) {
       await saveResolution(updatedResolution);
+
+      // Trigger celebration when hitting 100% for the first time
+      if (newProgress === 100 && !wasAlreadyComplete) {
+        triggerCelebration(title);
+      } else {
+        progressHaptic();
+      }
     }
-  }, []);
+  }, [triggerCelebration]);
 
   const updateProgress = useCallback(async (resolutionId: string, progress: number) => {
     let updatedResolution: Resolution | null = null;
+    let wasAlreadyComplete = false;
+    let title = '';
 
     setResolutions(prev => prev.map(r => {
       if (r.id === resolutionId) {
+        wasAlreadyComplete = r.progress === 100;
+        title = r.title;
         updatedResolution = {
           ...r,
           progress: Math.max(0, Math.min(100, progress)),
@@ -226,8 +307,18 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
 
     if (updatedResolution) {
       await saveResolution(updatedResolution);
+
+      // Trigger celebration when hitting 100% for the first time
+      if (progress === 100 && !wasAlreadyComplete) {
+        triggerCelebration(title);
+        // Cancel reminder since resolution is complete
+        cancelReminder(resolutionId).catch(console.error);
+      } else {
+        // Regular progress haptic
+        progressHaptic();
+      }
     }
-  }, []);
+  }, [triggerCelebration]);
 
   const addJournalEntry = useCallback(async (resolutionId: string, entry: Partial<JournalEntry>) => {
     const newEntry: JournalEntry = {
@@ -302,6 +393,9 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
       value={{
         resolutions,
         loading,
+        showCelebration,
+        celebrationMessage,
+        dismissCelebration,
         addResolution,
         updateResolution,
         deleteResolution,

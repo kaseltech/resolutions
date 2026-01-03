@@ -10,11 +10,14 @@ import { ResolutionForm } from '@/components/ResolutionForm';
 import { DashboardStats } from '@/components/DashboardStats';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { Logo } from '@/components/Logo';
+import { Confetti } from '@/components/Confetti';
+import { Settings } from '@/components/Settings';
+import { SwipeableCard } from '@/components/SwipeableCard';
 
 type SortOption = 'custom' | 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
 export default function Home() {
-  const { resolutions, loading, getResolutionsByCategory, reorderResolutions } = useResolutions();
+  const { resolutions, loading, getResolutionsByCategory, reorderResolutions, updateProgress, showCelebration, celebrationMessage, dismissCelebration } = useResolutions();
   const { signOut } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
   const [showForm, setShowForm] = useState(false);
@@ -22,8 +25,10 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('custom');
   const [view, setView] = useState<'dashboard' | 'list'>('dashboard');
+  const [showSettings, setShowSettings] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [openJournalForId, setOpenJournalForId] = useState<string | null>(null);
 
   const filteredResolutions = getResolutionsByCategory(selectedCategory);
 
@@ -82,6 +87,8 @@ export default function Home() {
 
   useEffect(() => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    // Reset scroll position on mount (fixes scroll offset after login)
+    window.scrollTo(0, 0);
   }, []);
 
   const isDragEnabled = sortBy === 'custom' && selectedCategory === 'all' && !isTouchDevice;
@@ -89,6 +96,10 @@ export default function Home() {
   const handleEdit = (resolution: Resolution) => {
     setEditingResolution(resolution);
     setShowForm(true);
+  };
+
+  const handleAddJournal = (resolution: Resolution) => {
+    setOpenJournalForId(resolution.id);
   };
 
   const handleCloseForm = useCallback(() => {
@@ -187,6 +198,28 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 )}
+              </button>
+              {/* Settings button */}
+              <button
+                onClick={() => setShowSettings(true)}
+                style={{
+                  padding: '0.5rem',
+                  backgroundColor: 'transparent',
+                  color: colors.textMuted,
+                  borderRadius: '0.5rem',
+                  border: `1px solid ${colors.border}`,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s',
+                }}
+                title="Settings"
+              >
+                <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
               </button>
               {/* Desktop: New Resolution button */}
               <button
@@ -379,10 +412,22 @@ export default function Home() {
                     zIndex: 10,
                   }} />
                 )}
-                <ResolutionCard
-                  resolution={resolution}
-                  onEdit={handleEdit}
-                />
+                <SwipeableCard
+                  onSwipeLeft={() => handleEdit(resolution)}
+                  onSwipeRight={() => handleAddJournal(resolution)}
+                  leftLabel="Edit"
+                  rightLabel="Journal"
+                  leftColor={theme === 'light' ? '#3b82f6' : '#60a5fa'}
+                  rightColor={theme === 'light' ? '#8b5cf6' : '#a78bfa'}
+                  disabled={!isTouchDevice}
+                >
+                  <ResolutionCard
+                    resolution={resolution}
+                    onEdit={handleEdit}
+                    openJournalOnMount={openJournalForId === resolution.id}
+                    onJournalOpened={() => setOpenJournalForId(null)}
+                  />
+                </SwipeableCard>
               </div>
             ))}
           </div>
@@ -471,6 +516,43 @@ export default function Home() {
           onClose={handleCloseForm}
         />
       )}
+
+      {/* Confetti Celebration */}
+      <Confetti active={showCelebration} onComplete={dismissCelebration} />
+
+      {/* Celebration Modal */}
+      {showCelebration && celebrationMessage && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: colors.cardBg,
+            padding: '2rem',
+            borderRadius: '1rem',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            zIndex: 9998,
+            textAlign: 'center',
+            animation: 'scaleIn 0.3s ease-out',
+          }}
+          onClick={dismissCelebration}
+        >
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
+          <h2 style={{ color: colors.text, margin: '0 0 0.5rem', fontSize: '1.5rem', fontWeight: 600 }}>
+            Congratulations!
+          </h2>
+          <p style={{ color: colors.textMuted, margin: 0, fontSize: '1rem' }}>
+            {celebrationMessage}
+          </p>
+          <p style={{ color: colors.accent, marginTop: '1rem', fontSize: '0.875rem' }}>
+            Tap anywhere to continue
+          </p>
+        </div>
+      )}
+
+      {/* Settings Modal */}
+      <Settings isOpen={showSettings} onClose={() => setShowSettings(false)} />
 
       {/* Mobile-specific styles */}
       <style jsx global>{`

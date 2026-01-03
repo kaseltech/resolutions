@@ -81,13 +81,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const colors = theme === 'light' ? lightColors : darkColors;
 
-  // Prevent flash by not rendering until mounted
-  if (!mounted) {
-    return null;
-  }
+  // Use default theme before mounted to avoid hydration mismatch
+  // but still render children to maintain scroll position
+  const currentColors = mounted ? colors : lightColors;
+  const currentTheme = mounted ? theme : 'light';
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, colors }}>
+    <ThemeContext.Provider value={{ theme: currentTheme, toggleTheme, colors: currentColors }}>
       {children}
     </ThemeContext.Provider>
   );

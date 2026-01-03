@@ -5,6 +5,19 @@ import { Resolution, Category, CATEGORIES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CategoryIcon } from './CategoryIcon';
+import { Toggle } from './Toggle';
+
+// Check if mobile
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+};
 
 interface ResolutionFormProps {
   resolution?: Resolution | null;
@@ -14,6 +27,7 @@ interface ResolutionFormProps {
 export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   const { addResolution, updateResolution } = useResolutions();
   const { theme, colors } = useTheme();
+  const isMobile = useIsMobile();
   const isEditing = !!resolution;
   const formRef = useRef<HTMLFormElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -121,26 +135,44 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
         inset: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
-        alignItems: 'flex-start',
+        alignItems: isMobile ? 'flex-end' : 'flex-start',
         justifyContent: 'center',
-        padding: '1rem',
-        paddingTop: '5vh',
         zIndex: 50,
         overflowY: 'auto',
+        padding: isMobile ? 0 : '1rem',
+        paddingTop: isMobile ? 0 : '5vh',
       }}
     >
       <div
         ref={modalRef}
         style={{
           backgroundColor: colors.cardBg,
-          borderRadius: '1rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
           width: '100%',
-          maxWidth: '28rem',
+          maxWidth: isMobile ? '100%' : '28rem',
           border: `1px solid ${colors.border}`,
-          marginBottom: '2rem',
+          borderRadius: isMobile ? '1.5rem 1.5rem 0 0' : '1rem',
+          maxHeight: isMobile ? '90vh' : 'none',
+          overflowY: 'auto',
+          marginBottom: isMobile ? 0 : '2rem',
+          paddingBottom: isMobile ? 'env(safe-area-inset-bottom)' : 0,
         }}
       >
+        {/* Handle bar for mobile */}
+        {isMobile && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '0.75rem',
+          }}>
+            <div style={{
+              width: '40px',
+              height: '4px',
+              backgroundColor: colors.border,
+              borderRadius: '2px',
+            }} />
+          </div>
+        )}
         <div style={{ padding: '1rem 1.25rem', borderBottom: `1px solid ${colors.border}` }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, margin: 0 }}>
@@ -255,34 +287,15 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
 
           <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Reminder</span>
-              <button
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, reminderEnabled: !prev.reminderEnabled }))}
-                style={{
-                  width: '2.75rem',
-                  height: '1.5rem',
-                  borderRadius: '9999px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  backgroundColor: formData.reminderEnabled ? colors.accent : colors.border,
-                  position: 'relative',
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '0.125rem',
-                    left: formData.reminderEnabled ? '1.375rem' : '0.125rem',
-                    width: '1.25rem',
-                    height: '1.25rem',
-                    backgroundColor: 'white',
-                    borderRadius: '9999px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                    transition: 'left 0.2s',
-                  }}
-                />
-              </button>
+              <div>
+                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text, display: 'block' }}>Reminder</span>
+                <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>Get notified to check in</span>
+              </div>
+              <Toggle
+                enabled={formData.reminderEnabled}
+                onChange={(enabled) => setFormData(prev => ({ ...prev, reminderEnabled: enabled }))}
+                size="md"
+              />
             </div>
 
             {formData.reminderEnabled && (
@@ -374,6 +387,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           </p>
         </form>
       </div>
+
     </div>
   );
 }

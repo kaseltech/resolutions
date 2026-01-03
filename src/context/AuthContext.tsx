@@ -53,6 +53,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password
     });
+    // Reset scroll position after successful login
+    if (!error && typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     return { error: error?.message ?? null };
   };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Resolution, getCategoryInfo, JournalEntry } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -8,6 +8,7 @@ import { ProgressBar } from './ProgressBar';
 import { MilestoneList } from './MilestoneList';
 import { CategoryIcon } from './CategoryIcon';
 import { ConfirmModal } from './ConfirmModal';
+import { ContextMenu, useLongPress } from './ContextMenu';
 
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   great: '😄',
@@ -19,17 +20,83 @@ const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
 interface ResolutionCardProps {
   resolution: Resolution;
   onEdit: (resolution: Resolution) => void;
+  openJournalOnMount?: boolean;
+  onJournalOpened?: () => void;
 }
 
-export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
+export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJournalOpened }: ResolutionCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [journalContent, setJournalContent] = useState('');
   const [journalMood, setJournalMood] = useState<JournalEntry['mood']>(undefined);
   const [showJournalForm, setShowJournalForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [journalToDelete, setJournalToDelete] = useState<string | null>(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
   const { deleteResolution, updateProgress, addJournalEntry, deleteJournalEntry } = useResolutions();
   const { theme, colors } = useTheme();
+
+  // Open journal when triggered from parent (e.g., swipe action)
+  useEffect(() => {
+    if (openJournalOnMount) {
+      setExpanded(true);
+      setShowJournalForm(true);
+      onJournalOpened?.();
+    }
+  }, [openJournalOnMount, onJournalOpened]);
+
+  // Long press handler for context menu
+  const longPressHandlers = useLongPress(
+    () => setShowContextMenu(true),
+    { threshold: 500 }
+  );
+
+  // Context menu items
+  const contextMenuItems = [
+    {
+      label: 'Edit Resolution',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      ),
+      onClick: () => onEdit(resolution),
+    },
+    {
+      label: resolution.progress < 100 ? 'Add 10% Progress' : 'Completed!',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      onClick: () => {
+        if (resolution.progress < 100) {
+          updateProgress(resolution.id, Math.min(100, resolution.progress + 10));
+        }
+      },
+    },
+    {
+      label: 'Add Journal Entry',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      ),
+      onClick: () => {
+        setExpanded(true);
+        setShowJournalForm(true);
+      },
+    },
+    {
+      label: 'Delete',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      ),
+      onClick: () => setShowDeleteModal(true),
+      variant: 'danger' as const,
+    },
+  ];
 
   const handleAddJournalEntry = () => {
     if (!journalContent.trim()) return;
@@ -59,20 +126,33 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
   const completedBg = theme === 'light' ? '#F0F2EE' : '#1a2e1a';
 
   return (
+    <>
     <div
+      {...longPressHandlers}
       className="card-hover animate-fadeIn"
       style={{
         backgroundColor: isCompleted ? completedBg : colors.cardBg,
-        borderRadius: '0.75rem',
+        borderRadius: '0.875rem',
         overflow: 'hidden',
         borderLeft: `4px solid ${borderColor}`,
         boxShadow: theme === 'light'
-          ? '0 2px 8px -2px rgba(0, 0, 0, 0.06)'
-          : '0 2px 8px -2px rgba(0, 0, 0, 0.25)',
-        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease',
+          ? '0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06)'
+          : '0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3)',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        WebkitTouchCallout: 'none',
       }}
     >
-      <div style={{ padding: '1.25rem' }}>
+      {/* Tappable card header area - clicking opens edit */}
+      <div
+        onClick={() => onEdit(resolution)}
+        style={{
+          padding: '1.25rem',
+          paddingBottom: '0',
+          cursor: 'pointer',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
@@ -122,25 +202,7 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
               </p>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '0.25rem' }}>
-            <button
-              onClick={() => onEdit(resolution)}
-              className="action-btn"
-              style={{
-                padding: '0.5rem',
-                color: colors.textMuted,
-                backgroundColor: 'transparent',
-                border: 'none',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              title="Edit"
-            >
-              <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </button>
+          <div style={{ display: 'flex', gap: '0.25rem' }} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="action-btn action-btn-danger"
@@ -161,6 +223,10 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Non-tappable card content area */}
+      <div style={{ padding: '0 1.25rem 1.25rem' }}>
 
         <div style={{ marginTop: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
@@ -245,14 +311,24 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
             color: colors.accent,
             display: 'flex',
             alignItems: 'center',
-            gap: '0.25rem',
+            gap: '0.375rem',
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
             padding: 0,
           }}
         >
-          {expanded ? 'Hide details' : 'Show details'}
+          {expanded ? 'Hide' : 'Journal & Notes'}
+          {!expanded && resolution.journal && resolution.journal.length > 0 && (
+            <span style={{
+              backgroundColor: `${colors.accent}20`,
+              padding: '0.125rem 0.375rem',
+              borderRadius: '9999px',
+              fontSize: '0.75rem',
+            }}>
+              {resolution.journal.length}
+            </span>
+          )}
           <svg
             style={{
               width: '1rem',
@@ -508,5 +584,13 @@ export function ResolutionCard({ resolution, onEdit }: ResolutionCardProps) {
         onCancel={() => setJournalToDelete(null)}
       />
     </div>
+
+    {/* Long-press context menu */}
+    <ContextMenu
+      isOpen={showContextMenu}
+      onClose={() => setShowContextMenu(false)}
+      items={contextMenuItems}
+    />
+    </>
   );
 }

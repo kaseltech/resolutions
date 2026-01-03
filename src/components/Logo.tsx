@@ -5,52 +5,29 @@ import { useTheme } from '@/context/ThemeContext';
 interface LogoProps {
   size?: number;
   className?: string;
+  animated?: boolean;
 }
 
-export function Logo({ size = 40, className = '' }: LogoProps) {
+// 2026 Color Theme - Teal/Emerald for navigation/journey
+const YEAR_COLORS = {
+  primary: '#0d9488',      // Teal
+  secondary: '#14b8a6',    // Lighter teal
+  accent: '#2dd4bf',       // Bright teal
+  glow: '#5eead4',         // Light glow
+};
+
+export function Logo({ size = 40, className = '', animated = false }: LogoProps) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  // Light theme - rugged outdoorsy colors
-  const lightColors = {
-    skyStart: '#2d3a3a',
-    skyMid: '#1f2937',
-    skyEnd: '#111827',
-    outerRing: '#4b5563',
-    distantStars: '#9ca3af',
-    starStart: '#f5f5f4',
-    starMid: '#e7e5e4',
-    starEnd: '#d6d3d1',
-    centerCore: '#ffffff',
-    accentStart: '#059669',
-    accentEnd: '#047857',
-    text: '#d1d5db',
-    mountainDark: '#1f2937',
-    mountainMid: '#374151',
-    mountainLight: '#4b5563',
+  const colors = {
+    compass: YEAR_COLORS,
+    ring: isDark ? 'rgba(45, 212, 191, 0.25)' : 'rgba(13, 148, 136, 0.15)',
+    bg: isDark ? '#0f172a' : '#ffffff',
+    cardinalMarks: isDark ? '#334155' : '#cbd5e1',
   };
 
-  // Dark theme - deeper wilderness night
-  const darkColors = {
-    skyStart: '#0c1222',
-    skyMid: '#0a0f1a',
-    skyEnd: '#050810',
-    outerRing: '#334155',
-    distantStars: '#cbd5e1',
-    starStart: '#fafaf9',
-    starMid: '#f5f5f4',
-    starEnd: '#e7e5e4',
-    centerCore: '#ffffff',
-    accentStart: '#10b981',
-    accentEnd: '#059669',
-    text: '#e2e8f0',
-    mountainDark: '#1e293b',
-    mountainMid: '#334155',
-    mountainLight: '#475569',
-  };
-
-  const c = isDark ? darkColors : lightColors;
-  const idSuffix = isDark ? '-dark' : '-light';
+  const id = isDark ? 'dark' : 'light';
 
   return (
     <svg
@@ -60,111 +37,89 @@ export function Logo({ size = 40, className = '' }: LogoProps) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={{ display: 'block' }}
     >
       <defs>
-        <linearGradient id={`skyGradient${idSuffix}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={c.skyStart} />
-          <stop offset="50%" stopColor={c.skyMid} />
-          <stop offset="100%" stopColor={c.skyEnd} />
+        {/* Compass needle gradient - North */}
+        <linearGradient id={`needleNorth-${id}`} x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor={colors.compass.glow} />
+          <stop offset="100%" stopColor={colors.compass.primary} />
         </linearGradient>
-        <linearGradient id={`starGradient${idSuffix}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={c.starStart} />
-          <stop offset="50%" stopColor={c.starMid} />
-          <stop offset="100%" stopColor={c.starEnd} />
+
+        {/* Compass needle gradient - South */}
+        <linearGradient id={`needleSouth-${id}`} x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor={isDark ? '#475569' : '#94a3b8'} />
+          <stop offset="100%" stopColor={isDark ? '#334155' : '#64748b'} />
         </linearGradient>
-        <linearGradient id={`mountainGradient${idSuffix}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={c.mountainLight} />
-          <stop offset="100%" stopColor={c.mountainDark} />
-        </linearGradient>
-        <filter id={`starGlow${idSuffix}`} x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="1.5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+
+        {/* Glow filter */}
+        <filter id={`compassGlow-${id}`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
       </defs>
 
-      {/* Main circle - night sky */}
-      <circle cx="50" cy="50" r="48" fill={`url(#skyGradient${idSuffix})`} />
-      <circle cx="50" cy="50" r="47" stroke={c.outerRing} strokeWidth="2" fill="none" />
+      {/* Outer ring */}
+      <circle cx="50" cy="50" r="46" fill="none" stroke={colors.ring} strokeWidth="2.5" />
 
-      {/* Distant stars */}
-      <circle cx="20" cy="25" r="0.8" fill={c.distantStars} opacity="0.9" />
-      <circle cx="78" cy="18" r="1" fill={c.distantStars} opacity="0.8" />
-      <circle cx="15" cy="45" r="0.6" fill={c.distantStars} opacity="0.7" />
-      <circle cx="85" cy="35" r="0.7" fill={c.distantStars} opacity="0.6" />
-      <circle cx="25" cy="55" r="0.5" fill={c.distantStars} opacity="0.5" />
-      <circle cx="72" cy="50" r="0.6" fill={c.distantStars} opacity="0.7" />
-      <circle cx="35" cy="15" r="0.7" fill={c.distantStars} opacity="0.8" />
-      <circle cx="65" cy="22" r="0.5" fill={c.distantStars} opacity="0.6" />
+      {/* Background circle */}
+      <circle cx="50" cy="50" r="43" fill={colors.bg} />
 
-      {/* Mountain range silhouette */}
-      <path
-        d="M 2 85 L 18 60 L 28 70 L 42 52 L 50 62 L 58 48 L 72 65 L 82 55 L 98 85 Z"
-        fill={`url(#mountainGradient${idSuffix})`}
-      />
+      {/* Cardinal direction marks */}
+      <g stroke={colors.cardinalMarks} strokeWidth="2" strokeLinecap="round">
+        {/* N */}
+        <line x1="50" y1="12" x2="50" y2="18" />
+        {/* E */}
+        <line x1="88" y1="50" x2="82" y2="50" />
+        {/* S */}
+        <line x1="50" y1="88" x2="50" y2="82" />
+        {/* W */}
+        <line x1="12" y1="50" x2="18" y2="50" />
+      </g>
 
-      {/* Front mountain */}
-      <path
-        d="M 2 85 L 25 65 L 38 75 L 50 58 L 62 72 L 75 62 L 98 85 Z"
-        fill={c.mountainDark}
-        opacity="0.7"
-      />
+      {/* Minor tick marks */}
+      <g stroke={colors.cardinalMarks} strokeWidth="1" strokeLinecap="round" opacity="0.5">
+        {/* NE */}
+        <line x1="76.5" y1="23.5" x2="72.5" y2="27.5" />
+        {/* SE */}
+        <line x1="76.5" y1="76.5" x2="72.5" y2="72.5" />
+        {/* SW */}
+        <line x1="23.5" y1="76.5" x2="27.5" y2="72.5" />
+        {/* NW */}
+        <line x1="23.5" y1="23.5" x2="27.5" y2="27.5" />
+      </g>
 
-      {/* North Star - Sharp, rugged 4-point star */}
-      <g filter={`url(#starGlow${idSuffix})`}>
-        {/* Main vertical beam - sharp points */}
-        <polygon
-          points="50,8 51.5,42 50,50 48.5,42"
-          fill={`url(#starGradient${idSuffix})`}
-        />
-        <polygon
-          points="50,50 51.5,58 50,70 48.5,58"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.6"
-        />
+      {/* Compass needle */}
+      <g filter={`url(#compassGlow-${id})`}>
+        {/* North needle (colored) */}
+        <path
+          d="M50 18 L55 50 L50 54 L45 50 Z"
+          fill={`url(#needleNorth-${id})`}
+        >
+          {animated && (
+            <animate
+              attributeName="opacity"
+              values="0.9;1;0.9"
+              dur="2s"
+              repeatCount="indefinite"
+            />
+          )}
+        </path>
 
-        {/* Main horizontal beam */}
-        <polygon
-          points="8,38 42,36.5 50,38 42,39.5"
-          fill={`url(#starGradient${idSuffix})`}
-        />
-        <polygon
-          points="50,38 58,36.5 92,38 58,39.5"
-          fill={`url(#starGradient${idSuffix})`}
-        />
-
-        {/* Secondary diagonal beams - shorter */}
-        <polygon
-          points="22,18 44,34 50,38 46,36"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.5"
-        />
-        <polygon
-          points="78,18 56,34 50,38 54,36"
-          fill={`url(#starGradient${idSuffix})`}
-          opacity="0.5"
+        {/* South needle (muted) */}
+        <path
+          d="M50 82 L55 50 L50 46 L45 50 Z"
+          fill={`url(#needleSouth-${id})`}
         />
       </g>
 
-      {/* Star center - bright core */}
-      <circle cx="50" cy="38" r="4" fill={c.starMid} />
-      <circle cx="50" cy="38" r="2" fill={c.centerCore} />
-
-      {/* 2026 text */}
-      <text
-        x="50"
-        y="96"
-        textAnchor="middle"
-        fill={c.text}
-        fontSize="11"
-        fontWeight="700"
-        fontFamily="Arial, sans-serif"
-        letterSpacing="0.1em"
-      >
-        2026
-      </text>
+      {/* Center pivot */}
+      <circle cx="50" cy="50" r="6" fill={colors.bg} stroke={colors.compass.primary} strokeWidth="2" />
+      <circle cx="50" cy="50" r="3" fill={colors.compass.accent} />
+      <circle cx="50" cy="50" r="1.5" fill="#ffffff" />
     </svg>
   );
 }
+
+// Export the year colors for use in other components
+export { YEAR_COLORS };
