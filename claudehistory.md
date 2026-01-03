@@ -143,3 +143,118 @@ const YEAR_COLORS = {
 - Face ID requires testing on physical device
 - OneSignal push notifications configured but server-side not implemented
 - Biometric plugin doesn't have SPM support (warning during sync)
+
+---
+
+## Session: January 3, 2026
+
+### Overview
+Added social login (Apple/Google), spotlight tutorial for onboarding, help/feedback UI, and various fixes.
+
+---
+
+### Changes Made
+
+#### 1. Social Login - Sign in with Apple & Google
+**Files:**
+- `src/lib/socialAuth.ts` (NEW)
+- `src/lib/biometric.ts` (updated import)
+- `src/components/AuthForm.tsx`
+- `src/context/AuthContext.tsx`
+- `ios/App/App/Info.plist`
+
+- Replaced `capacitor-native-biometric` with `@capgo/capacitor-native-biometric` (better maintained)
+- Added `@capgo/capacitor-social-login` for Apple/Google sign in
+- Native iOS login uses `signInWithIdToken()` to Supabase
+- Web fallback uses Supabase OAuth flow
+- Added social logout on sign out (clears cached sessions for account switching)
+- Configured Google URL scheme in Info.plist
+
+**Configuration Required:**
+- Supabase: Enable Apple/Google providers with client IDs
+- Apple Developer: App ID with Sign in with Apple capability
+- Apple Developer: Service ID for web OAuth (com.resolutions2026.app.web)
+- Google Cloud: iOS OAuth client + Web OAuth client
+- Comma-separated client IDs in Supabase for audience validation
+
+#### 2. Simplified Splash Screen
+**Files:** `src/components/AnimatedSplash.tsx`
+
+- Removed complex path/grid animations (looked bad)
+- Simplified to: logo + twinkling stars + app name
+- Smooth fade transitions between phases
+- 2 second duration
+
+#### 3. Dark App Icon (No White Border)
+**Files:** `scripts/generate-assets.js`
+
+- Changed app icon to full square dark background
+- iOS automatically rounds corners
+- Matches the dark theme of the app
+
+#### 4. Spotlight Tutorial (Onboarding)
+**Files:**
+- `src/components/SpotlightTutorial.tsx` (NEW)
+- `src/app/page.tsx`
+
+- Coach marks style tutorial that highlights actual UI elements
+- 4 steps: Add button, Resolution card, View toggle, Settings button
+- Dark overlay with spotlight cutout around highlighted element
+- Tooltip card with title, description, navigation
+- Auto-scrolls page to bring off-screen elements into view
+- Smart tooltip positioning (flips if not enough space)
+- Skips steps if element not found
+- Stores completion in Preferences
+
+#### 5. Sample Resolution for New Users
+**Files:** `src/context/ResolutionContext.tsx`
+
+- Creates a starter resolution for first-time users
+- Title: "Complete my first resolution"
+- Includes 4 milestones to demonstrate the feature
+- 25% progress (first milestone completed)
+- Only creates once (tracked via Preferences)
+
+#### 6. Help & Feedback UI
+**Files:**
+- `src/components/HelpFeedback.tsx` (NEW)
+- `src/components/Settings.tsx`
+
+- Two tabs: FAQ and Send Feedback
+- FAQ: 5 expandable questions about app usage
+- Feedback: Type selector (Bug/Feature/General), optional email, message
+- Shows thank-you message on submit (no email backend yet)
+- Accessible from Settings > Help & Support
+
+#### 7. Settings Updates
+**Files:** `src/components/Settings.tsx`
+
+- Added "Help & Support" section with:
+  - Help & FAQ button (opens HelpFeedback modal)
+  - View Tutorial button (resets and shows onboarding)
+
+---
+
+### Key Files Added/Modified
+| File | Description |
+|------|-------------|
+| `src/lib/socialAuth.ts` | Apple/Google native + web sign in |
+| `src/components/SpotlightTutorial.tsx` | Coach marks onboarding |
+| `src/components/HelpFeedback.tsx` | FAQ and feedback UI |
+| `src/components/Settings.tsx` | Added help/tutorial options |
+| `src/context/ResolutionContext.tsx` | Sample resolution for new users |
+| `src/components/AnimatedSplash.tsx` | Simplified splash |
+| `scripts/generate-assets.js` | Dark app icon |
+
+---
+
+### Packages Added
+- `@capgo/capacitor-native-biometric@8.0.3` (replaced old biometric plugin)
+- `@capgo/capacitor-social-login@8.2.9`
+
+---
+
+### Pending/Future
+- Email backend for feedback form
+- Push notification improvements
+- Achievement badges system (planned)
