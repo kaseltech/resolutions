@@ -68,15 +68,11 @@ export async function signInWithApple(): Promise<{ error?: string }> {
   }
 
   try {
-    // Generate nonce for security
-    const rawNonce = generateNonce();
-    const hashedNonce = await sha256(rawNonce);
-
+    // iOS native Apple Sign In - no nonce needed
     const result = await SocialLogin.login({
       provider: 'apple',
       options: {
         scopes: ['email', 'name'],
-        nonce: hashedNonce,
       },
     });
 
@@ -86,14 +82,16 @@ export async function signInWithApple(): Promise<{ error?: string }> {
       return { error: 'Apple sign in failed - no token received' };
     }
 
-    // Sign in to Supabase with the Apple ID token
+    console.log('Apple ID token received, signing in to Supabase...');
+
+    // Sign in to Supabase with the Apple ID token (no nonce for iOS native)
     const { error } = await supabase.auth.signInWithIdToken({
       provider: 'apple',
       token: appleResult.idToken,
-      nonce: rawNonce, // Send raw nonce, Supabase will hash it
     });
 
     if (error) {
+      console.error('Supabase Apple sign in error:', error);
       return { error: error.message };
     }
 
@@ -127,8 +125,19 @@ export async function signInWithGoogle(): Promise<{ error?: string }> {
     // In 'online' mode, we get GoogleLoginResponseOnline with idToken
     const googleResult = result.result as GoogleLoginResponseOnline;
 
+    console.log('Google result:', JSON.stringify(googleResult, null, 2));
+
     if (!googleResult || !googleResult.idToken) {
       return { error: 'Google sign in failed - no token received' };
+    }
+
+    // Decode the JWT to check the audience (for debugging)
+    try {
+      const payload = JSON.parse(atob(googleResult.idToken.split('.')[1]));
+      console.log('Google ID token audience:', payload.aud);
+      console.log('Expected Web Client ID:', GOOGLE_WEB_CLIENT_ID);
+    } catch (e) {
+      console.log('Could not decode token for debugging');
     }
 
     // Sign in to Supabase with the Google ID token
@@ -139,6 +148,7 @@ export async function signInWithGoogle(): Promise<{ error?: string }> {
     });
 
     if (error) {
+      console.error('Supabase Google sign in error:', error);
       return { error: error.message };
     }
 
