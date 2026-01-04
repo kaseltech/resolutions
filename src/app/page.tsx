@@ -238,7 +238,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
               </button>
-              {/* Desktop: New Resolution button - more rounded, outline icon */}
+              {/* Desktop: New Resolution button - text-only, editorial feel */}
               <button
                 onClick={handleOpenForm}
                 className="hidden-mobile"
@@ -246,21 +246,15 @@ export default function Home() {
                   padding: '0.5rem 1rem',
                   backgroundColor: colors.accent,
                   color: '#1F3A5A',
-                  borderRadius: '0.625rem',  // Slightly more rounded
+                  borderRadius: '0.5rem',
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 500,
-                  fontSize: '0.875rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.375rem',
+                  fontSize: '0.8125rem',
                   transition: 'opacity 0.15s ease',
                 }}
               >
-                <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>New</span>
+                New
               </button>
               {/* Sign out - 70% opacity */}
               <button
@@ -378,29 +372,21 @@ export default function Home() {
           </div>
         )}
 
-        {/* Drag hint - Desktop only */}
+        {/* Drag hint - Desktop only (subtle helper text) */}
         {isDragEnabled && sortedResolutions.length > 1 && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.625rem 1rem',
-            backgroundColor: theme === 'light' ? 'rgba(138, 154, 128, 0.1)' : 'rgba(138, 154, 128, 0.15)',
-            border: `1px solid ${theme === 'light' ? 'rgba(138, 154, 128, 0.3)' : 'rgba(138, 154, 128, 0.25)'}`,
-            borderRadius: '0.5rem',
-            marginBottom: '1rem',
-            fontSize: '0.8125rem',
-            color: theme === 'light' ? '#6A7A60' : '#A0B090',
+            gap: '0.375rem',
+            marginBottom: '0.75rem',
+            fontSize: '0.6875rem',
+            color: colors.textMuted,
+            opacity: 0.6,
           }}>
-            <svg style={{ width: 14, height: 14, flexShrink: 0, opacity: 0.8 }} viewBox="0 0 24 24" fill="currentColor">
-              <circle cx="5" cy="9" r="1.5" />
-              <circle cx="12" cy="9" r="1.5" />
-              <circle cx="19" cy="9" r="1.5" />
-              <circle cx="5" cy="15" r="1.5" />
-              <circle cx="12" cy="15" r="1.5" />
-              <circle cx="19" cy="15" r="1.5" />
+            <svg style={{ width: 12, height: 12, flexShrink: 0 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
-            Drag cards to reorder
+            Drag to reorder
           </div>
         )}
 
