@@ -14,16 +14,20 @@ interface ThemeContextType {
 const lightColors = {
   bg: '#F5F1EA',           // Warm cream background
   cardBg: '#ffffff',
-  border: '#E8E4DD',       // Cream border
-  text: '#1E3A5F',         // Navy text
-  textMuted: '#6B7B8F',
-  accent: '#C4A35A',       // Gold accent (simplified)
-  accentHover: '#B8974E',
+  border: 'rgba(30, 58, 95, 0.08)',  // Subtle navy-tinted border
+  text: '#1F3A5A',         // Primary navy
+  textMuted: 'rgba(31, 58, 90, 0.6)', // 60% opacity navy
+  accent: '#C9A75A',       // Gold accent (ONE brand color)
+  accentHover: '#B8964A',
   inputBg: '#ffffff',
-  // Simplified category colors - muted tones
-  health: '#6B8E6B',       // Muted sage
-  career: '#1E3A5F',       // Navy
-  finance: '#C4A35A',      // Gold
+  // Status colors (muted - use sparingly)
+  success: '#4C8B6F',
+  warning: '#C97C5D',
+  error: '#B35C5C',
+  // Simplified category colors - all muted, cohesive
+  health: '#4C8B6F',       // Muted sage (same as success)
+  career: '#1F3A5A',       // Navy
+  finance: '#C9A75A',      // Gold
   personal: '#8B7BA8',     // Muted purple
   education: '#5C7A9F',    // Muted blue
   social: '#6B9B9B',       // Muted teal
@@ -33,23 +37,27 @@ const lightColors = {
 
 // YearVow dark theme - navy background with gold accent
 const darkColors = {
-  bg: '#1E3A5F',           // Navy background
-  cardBg: '#2A4A6F',       // Lighter navy
-  border: '#3A5A7F',
+  bg: '#1F3A5A',           // Primary navy background
+  cardBg: '#2A4A6F',       // Surface cards
+  border: 'rgba(255, 255, 255, 0.06)', // Subtle white border
   text: '#F5F1EA',         // Cream text
-  textMuted: '#B8C4D0',
-  accent: '#C4A35A',       // Gold accent
-  accentHover: '#D4B36A',
+  textMuted: 'rgba(245, 241, 234, 0.7)', // 70% opacity cream
+  accent: '#C9A75A',       // Gold accent (same as light)
+  accentHover: '#D9B76A',
   inputBg: '#2A4A6F',
-  // Muted category colors for dark - slightly brighter than light
-  health: '#7FB07F',       // Sage
+  // Status colors (muted)
+  success: '#5C9B7F',
+  warning: '#D98C6D',
+  error: '#C36C6C',
+  // Category colors for dark
+  health: '#5C9B7F',       // Sage
   career: '#7A9BC7',       // Muted blue
-  finance: '#C4A35A',      // Gold
+  finance: '#C9A75A',      // Gold
   personal: '#A89BC7',     // Muted purple
   education: '#7A9BC7',    // Muted blue
   social: '#7AB8B8',       // Muted teal
   creative: '#C9A07B',     // Terracotta
-  other: '#B8C4D0',        // Neutral
+  other: '#A0A8B0',        // Neutral
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);

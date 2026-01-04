@@ -71,18 +71,18 @@ export function DashboardStats() {
   if (totalCount === 0) {
     return (
       <div style={{
-        background: theme === 'light'
-          ? `linear-gradient(135deg, ${colors.cardBg}, ${colors.bg})`
-          : `linear-gradient(135deg, ${colors.cardBg}, ${colors.bg})`,
-        borderRadius: '1rem',
-        padding: '2rem',
+        background: colors.cardBg,
+        borderRadius: '0.75rem',
+        padding: '2.5rem 2rem',
         textAlign: 'center',
         border: `1px solid ${colors.border}`,
       }}>
-        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎯</div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: '500', color: colors.text, marginBottom: '0.5rem' }}>Start Your 2026 Journey</h2>
-        <p style={{ color: colors.textMuted }}>
-          Create your first resolution and begin tracking your progress toward your goals!
+        <svg style={{ width: '3rem', height: '3rem', color: colors.text, opacity: 0.25, marginBottom: '1rem' }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </svg>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: '500', color: colors.text, marginBottom: '0.5rem' }}>This is where your year takes shape</h2>
+        <p style={{ color: colors.textMuted, fontSize: '0.875rem', opacity: 0.85 }}>
+          Create your first resolution to begin tracking progress toward your goals.
         </p>
       </div>
     );
@@ -90,23 +90,44 @@ export function DashboardStats() {
 
   return (
     <div className="dashboard-container">
-      {/* Main Stats Row */}
+      {/* Main Stats Row - with icons */}
       <div className="stats-grid">
-        <div style={cardStyle}>
-          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: theme === 'light' ? '#7A8A90' : '#94a3b8' }}>{totalCount}</div>
-          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Total</div>
+        <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <svg style={{ width: '1rem', height: '1rem', color: colors.text, opacity: 0.25 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', color: colors.accent }}>{totalCount}</div>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.85 }}>total</div>
         </div>
-        <div style={cardStyle}>
-          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: colors.accent }}>{completedCount}</div>
-          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Done</div>
+        <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <svg style={{ width: '1rem', height: '1rem', color: colors.text, opacity: 0.25 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', color: colors.accent }}>{completedCount}</div>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.85 }}>done</div>
         </div>
-        <div style={cardStyle}>
-          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: theme === 'light' ? '#9A8A80' : '#fbbf24' }}>{overallProgress}%</div>
-          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Progress</div>
+        <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <svg style={{ width: '1rem', height: '1rem', color: colors.text, opacity: 0.25 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+            </svg>
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', color: colors.accent }}>{overallProgress}%</div>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.85 }}>progress</div>
         </div>
-        <div style={cardStyle}>
-          <div style={{ fontSize: '1.5rem', fontWeight: '500', color: theme === 'light' ? '#A09080' : '#fb923c' }}>{daysRemaining}</div>
-          <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>Days Left</div>
+        <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <svg style={{ width: '1rem', height: '1rem', color: colors.text, opacity: 0.25 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+            <div style={{ fontSize: '1.75rem', fontWeight: '500', color: colors.accent }}>{daysRemaining}</div>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.85 }}>days left</div>
         </div>
       </div>
       <style jsx>{`
@@ -133,31 +154,39 @@ export function DashboardStats() {
         }
       `}</style>
 
-      {/* Daily Inspiration - Toned down navy/gold theme */}
+      {/* Daily Inspiration - Subtle navy with gold quotation mark */}
       <div style={{
         ...cardStyle,
         background: theme === 'light'
-          ? 'linear-gradient(135deg, #1E3A5F 0%, #2A4A6F 100%)'
-          : 'linear-gradient(135deg, #0F1C2E 0%, #1E3A5F 100%)',
-        borderColor: theme === 'light' ? '#3A5A7F' : '#1E3A5F',
+          ? '#1F3A5A'
+          : '#0F1C2E',
+        borderColor: 'transparent',
+        padding: isMobile ? '0.875rem 1rem' : '1rem 1.25rem',
       }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-          <span style={{ fontSize: '1.25rem', opacity: 0.8 }}>✦</span>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
+          <span style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: '1.5rem',
+            color: '#C9A75A',
+            lineHeight: 1,
+            marginTop: '-0.125rem',
+          }}>"</span>
           <div style={{ flex: 1 }}>
             <p style={{
-              fontSize: '0.875rem',
+              fontSize: '0.8125rem',
               fontStyle: 'italic',
               color: '#F5F1EA',
               margin: 0,
               lineHeight: 1.5,
-              opacity: 0.95,
+              opacity: 0.9,
             }}>
-              "{dailyQuote.text}"
+              {dailyQuote.text}
             </p>
             <p style={{
-              fontSize: '0.75rem',
-              color: '#C4A35A',
-              margin: '0.5rem 0 0',
+              fontSize: '0.6875rem',
+              color: '#C9A75A',
+              margin: '0.375rem 0 0',
+              opacity: 0.9,
             }}>
               — {dailyQuote.author}
             </p>
@@ -165,18 +194,18 @@ export function DashboardStats() {
           <button
             onClick={refreshQuote}
             style={{
-              padding: '0.5rem',
+              padding: '0.375rem',
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#B8C4D0',
-              borderRadius: '0.375rem',
-              transition: 'all 0.2s',
+              color: 'rgba(245, 241, 234, 0.5)',
+              borderRadius: '0.25rem',
+              transition: 'color 0.15s ease',
             }}
             title="New quote"
           >
-            <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
           </button>
         </div>
@@ -196,34 +225,36 @@ export function DashboardStats() {
         </div>
       </div>
 
-      {/* Year Progress */}
+      {/* Year Progress - subtle gradient bar */}
       <div style={{
-        background: theme === 'light'
-          ? 'linear-gradient(135deg, #E8E8E3 0%, #D8D8D3 100%)'
-          : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        borderRadius: '0.75rem',
-        padding: '1.25rem',
-        border: `1px solid ${colors.border}`,
+        ...cardStyle,
+        background: colors.cardBg,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-          <h3 style={{ fontWeight: 500, margin: 0, color: colors.text }}>Year Progress</h3>
-          <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>{yearProgress}% of 2026</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+          <h3 style={{ fontWeight: 500, margin: 0, color: colors.text, fontSize: '0.875rem' }}>Year progress</h3>
+          <span style={{ fontSize: '0.75rem', color: colors.textMuted, opacity: 0.85 }}>{yearProgress}% of 2026</span>
         </div>
         <div style={{
           width: '100%',
-          backgroundColor: theme === 'light' ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.1)',
+          backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
           borderRadius: '9999px',
-          height: '0.75rem',
+          height: '0.5rem',
           overflow: 'hidden'
         }}>
           <div
-            style={{ height: '100%', backgroundColor: colors.accent, borderRadius: '9999px', transition: 'all 0.5s', width: `${yearProgress}%` }}
+            style={{
+              height: '100%',
+              background: 'linear-gradient(90deg, #C9A75A 0%, #9E843F 100%)',
+              borderRadius: '9999px',
+              transition: 'width 0.3s ease',
+              width: `${yearProgress}%`
+            }}
           />
         </div>
-        <p style={{ fontSize: '0.875rem', marginTop: '0.75rem', color: colors.textMuted, marginBottom: 0 }}>
+        <p style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: colors.textMuted, marginBottom: 0, opacity: 0.85 }}>
           {daysRemaining > 0
-            ? `${daysRemaining} days left to achieve your goals!`
-            : 'The year has ended. How did you do?'}
+            ? `${daysRemaining} days remaining`
+            : 'The year has ended'}
         </p>
       </div>
 
@@ -268,39 +299,39 @@ export function DashboardStats() {
             )}
           </button>
           {showCategories && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               {categoryStats.map(cat => (
                 <div key={cat.value}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        color: theme === 'light' ? cat.color : cat.darkColor,
-                        backgroundColor: theme === 'light' ? cat.bgLight : cat.bgDark,
-                        padding: '0.25rem 0.625rem',
-                        borderRadius: '0.375rem',
-                        border: `1px solid ${theme === 'light' ? `${cat.color}25` : `${cat.darkColor}35`}`,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                      }}
-                    >
-                      <CategoryIcon category={cat.value} size={14} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      color: colors.text,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
+                    }}>
+                      <CategoryIcon category={cat.value} size={12} />
                       {cat.label}
                     </span>
-                    <span style={{ fontSize: '0.8rem', color: colors.textMuted, fontWeight: 500 }}>
-                      {cat.count} resolution{cat.count !== 1 ? 's' : ''} · {cat.avgProgress}%
+                    <span style={{ fontSize: '0.6875rem', color: colors.textMuted, opacity: 0.85 }}>
+                      {cat.count} · {cat.avgProgress}%
                     </span>
                   </div>
-                  <div style={{ width: '100%', backgroundColor: colors.border, borderRadius: '0.375rem', height: '0.5rem', overflow: 'hidden' }}>
+                  <div style={{
+                    width: '100%',
+                    backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '9999px',
+                    height: '0.375rem',
+                    overflow: 'hidden'
+                  }}>
                     <div
                       style={{
                         height: '100%',
-                        borderRadius: '0.375rem',
-                        transition: 'all 0.5s',
+                        borderRadius: '9999px',
+                        transition: 'width 0.3s ease',
                         width: `${cat.avgProgress}%`,
-                        backgroundColor: theme === 'light' ? cat.color : cat.darkColor
+                        backgroundColor: cat.avgProgress === 100 ? '#4C8B6F' : '#C9A75A'
                       }}
                     />
                   </div>
@@ -346,32 +377,33 @@ export function DashboardStats() {
           )}
         </button>
         {showDistribution && (
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '8rem', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '6rem', gap: '0.375rem' }}>
             {[
-              { label: '0-25%', min: 0, max: 25, color: theme === 'light' ? '#D4C4A0' : '#A08860' },
-              { label: '26-50%', min: 26, max: 50, color: theme === 'light' ? '#CDB87A' : '#B09860' },
-              { label: '51-75%', min: 51, max: 75, color: theme === 'light' ? '#C4A35A' : '#C4A35A' },
-              { label: '76-99%', min: 76, max: 99, color: theme === 'light' ? '#B8974E' : '#D4B36A' },
-              { label: '100%', min: 100, max: 100, color: theme === 'light' ? '#6B8E6B' : '#7FB07F' },
+              { label: '0-25%', min: 0, max: 25 },
+              { label: '26-50%', min: 26, max: 50 },
+              { label: '51-75%', min: 51, max: 75 },
+              { label: '76-99%', min: 76, max: 99 },
+              { label: '100%', min: 100, max: 100 },
             ].map(bucket => {
               const count = resolutions.filter(
                 r => r.progress >= bucket.min && r.progress <= bucket.max
               ).length;
               const height = totalCount > 0 ? (count / totalCount) * 100 : 0;
+              const isComplete = bucket.min === 100;
               return (
                 <div key={bucket.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>{count}</div>
+                  <div style={{ fontSize: '0.6875rem', fontWeight: 500, color: colors.accent, marginBottom: '0.25rem' }}>{count}</div>
                   <div
                     style={{
                       width: '100%',
-                      backgroundColor: bucket.color,
-                      borderTopLeftRadius: '0.5rem',
-                      borderTopRightRadius: '0.5rem',
-                      transition: 'all 0.5s',
+                      backgroundColor: isComplete ? '#4C8B6F' : '#C9A75A',
+                      borderRadius: '0.25rem 0.25rem 0 0',
+                      transition: 'height 0.3s ease',
                       height: `${Math.max(4, height)}%`,
+                      opacity: count > 0 ? 1 : 0.3,
                     }}
                   />
-                  <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.5rem' }}>{bucket.label}</div>
+                  <div style={{ fontSize: '0.625rem', color: colors.textMuted, marginTop: '0.375rem', opacity: 0.85 }}>{bucket.label}</div>
                 </div>
               );
             })}

@@ -10,17 +10,17 @@ interface LogoProps {
 
 // YearVow Brand Colors
 const YEAR_COLORS = {
-  navy: '#1E3A5F',         // Deep navy blue
+  navy: '#1F3A5A',         // Primary navy
   cream: '#F5F1EA',        // Warm cream
-  gold: '#C4A35A',         // Gold accent
+  gold: '#C9A75A',         // Gold accent
 };
 
-// Slightly reduced sizes for refinement
+// Reduced sizes (~10% smaller) for refinement
 const sizes = {
-  sm: { fontSize: 16 },
-  md: { fontSize: 20 },
-  lg: { fontSize: 26 },
-  xl: { fontSize: 40 },
+  sm: { fontSize: 14 },
+  md: { fontSize: 18 },
+  lg: { fontSize: 22 },
+  xl: { fontSize: 36 },
 };
 
 export function Logo({ size = 'md', className = '', animated = false }: LogoProps) {
@@ -29,8 +29,8 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
 
   const { fontSize } = sizes[size];
 
-  // Cream text on dark, navy text on light
-  const textColor = isDark ? YEAR_COLORS.cream : YEAR_COLORS.navy;
+  // White/off-white on dark, navy on light
+  const textColor = isDark ? '#F5F1EA' : YEAR_COLORS.navy;
 
   return (
     <span
@@ -40,12 +40,12 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
         alignItems: 'baseline',
         fontFamily: 'var(--font-libre-baskerville), Georgia, "Times New Roman", Times, serif',
         fontSize,
-        letterSpacing: '0.01em',
+        letterSpacing: '0.02em',  // +2% letter-spacing
         lineHeight: 1,
         userSelect: 'none',
         color: textColor,
-        fontWeight: 400,
-        transition: animated ? 'opacity 0.3s ease' : undefined,
+        fontWeight: 500,  // Medium weight
+        transition: animated ? 'opacity 0.15s ease' : undefined,
       }}
     >
       YearVow
