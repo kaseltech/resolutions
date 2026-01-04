@@ -115,12 +115,19 @@ export async function signInWithGoogle(): Promise<{ error?: string }> {
   }
 
   try {
-    const result = await SocialLogin.login({
+    // Add timeout to prevent hanging forever
+    const loginPromise = SocialLogin.login({
       provider: 'google',
       options: {
         scopes: ['email', 'profile'],
       },
     });
+
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Google sign in timed out')), 30000)
+    );
+
+    const result = await Promise.race([loginPromise, timeoutPromise]);
 
     // In 'online' mode, we get GoogleLoginResponseOnline with idToken
     const googleResult = result.result as GoogleLoginResponseOnline;

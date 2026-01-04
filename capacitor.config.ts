@@ -5,8 +5,12 @@ const config: CapacitorConfig = {
   appName: 'YearVow',
   webDir: 'out',
   ios: {
-    contentInset: 'automatic',
+    contentInset: 'always',
     preferredContentMode: 'mobile',
+    backgroundColor: '#1E3A5F',
+  },
+  server: {
+    iosScheme: 'capacitor',
   },
   plugins: {
     PushNotifications: {
