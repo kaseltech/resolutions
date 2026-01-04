@@ -183,8 +183,14 @@ export function AuthForm() {
     color: '#f1f5f9',
     fontSize: '1rem',
     outline: 'none',
-    transition: 'all 0.2s',
+    transition: 'border-color 0.15s ease',
   };
+
+  const inputFocusStyle = `
+    input:focus {
+      border-color: #C9A75A !important;
+    }
+  `;
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{
@@ -251,6 +257,7 @@ export function AuthForm() {
           </p>
         </div>
 
+        <style dangerouslySetInnerHTML={{ __html: inputFocusStyle }} />
         <div style={{
           backgroundColor: 'rgba(30, 41, 59, 0.9)',
           backdropFilter: 'blur(12px)',
@@ -372,15 +379,15 @@ export function AuthForm() {
                 width: '100%',
                 padding: '0.875rem 1rem',
                 borderRadius: '0.5rem',
-                backgroundColor: '#047857',
-                color: 'white',
+                backgroundColor: '#C9A75A',
+                color: '#1E3A5F',
                 fontWeight: '600',
                 fontSize: '1rem',
                 border: 'none',
                 cursor: loading || socialLoading !== null ? 'not-allowed' : 'pointer',
                 opacity: loading || socialLoading !== null ? 0.7 : 1,
-                transition: 'all 0.2s',
-                marginTop: '0.5rem',
+                transition: 'all 0.15s ease',
+                marginTop: '0.25rem',
               }}
             >
               {loading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
@@ -393,14 +400,14 @@ export function AuthForm() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '1rem',
-                  marginTop: '1.25rem',
+                  marginTop: '0.875rem',
                 }}>
                   <div style={{ flex: 1, height: '1px', backgroundColor: '#334155' }} />
                   <span style={{ color: '#64748b', fontSize: '0.75rem' }}>or continue with</span>
                   <div style={{ flex: 1, height: '1px', backgroundColor: '#334155' }} />
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem' }}>
                   {/* Sign in with Apple */}
                   <button
                     type="button"
@@ -408,7 +415,7 @@ export function AuthForm() {
                     disabled={loading || socialLoading !== null}
                     style={{
                       flex: 1,
-                      padding: '0.875rem 1rem',
+                      padding: '0.75rem 1rem',
                       borderRadius: '0.5rem',
                       backgroundColor: '#000000',
                       color: 'white',
@@ -417,7 +424,7 @@ export function AuthForm() {
                       border: 'none',
                       cursor: loading || socialLoading !== null ? 'not-allowed' : 'pointer',
                       opacity: socialLoading === 'apple' ? 0.7 : 1,
-                      transition: 'all 0.2s',
+                      transition: 'all 0.15s ease',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -437,16 +444,16 @@ export function AuthForm() {
                     disabled={loading || socialLoading !== null}
                     style={{
                       flex: 1,
-                      padding: '0.875rem 1rem',
+                      padding: '0.75rem 1rem',
                       borderRadius: '0.5rem',
                       backgroundColor: '#ffffff',
                       color: '#1f2937',
                       fontWeight: '600',
                       fontSize: '0.875rem',
-                      border: 'none',
+                      border: '1px solid rgba(0, 0, 0, 0.1)',
                       cursor: loading || socialLoading !== null ? 'not-allowed' : 'pointer',
                       opacity: socialLoading === 'google' ? 0.7 : 1,
-                      transition: 'all 0.2s',
+                      transition: 'all 0.15s ease',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -527,7 +534,7 @@ export function AuthForm() {
                 transition: 'color 0.2s',
               }}
             >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+              {isSignUp ? 'Already have an account? Sign in' : 'New to YearVow? Create an account'}
             </button>
           </div>
         </div>
@@ -586,8 +593,8 @@ export function AuthForm() {
                   width: '100%',
                   padding: '0.875rem 1rem',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#047857',
-                  color: 'white',
+                  backgroundColor: '#C9A75A',
+                  color: '#1E3A5F',
                   fontWeight: '600',
                   fontSize: '1rem',
                   border: 'none',
