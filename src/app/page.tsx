@@ -622,12 +622,11 @@ export default function Home() {
           opacity: 1 !important;
         }
 
-        /* Show drag handle on card hover - Desktop only */
-        .card-hover:hover .drag-handle {
-          opacity: 0.4 !important;
+        /* Show card actions (menu + drag handle) on card hover - Desktop only */
+        .card-hover:hover .card-actions {
+          opacity: 1 !important;
         }
         .drag-handle:hover {
-          opacity: 0.7 !important;
           background-color: rgba(0, 0, 0, 0.05);
         }
 

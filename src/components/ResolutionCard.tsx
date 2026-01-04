@@ -164,31 +164,6 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         position: 'relative',
       }}
     >
-      {/* Drag handle - Desktop only (visible on hover) */}
-      {isDragEnabled && onDragHandleMouseDown && (
-        <div
-          className="drag-handle"
-          onMouseDown={onDragHandleMouseDown}
-          style={{
-            position: 'absolute',
-            top: '0.75rem',
-            left: '0.5rem',
-            padding: '0.375rem',
-            cursor: 'grab',
-            color: colors.textMuted,
-            opacity: 0,
-            transition: 'opacity 0.15s ease',
-            zIndex: 5,
-            borderRadius: '0.25rem',
-          }}
-          title="Drag to reorder"
-        >
-          <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
-          </svg>
-        </div>
-      )}
-
       {/* Tappable card header area - clicking opens edit */}
       <div
         onClick={() => onEdit(resolution)}
@@ -249,8 +224,30 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               </p>
             )}
           </div>
-          {/* Menu button - Desktop only (visible on hover) */}
-          <div className="card-actions" style={{ opacity: 0, transition: 'opacity 0.15s ease' }} onClick={(e) => e.stopPropagation()}>
+          {/* Card actions - Desktop only (visible on hover) */}
+          <div className="card-actions" style={{ display: 'flex', gap: '0.125rem', opacity: 0, transition: 'opacity 0.15s ease' }} onClick={(e) => e.stopPropagation()}>
+            {/* Drag handle */}
+            {isDragEnabled && onDragHandleMouseDown && (
+              <div
+                className="drag-handle desktop-only-action"
+                onMouseDown={onDragHandleMouseDown}
+                style={{
+                  padding: '0.5rem',
+                  cursor: 'grab',
+                  color: colors.textMuted,
+                  borderRadius: '0.375rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Drag to reorder"
+              >
+                <svg style={{ width: '1rem', height: '1rem' }} fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+                </svg>
+              </div>
+            )}
+            {/* Menu button */}
             <button
               ref={menuButtonRef}
               onClick={handleMenuButtonClick}
