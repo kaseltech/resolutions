@@ -237,25 +237,26 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, category: cat.value }))}
                     style={{
-                      padding: '0.625rem 0.75rem',
-                      borderRadius: '0.5rem',
-                      fontSize: '0.8125rem',
-                      fontWeight: 600,
-                      border: isSelected
-                        ? `2px solid ${catColor}`
-                        : `1px solid ${colors.border}`,
+                      padding: '0.5rem 0.625rem',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      border: `1px solid ${isSelected ? colors.border : colors.border}`,
+                      borderLeft: isSelected ? `3px solid ${catColor}60` : `1px solid ${colors.border}`,
                       cursor: 'pointer',
                       backgroundColor: isSelected
-                        ? (theme === 'light' ? cat.bgLight : cat.bgDark)
+                        ? (theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)')
                         : colors.cardBg,
-                      color: isSelected ? catColor : colors.textMuted,
+                      color: theme === 'light' ? 'rgba(31, 58, 90, 0.85)' : 'rgba(255, 255, 255, 0.85)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.5rem',
+                      gap: '0.375rem',
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <CategoryIcon category={cat.value} size={16} />
+                    <span style={{ opacity: 0.7 }}>
+                      <CategoryIcon category={cat.value} size={14} />
+                    </span>
                     {cat.label}
                   </button>
                 );

@@ -184,7 +184,7 @@ export default function Home() {
               <Logo size="lg" />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              {/* Dark mode toggle - 70% opacity icons */}
+              {/* Dark mode toggle - 60% opacity icons */}
               <button
                 onClick={toggleTheme}
                 className="header-icon-btn"
@@ -192,7 +192,7 @@ export default function Home() {
                   padding: '0.5rem',
                   backgroundColor: 'transparent',
                   color: colors.text,
-                  opacity: 0.7,
+                  opacity: 0.6,
                   borderRadius: '0.375rem',
                   border: 'none',
                   cursor: 'pointer',
@@ -213,7 +213,7 @@ export default function Home() {
                   </svg>
                 )}
               </button>
-              {/* Settings button - 70% opacity */}
+              {/* Settings button - 60% opacity */}
               <button
                 onClick={() => setShowSettings(true)}
                 data-tutorial="settings-button"
@@ -222,7 +222,7 @@ export default function Home() {
                   padding: '0.5rem',
                   backgroundColor: 'transparent',
                   color: colors.text,
-                  opacity: 0.7,
+                  opacity: 0.6,
                   borderRadius: '0.375rem',
                   border: 'none',
                   cursor: 'pointer',
@@ -238,25 +238,25 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
               </button>
-              {/* Desktop: New Resolution button - text-only, editorial feel */}
+              {/* Desktop: New Resolution button */}
               <button
                 onClick={handleOpenForm}
                 className="hidden-mobile"
                 style={{
-                  padding: '0.5rem 1rem',
+                  padding: '0.5rem 0.875rem',
                   backgroundColor: colors.accent,
                   color: '#1F3A5A',
                   borderRadius: '0.5rem',
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 500,
-                  fontSize: '0.8125rem',
+                  fontSize: '0.75rem',
                   transition: 'opacity 0.15s ease',
                 }}
               >
-                New
+                New Resolution
               </button>
-              {/* Sign out - 70% opacity */}
+              {/* Sign out - 60% opacity */}
               <button
                 onClick={signOut}
                 className="header-icon-btn"
@@ -264,7 +264,7 @@ export default function Home() {
                   padding: '0.5rem',
                   backgroundColor: 'transparent',
                   color: colors.text,
-                  opacity: 0.7,
+                  opacity: 0.6,
                   borderRadius: '0.375rem',
                   border: 'none',
                   cursor: 'pointer',
@@ -372,18 +372,18 @@ export default function Home() {
           </div>
         )}
 
-        {/* Drag hint - Desktop only (subtle helper text) */}
+        {/* Drag hint - Desktop only (very subtle helper text) */}
         {isDragEnabled && sortedResolutions.length > 1 && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.375rem',
-            marginBottom: '0.75rem',
-            fontSize: '0.6875rem',
+            gap: '0.25rem',
+            marginBottom: '0.5rem',
+            fontSize: '0.625rem',
             color: colors.textMuted,
-            opacity: 0.6,
+            opacity: 0.5,
           }}>
-            <svg style={{ width: 12, height: 12, flexShrink: 0 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: 10, height: 10, flexShrink: 0 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
             Drag to reorder
@@ -578,13 +578,14 @@ export default function Home() {
       <style jsx global>{`
         .resolution-grid {
           display: grid;
-          gap: 1rem;
+          gap: 1.125rem;
           grid-template-columns: 1fr;
         }
 
         @media (min-width: 640px) {
           .resolution-grid {
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.25rem;
           }
         }
 

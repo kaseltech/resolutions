@@ -158,20 +158,22 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <span
                 style={{
-                  padding: '0.375rem 0.75rem',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
+                  padding: '0.25rem 0.625rem',
+                  borderRadius: '0.375rem',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
                   letterSpacing: '0.01em',
-                  color: theme === 'light' ? categoryInfo.color : categoryInfo.darkColor,
-                  backgroundColor: theme === 'light' ? categoryInfo.bgLight : categoryInfo.bgDark,
-                  border: `1px solid ${theme === 'light' ? `${categoryInfo.color}30` : `${categoryInfo.darkColor}40`}`,
+                  color: theme === 'light' ? 'rgba(31, 58, 90, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+                  backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)',
+                  borderLeft: `2px solid ${theme === 'light' ? `${categoryInfo.color}50` : `${categoryInfo.darkColor}50`}`,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
+                  gap: '0.375rem',
                 }}
               >
-                <CategoryIcon category={resolution.category} size={14} />
+                <span style={{ opacity: 0.7 }}>
+                  <CategoryIcon category={resolution.category} size={12} />
+                </span>
                 {categoryInfo.label}
               </span>
               {isCompleted && (
@@ -202,7 +204,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               </p>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '0.25rem' }} onClick={(e) => e.stopPropagation()}>
+          <div className="card-actions" style={{ display: 'flex', gap: '0.25rem', opacity: 0.4, transition: 'opacity 0.15s ease' }} onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="action-btn action-btn-danger"
@@ -232,7 +234,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Progress</span>
             {!isCompleted && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <div className="progress-controls" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', opacity: 0, transition: 'opacity 0.15s ease' }}>
                 <button
                   onClick={() => updateProgress(resolution.id, Math.max(0, resolution.progress - 10))}
                   className="action-btn"

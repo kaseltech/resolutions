@@ -325,6 +325,22 @@ input[type="time"] {
   }
 }
 
+/* Show controls on card hover (desktop only) */
+@media (hover: hover) {
+  .card-hover:hover .progress-controls,
+  .card-hover:hover .card-actions {
+    opacity: 1 !important;
+  }
+}
+
+/* Always show controls on touch devices */
+@media (hover: none) {
+  .progress-controls,
+  .card-actions {
+    opacity: 1 !important;
+  }
+}
+
 /* Premium card style */
 .card-premium {
   background: var(--card-bg);

@@ -94,40 +94,40 @@ export function DashboardStats() {
       <div className="stats-grid">
         <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.125rem' }}>
-            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.2 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.15 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
-            <div style={{ fontSize: '1.875rem', fontWeight: '500', color: colors.accent }}>{totalCount}</div>
+            <div style={{ fontSize: '2rem', fontWeight: '500', color: colors.accent }}>{totalCount}</div>
           </div>
-          <div style={{ fontSize: '0.625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.6, letterSpacing: '-0.01em' }}>total</div>
+          <div style={{ fontSize: '0.5625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.5, letterSpacing: '-0.01em' }}>total</div>
         </div>
         <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.125rem' }}>
-            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.2 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.15 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
             </svg>
-            <div style={{ fontSize: '1.875rem', fontWeight: '500', color: colors.accent }}>{completedCount}</div>
+            <div style={{ fontSize: '2rem', fontWeight: '500', color: colors.accent }}>{completedCount}</div>
           </div>
-          <div style={{ fontSize: '0.625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.6, letterSpacing: '-0.01em' }}>done</div>
+          <div style={{ fontSize: '0.5625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.5, letterSpacing: '-0.01em' }}>done</div>
         </div>
         <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.125rem' }}>
-            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.2 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.15 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
             </svg>
-            <div style={{ fontSize: '1.875rem', fontWeight: '500', color: colors.accent }}>{overallProgress}%</div>
+            <div style={{ fontSize: '2rem', fontWeight: '500', color: colors.accent }}>{overallProgress}%</div>
           </div>
-          <div style={{ fontSize: '0.625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.6, letterSpacing: '-0.01em' }}>progress</div>
+          <div style={{ fontSize: '0.5625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.5, letterSpacing: '-0.01em' }}>progress</div>
         </div>
         <div style={{ ...cardStyle, padding: isMobile ? '0.75rem' : '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.125rem' }}>
-            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.2 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.text, opacity: 0.15 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
-            <div style={{ fontSize: '1.875rem', fontWeight: '500', color: colors.accent }}>{daysRemaining}</div>
+            <div style={{ fontSize: '2rem', fontWeight: '500', color: colors.accent }}>{daysRemaining}</div>
           </div>
-          <div style={{ fontSize: '0.625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.6, letterSpacing: '-0.01em' }}>days left</div>
+          <div style={{ fontSize: '0.5625rem', color: colors.textMuted, textTransform: 'lowercase', opacity: 0.5, letterSpacing: '-0.01em' }}>days left</div>
         </div>
       </div>
       <style jsx>{`
@@ -161,19 +161,19 @@ export function DashboardStats() {
           ? '#1F3A5A'
           : '#0F1C2E',
         borderColor: 'transparent',
-        padding: isMobile ? '0.75rem 0.875rem' : '0.875rem 1rem',
+        padding: isMobile ? '0.625rem 0.75rem' : '0.75rem 0.875rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
           <span style={{
             fontFamily: 'Georgia, serif',
-            fontSize: '1.25rem',
+            fontSize: '1.125rem',
             color: '#C9A75A',
             lineHeight: 1,
             marginTop: '-0.0625rem',
           }}>"</span>
           <div style={{ flex: 1 }}>
             <p style={{
-              fontSize: '0.8125rem',
+              fontSize: '0.75rem',
               fontStyle: 'italic',
               color: '#F5F1EA',
               margin: 0,
@@ -183,11 +183,11 @@ export function DashboardStats() {
               {dailyQuote.text}
             </p>
             <p style={{
-              fontSize: '0.5625rem',
-              color: 'rgba(201, 167, 90, 0.7)',
-              margin: '0.25rem 0 0 0.125rem',
-              fontWeight: 400,
-              letterSpacing: '0.01em',
+              fontSize: '0.5rem',
+              color: 'rgba(201, 167, 90, 0.6)',
+              margin: '0.1875rem 0 0 0.25rem',
+              fontWeight: 300,
+              letterSpacing: '0.02em',
             }}>
               — {dailyQuote.author}
             </p>
@@ -199,13 +199,13 @@ export function DashboardStats() {
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(245, 241, 234, 0.4)',
+              color: 'rgba(245, 241, 234, 0.3)',
               borderRadius: '0.25rem',
               transition: 'color 0.15s ease',
             }}
             title="New quote"
           >
-            <svg style={{ width: '0.75rem', height: '0.75rem' }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <svg style={{ width: '0.625rem', height: '0.625rem' }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
           </button>
@@ -231,15 +231,15 @@ export function DashboardStats() {
         ...cardStyle,
         background: colors.cardBg,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
           <h3 style={{ fontWeight: 500, margin: 0, color: colors.text, fontSize: '0.875rem' }}>Year progress</h3>
-          <span style={{ fontSize: '0.75rem', color: colors.textMuted, opacity: 0.85 }}>{yearProgress}% of 2026</span>
+          <span style={{ fontSize: '0.6875rem', color: colors.textMuted, opacity: 0.7 }}>{yearProgress}% of 2026</span>
         </div>
         <div style={{
           width: '100%',
-          backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.12)' : 'rgba(255, 255, 255, 0.12)',
           borderRadius: '9999px',
-          height: '0.5rem',
+          height: '0.375rem',
           overflow: 'hidden'
         }}>
           <div
@@ -252,7 +252,7 @@ export function DashboardStats() {
             }}
           />
         </div>
-        <p style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: colors.textMuted, marginBottom: 0, opacity: 0.85 }}>
+        <p style={{ fontSize: '0.6875rem', marginTop: '0.375rem', color: colors.textMuted, marginBottom: 0, opacity: 0.7 }}>
           {daysRemaining > 0
             ? `${daysRemaining} days remaining`
             : 'The year has ended'}
@@ -306,24 +306,24 @@ export function DashboardStats() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
                     <span style={{
                       fontSize: '0.75rem',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       color: colors.text,
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.375rem',
                     }}>
-                      <CategoryIcon category={cat.value} size={12} />
+                      <span style={{ opacity: 0.5 }}><CategoryIcon category={cat.value} size={11} /></span>
                       {cat.label}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', color: colors.textMuted, opacity: 0.85 }}>
+                    <span style={{ fontSize: '0.6875rem', color: colors.textMuted, fontWeight: 400, opacity: 0.7 }}>
                       {cat.count} · {cat.avgProgress}%
                     </span>
                   </div>
                   <div style={{
                     width: '100%',
-                    backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+                    backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                     borderRadius: '9999px',
-                    height: '0.375rem',
+                    height: '0.3125rem',
                     overflow: 'hidden'
                   }}>
                     <div
@@ -394,26 +394,26 @@ export function DashboardStats() {
                   );
                 })}
               </div>
-              {/* Labels below */}
+              {/* Labels below - more subtle */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginTop: '0.5rem',
+                marginTop: '0.375rem',
               }}>
                 {buckets.map(bucket => (
                   <div key={bucket.label} style={{ textAlign: 'center', flex: 1 }}>
                     <div style={{
-                      fontSize: '0.6875rem',
+                      fontSize: '0.625rem',
                       fontWeight: 500,
                       color: bucket.count > 0 ? colors.accent : colors.textMuted,
-                      opacity: bucket.count > 0 ? 1 : 0.5,
+                      opacity: bucket.count > 0 ? 0.9 : 0.4,
                     }}>
                       {bucket.count}
                     </div>
                     <div style={{
-                      fontSize: '0.5625rem',
+                      fontSize: '0.5rem',
                       color: colors.textMuted,
-                      opacity: 0.7,
+                      opacity: 0.5,
                     }}>
                       {bucket.label}%
                     </div>

@@ -177,8 +177,8 @@ export function AchievementProgress() {
   const totalCount = getTotalAchievements();
   const percentage = Math.round((unlockedCount / totalCount) * 100);
 
-  // Slightly more saturated gold for reward zone
-  const rewardGold = '#D4A84A';
+  // More saturated gold for achievements
+  const rewardGold = '#D9A635';
 
   return (
     <div style={{

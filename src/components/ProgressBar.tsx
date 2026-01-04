@@ -12,11 +12,11 @@ interface ProgressBarProps {
 export function ProgressBar({ progress, size = 'md', showLabel = true }: ProgressBarProps) {
   const { theme, colors } = useTheme();
 
-  // Consistent heights - fully rounded
+  // Reduced heights - fully rounded
   const heights = {
-    sm: '0.375rem',
-    md: '0.5rem',
-    lg: '0.625rem',
+    sm: '0.3125rem',
+    md: '0.4375rem',
+    lg: '0.5625rem',
   };
 
   // Gold only - with subtle success state for 100%
@@ -31,7 +31,7 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
     <div style={{ width: '100%' }}>
       <div style={{
         width: '100%',
-        backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+        backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.12)' : 'rgba(255, 255, 255, 0.12)',
         borderRadius: '9999px',  // Fully rounded
         height: heights[size],
         overflow: 'hidden',
