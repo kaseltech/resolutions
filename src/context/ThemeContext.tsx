@@ -10,46 +10,46 @@ interface ThemeContextType {
   colors: typeof lightColors;
 }
 
-// YearVow light theme - midnight blue accent with warm neutral
+// YearVow light theme - cream background with navy accent
 const lightColors = {
-  bg: '#F6F4EF',           // Warm neutral background
+  bg: '#F5F1EA',           // Warm cream background
   cardBg: '#ffffff',
-  border: '#E5E2DB',       // Warm neutral border
-  text: '#0F1C2E',         // Midnight blue text
-  textMuted: '#64748b',
-  accent: '#0F1C2E',       // Midnight blue accent
-  accentHover: '#1A2B3C',
+  border: '#E8E4DD',       // Cream border
+  text: '#1E3A5F',         // Navy text
+  textMuted: '#6B7B8F',
+  accent: '#1E3A5F',       // Navy accent
+  accentHover: '#2A4A6F',
   inputBg: '#ffffff',
   // Category colors
   health: '#059669',
-  career: '#0369a1',
-  finance: '#b45309',
+  career: '#1E3A5F',
+  finance: '#C4A35A',
   personal: '#7c3aed',
   education: '#1d4ed8',
   social: '#0891b2',
   creative: '#c2410c',
-  other: '#475569',
+  other: '#6B7B8F',
 };
 
-// YearVow dark theme - midnight blue depths
+// YearVow dark theme - navy background with cream accents
 const darkColors = {
-  bg: '#0F1C2E',           // Midnight blue background
-  cardBg: '#1A2B3C',       // Lighter midnight
-  border: '#2A3B4C',
-  text: '#F6F4EF',         // Warm neutral text
-  textMuted: '#94a3b8',
-  accent: '#5B8CB8',       // Lighter blue accent for dark mode
-  accentHover: '#7AA8D4',
-  inputBg: '#1A2B3C',
+  bg: '#1E3A5F',           // Navy background
+  cardBg: '#2A4A6F',       // Lighter navy
+  border: '#3A5A7F',
+  text: '#F5F1EA',         // Cream text
+  textMuted: '#B8C4D0',
+  accent: '#C4A35A',       // Gold accent for dark mode
+  accentHover: '#D4B36A',
+  inputBg: '#2A4A6F',
   // Vibrant category colors for dark
   health: '#34d399',
-  career: '#38bdf8',
-  finance: '#fbbf24',
+  career: '#60a5fa',
+  finance: '#C4A35A',
   personal: '#a78bfa',
   education: '#60a5fa',
   social: '#22d3ee',
   creative: '#fb923c',
-  other: '#94a3b8',
+  other: '#B8C4D0',
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);

@@ -1,14 +1,13 @@
 const sharp = require('sharp');
 const path = require('path');
 
-// YearVow Color Theme - Midnight Blue & Warm Neutral
+// YearVow Color Theme - Navy & Cream
 const COLORS = {
-  primary: '#0F1C2E',      // Midnight blue
-  secondary: '#1A2B3C',    // Lighter midnight
-  accent: '#5B8CB8',       // Accent blue
-  glow: '#F6F4EF',         // Warm neutral
-  background: '#0F1C2E',
-  textMuted: '#94A3B8',
+  navy: '#1E3A5F',         // Deep navy blue
+  navyLight: '#2A4A6F',    // Lighter navy
+  cream: '#F5F1EA',        // Warm cream
+  gold: '#C4A35A',         // Gold accent
+  textMuted: '#B8C4D0',
 };
 
 // Generate YearVow "YV" monogram app icon SVG
@@ -17,29 +16,29 @@ function generateAppIconSVG(size) {
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${COLORS.primary}" />
-      <stop offset="100%" stop-color="${COLORS.secondary}" />
+      <stop offset="0%" stop-color="${COLORS.navy}" />
+      <stop offset="100%" stop-color="${COLORS.navyLight}" />
     </linearGradient>
   </defs>
 
-  <!-- Full square dark background - iOS will round the corners -->
+  <!-- Full square navy background - iOS will round the corners -->
   <rect x="0" y="0" width="100" height="100" fill="url(#bgGrad)" />
 
-  <!-- YV Monogram -->
+  <!-- YV Monogram in serif font -->
   <text
     x="50"
-    y="62"
+    y="64"
     text-anchor="middle"
-    font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
-    font-size="42"
-    font-weight="700"
-    fill="${COLORS.glow}"
-    letter-spacing="-2"
+    font-family="Georgia, 'Times New Roman', Times, serif"
+    font-size="44"
+    font-weight="400"
+    fill="${COLORS.cream}"
+    letter-spacing="-1"
   >YV</text>
 </svg>`;
 }
 
-// Generate splash screen SVG - simple gradient with stars and centered wordmark
+// Generate splash screen SVG - navy gradient with stars and centered wordmark
 function generateSplashSVG(size) {
   // Generate random stars
   const stars = [];
@@ -47,8 +46,8 @@ function generateSplashSVG(size) {
     const x = Math.random() * size;
     const y = Math.random() * size;
     const r = Math.random() * 2 + 0.5;
-    const opacity = Math.random() * 0.5 + 0.2;
-    stars.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${COLORS.glow}" opacity="${opacity}" />`);
+    const opacity = Math.random() * 0.4 + 0.2;
+    stars.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${COLORS.cream}" opacity="${opacity}" />`);
   }
 
   const centerX = size / 2;
@@ -58,9 +57,9 @@ function generateSplashSVG(size) {
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="${COLORS.primary}" />
-      <stop offset="50%" stop-color="${COLORS.secondary}" />
-      <stop offset="100%" stop-color="${COLORS.primary}" />
+      <stop offset="0%" stop-color="${COLORS.navy}" />
+      <stop offset="50%" stop-color="${COLORS.navyLight}" />
+      <stop offset="100%" stop-color="${COLORS.navy}" />
     </linearGradient>
   </defs>
 
@@ -70,25 +69,25 @@ function generateSplashSVG(size) {
   <!-- Twinkling stars -->
   ${stars.join('\n  ')}
 
-  <!-- YearVow wordmark -->
+  <!-- YearVow wordmark in serif -->
   <text
     x="${centerX}"
     y="${centerY}"
     text-anchor="middle"
     dominant-baseline="middle"
-    font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
-    font-size="120"
-    letter-spacing="-3"
-  >
-    <tspan font-weight="300" fill="${COLORS.textMuted}">Year</tspan><tspan font-weight="700" fill="${COLORS.glow}">Vow</tspan>
-  </text>
+    font-family="Georgia, 'Times New Roman', Times, serif"
+    font-size="140"
+    font-weight="400"
+    fill="${COLORS.cream}"
+    letter-spacing="-2"
+  >YearVow</text>
 
   <!-- Tagline -->
   <text
     x="${centerX}"
-    y="${centerY + 80}"
+    y="${centerY + 90}"
     text-anchor="middle"
-    font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
+    font-family="Georgia, 'Times New Roman', Times, serif"
     font-size="36"
     fill="${COLORS.textMuted}"
     opacity="0.8"

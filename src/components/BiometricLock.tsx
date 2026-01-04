@@ -69,7 +69,7 @@ export function BiometricLock({ children }: BiometricLockProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
+          background: 'linear-gradient(180deg, #1E3A5F 0%, #2A4A6F 50%, #1E3A5F 100%)',
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
@@ -98,7 +98,7 @@ export function BiometricLock({ children }: BiometricLockProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
+          background: 'linear-gradient(180deg, #1E3A5F 0%, #2A4A6F 50%, #1E3A5F 100%)',
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
           cursor: 'pointer',

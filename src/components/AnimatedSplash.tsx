@@ -54,7 +54,7 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
+        background: 'linear-gradient(180deg, #1E3A5F 0%, #2A4A6F 50%, #1E3A5F 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -75,7 +75,7 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            backgroundColor: '#F6F4EF',
+            backgroundColor: '#F5F1EA',
             borderRadius: '50%',
             opacity: 0,
             animation: phase !== 'initial'
@@ -101,7 +101,7 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
         style={{
           marginTop: '1rem',
           fontSize: '1rem',
-          color: '#94A3B8',
+          color: '#B8C4D0',
           letterSpacing: '0.02em',
           opacity: phase !== 'initial' ? 1 : 0,
           transform: phase !== 'initial' ? 'translateY(0)' : 'translateY(10px)',

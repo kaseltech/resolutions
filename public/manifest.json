@@ -4,8 +4,8 @@
   "description": "Make your resolutions count with YearVow",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0F1C2E",
-  "theme_color": "#0F1C2E",
+  "background_color": "#1E3A5F",
+  "theme_color": "#1E3A5F",
   "orientation": "portrait-primary",
   "icons": [
     {
