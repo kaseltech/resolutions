@@ -242,7 +242,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       fontSize: '0.75rem',
                       fontWeight: 500,
                       border: `1px solid ${isSelected ? colors.border : colors.border}`,
-                      borderLeft: isSelected ? `3px solid ${catColor}60` : `1px solid ${colors.border}`,
+                      borderLeft: isSelected ? `3px solid ${catColor}73` : `1px solid ${colors.border}`,
                       cursor: 'pointer',
                       backgroundColor: isSelected
                         ? (theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)')

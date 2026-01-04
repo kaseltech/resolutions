@@ -165,7 +165,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                   letterSpacing: '0.01em',
                   color: theme === 'light' ? 'rgba(31, 58, 90, 0.85)' : 'rgba(255, 255, 255, 0.85)',
                   backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)',
-                  borderLeft: `2px solid ${theme === 'light' ? `${categoryInfo.color}50` : `${categoryInfo.darkColor}50`}`,
+                  borderLeft: `2px solid ${theme === 'light' ? `${categoryInfo.color}70` : `${categoryInfo.darkColor}70`}`,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.375rem',
