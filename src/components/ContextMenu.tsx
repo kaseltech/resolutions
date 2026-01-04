@@ -179,9 +179,9 @@ export function ContextMenu({ isOpen, onClose, items, position }: ContextMenuPro
   );
 }
 
-// Hook for long press detection
+// Hook for long press detection - TOUCH ONLY (no mouse/desktop)
 export function useLongPress(
-  callback: (e: React.TouchEvent | React.MouseEvent) => void,
+  callback: (e: React.TouchEvent) => void,
   { threshold = 500, onStart, onCancel }: {
     threshold?: number;
     onStart?: () => void;
@@ -192,16 +192,9 @@ export function useLongPress(
   const isLongPress = useRef(false);
   const startPos = useRef<{ x: number; y: number } | null>(null);
 
-  const start = (e: React.TouchEvent | React.MouseEvent) => {
+  const start = (e: React.TouchEvent) => {
     isLongPress.current = false;
-
-    // Get start position
-    if ('touches' in e) {
-      startPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    } else {
-      startPos.current = { x: e.clientX, y: e.clientY };
-    }
-
+    startPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     onStart?.();
 
     timerRef.current = setTimeout(() => {
@@ -210,18 +203,11 @@ export function useLongPress(
     }, threshold);
   };
 
-  const move = (e: React.TouchEvent | React.MouseEvent) => {
+  const move = (e: React.TouchEvent) => {
     if (!startPos.current || !timerRef.current) return;
 
-    // Get current position
-    let currentX: number, currentY: number;
-    if ('touches' in e) {
-      currentX = e.touches[0].clientX;
-      currentY = e.touches[0].clientY;
-    } else {
-      currentX = e.clientX;
-      currentY = e.clientY;
-    }
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
 
     // Cancel if moved too much
     const deltaX = Math.abs(currentX - startPos.current.x);
@@ -241,20 +227,17 @@ export function useLongPress(
     startPos.current = null;
   };
 
-  const end = (e: React.TouchEvent | React.MouseEvent) => {
+  const end = (e: React.TouchEvent) => {
     if (isLongPress.current) {
       e.preventDefault();
     }
     clear();
   };
 
+  // Only return touch handlers - no mouse events
   return {
     onTouchStart: start,
     onTouchMove: move,
     onTouchEnd: end,
-    onMouseDown: start,
-    onMouseMove: move,
-    onMouseUp: end,
-    onMouseLeave: clear,
   };
 }

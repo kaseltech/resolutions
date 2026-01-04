@@ -56,8 +56,16 @@ export default function Home() {
         }
       });
 
+  // Track if drag was initiated from handle
+  const [dragFromHandle, setDragFromHandle] = useState(false);
+
   // Drag and drop handlers
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    // Only allow drag if initiated from handle
+    if (!dragFromHandle) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
   };
 
@@ -83,6 +91,12 @@ export default function Home() {
   const handleDragEnd = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
+    setDragFromHandle(false);
+  };
+
+  // Handler for drag handle mousedown - sets flag to allow drag
+  const handleDragHandleMouseDown = () => {
+    setDragFromHandle(true);
   };
 
   // Drag only works on desktop (not touch devices)
@@ -383,10 +397,10 @@ export default function Home() {
             color: colors.textMuted,
             opacity: 0.5,
           }}>
-            <svg style={{ width: 10, height: 10, flexShrink: 0 }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            <svg style={{ width: 10, height: 10, flexShrink: 0 }} fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
             </svg>
-            Drag to reorder
+            Use handle to reorder
           </div>
         )}
 
@@ -397,14 +411,14 @@ export default function Home() {
               <div
                 key={resolution.id}
                 draggable={isDragEnabled}
-                onDragStart={() => handleDragStart(index)}
+                onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragLeave={handleDragLeave}
                 onDrop={() => handleDrop(index)}
                 onDragEnd={handleDragEnd}
                 {...(index === 0 ? { 'data-tutorial': 'resolution-card' } : {})}
                 style={{
-                  cursor: isDragEnabled ? 'grab' : 'default',
+                  cursor: 'default',
                   opacity: draggedIndex === index ? 0.5 : 1,
                   transform: dragOverIndex === index ? 'scale(1.02)' : 'scale(1)',
                   transition: 'transform 0.15s ease, opacity 0.15s ease',
@@ -438,6 +452,8 @@ export default function Home() {
                     onEdit={handleEdit}
                     openJournalOnMount={openJournalForId === resolution.id}
                     onJournalOpened={() => setOpenJournalForId(null)}
+                    isDragEnabled={isDragEnabled}
+                    onDragHandleMouseDown={handleDragHandleMouseDown}
                   />
                 </SwipeableCard>
               </div>
@@ -606,6 +622,20 @@ export default function Home() {
           opacity: 1 !important;
         }
 
+        /* Show drag handle on card hover - Desktop only */
+        .card-hover:hover .drag-handle {
+          opacity: 0.4 !important;
+        }
+        .drag-handle:hover {
+          opacity: 0.7 !important;
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Hide desktop-only actions on mobile */
+        .desktop-only-action {
+          display: none;
+        }
+
         /* Reduced animation speed globally */
         * {
           transition-duration: 0.15s !important;
@@ -622,6 +652,11 @@ export default function Home() {
 
           .keyboard-hints {
             display: block;
+          }
+
+          /* Show desktop-only actions */
+          .desktop-only-action {
+            display: flex;
           }
         }
 

@@ -22,9 +22,12 @@ interface ResolutionCardProps {
   onEdit: (resolution: Resolution) => void;
   openJournalOnMount?: boolean;
   onJournalOpened?: () => void;
+  // Drag handle support for desktop
+  isDragEnabled?: boolean;
+  onDragHandleMouseDown?: (e: React.MouseEvent) => void;
 }
 
-export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJournalOpened }: ResolutionCardProps) {
+export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJournalOpened, isDragEnabled, onDragHandleMouseDown }: ResolutionCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [journalContent, setJournalContent] = useState('');
   const [journalMood, setJournalMood] = useState<JournalEntry['mood']>(undefined);
@@ -142,8 +145,34 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         WebkitUserSelect: 'none',
         userSelect: 'none',
         WebkitTouchCallout: 'none',
+        position: 'relative',
       }}
     >
+      {/* Drag handle - Desktop only (visible on hover) */}
+      {isDragEnabled && onDragHandleMouseDown && (
+        <div
+          className="drag-handle"
+          onMouseDown={onDragHandleMouseDown}
+          style={{
+            position: 'absolute',
+            top: '0.75rem',
+            left: '0.5rem',
+            padding: '0.375rem',
+            cursor: 'grab',
+            color: colors.textMuted,
+            opacity: 0,
+            transition: 'opacity 0.15s ease',
+            zIndex: 5,
+            borderRadius: '0.25rem',
+          }}
+          title="Drag to reorder"
+        >
+          <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm8-12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+          </svg>
+        </div>
+      )}
+
       {/* Tappable card header area - clicking opens edit */}
       <div
         onClick={() => onEdit(resolution)}
@@ -205,6 +234,25 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             )}
           </div>
           <div className="card-actions" style={{ display: 'flex', gap: '0.25rem', opacity: 0.4, transition: 'opacity 0.15s ease' }} onClick={(e) => e.stopPropagation()}>
+            {/* Menu button - Desktop only (visible on hover) */}
+            <button
+              onClick={() => setShowContextMenu(true)}
+              className="action-btn desktop-only-action"
+              style={{
+                padding: '0.5rem',
+                color: colors.textMuted,
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderRadius: '0.5rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Actions"
+            >
+              <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </button>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="action-btn action-btn-danger"
