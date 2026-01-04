@@ -133,29 +133,30 @@ export function DashboardStats() {
         }
       `}</style>
 
-      {/* Daily Inspiration */}
+      {/* Daily Inspiration - Toned down navy/gold theme */}
       <div style={{
         ...cardStyle,
         background: theme === 'light'
-          ? 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)'
-          : 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)',
-        borderColor: theme === 'light' ? '#bbf7d0' : '#10b981',
+          ? 'linear-gradient(135deg, #1E3A5F 0%, #2A4A6F 100%)'
+          : 'linear-gradient(135deg, #0F1C2E 0%, #1E3A5F 100%)',
+        borderColor: theme === 'light' ? '#3A5A7F' : '#1E3A5F',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-          <span style={{ fontSize: '1.5rem' }}>💡</span>
+          <span style={{ fontSize: '1.25rem', opacity: 0.8 }}>✦</span>
           <div style={{ flex: 1 }}>
             <p style={{
-              fontSize: '0.9375rem',
+              fontSize: '0.875rem',
               fontStyle: 'italic',
-              color: colors.text,
+              color: '#F5F1EA',
               margin: 0,
               lineHeight: 1.5,
+              opacity: 0.95,
             }}>
               "{dailyQuote.text}"
             </p>
             <p style={{
               fontSize: '0.75rem',
-              color: colors.textMuted,
+              color: '#C4A35A',
               margin: '0.5rem 0 0',
             }}>
               — {dailyQuote.author}
@@ -168,13 +169,13 @@ export function DashboardStats() {
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: colors.textMuted,
+              color: '#B8C4D0',
               borderRadius: '0.375rem',
               transition: 'all 0.2s',
             }}
             title="New quote"
           >
-            <svg style={{ width: '1.25rem', height: '1.25rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
@@ -347,11 +348,11 @@ export function DashboardStats() {
         {showDistribution && (
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '8rem', gap: '0.5rem' }}>
             {[
-              { label: '0-25%', min: 0, max: 25, color: theme === 'light' ? '#C4A0A0' : '#f87171' },
-              { label: '26-50%', min: 26, max: 50, color: theme === 'light' ? '#C4B0A0' : '#fbbf24' },
-              { label: '51-75%', min: 51, max: 75, color: theme === 'light' ? '#B4B4A0' : '#a3e635' },
-              { label: '76-99%', min: 76, max: 99, color: theme === 'light' ? '#A0B4A0' : '#34d399' },
-              { label: '100%', min: 100, max: 100, color: colors.accent },
+              { label: '0-25%', min: 0, max: 25, color: theme === 'light' ? '#D4C4A0' : '#A08860' },
+              { label: '26-50%', min: 26, max: 50, color: theme === 'light' ? '#CDB87A' : '#B09860' },
+              { label: '51-75%', min: 51, max: 75, color: theme === 'light' ? '#C4A35A' : '#C4A35A' },
+              { label: '76-99%', min: 76, max: 99, color: theme === 'light' ? '#B8974E' : '#D4B36A' },
+              { label: '100%', min: 100, max: 100, color: theme === 'light' ? '#6B8E6B' : '#7FB07F' },
             ].map(bucket => {
               const count = resolutions.filter(
                 r => r.progress >= bucket.min && r.progress <= bucket.max

@@ -10,46 +10,46 @@ interface ThemeContextType {
   colors: typeof lightColors;
 }
 
-// YearVow light theme - cream background with navy accent
+// YearVow light theme - cream background with gold accent
 const lightColors = {
   bg: '#F5F1EA',           // Warm cream background
   cardBg: '#ffffff',
   border: '#E8E4DD',       // Cream border
   text: '#1E3A5F',         // Navy text
   textMuted: '#6B7B8F',
-  accent: '#1E3A5F',       // Navy accent
-  accentHover: '#2A4A6F',
+  accent: '#C4A35A',       // Gold accent (simplified)
+  accentHover: '#B8974E',
   inputBg: '#ffffff',
-  // Category colors
-  health: '#059669',
-  career: '#1E3A5F',
-  finance: '#C4A35A',
-  personal: '#7c3aed',
-  education: '#1d4ed8',
-  social: '#0891b2',
-  creative: '#c2410c',
-  other: '#6B7B8F',
+  // Simplified category colors - muted tones
+  health: '#6B8E6B',       // Muted sage
+  career: '#1E3A5F',       // Navy
+  finance: '#C4A35A',      // Gold
+  personal: '#8B7BA8',     // Muted purple
+  education: '#5C7A9F',    // Muted blue
+  social: '#6B9B9B',       // Muted teal
+  creative: '#B8866B',     // Muted terracotta
+  other: '#8B8B8B',        // Neutral gray
 };
 
-// YearVow dark theme - navy background with cream accents
+// YearVow dark theme - navy background with gold accent
 const darkColors = {
   bg: '#1E3A5F',           // Navy background
   cardBg: '#2A4A6F',       // Lighter navy
   border: '#3A5A7F',
   text: '#F5F1EA',         // Cream text
   textMuted: '#B8C4D0',
-  accent: '#C4A35A',       // Gold accent for dark mode
+  accent: '#C4A35A',       // Gold accent
   accentHover: '#D4B36A',
   inputBg: '#2A4A6F',
-  // Vibrant category colors for dark
-  health: '#34d399',
-  career: '#60a5fa',
-  finance: '#C4A35A',
-  personal: '#a78bfa',
-  education: '#60a5fa',
-  social: '#22d3ee',
-  creative: '#fb923c',
-  other: '#B8C4D0',
+  // Muted category colors for dark - slightly brighter than light
+  health: '#7FB07F',       // Sage
+  career: '#7A9BC7',       // Muted blue
+  finance: '#C4A35A',      // Gold
+  personal: '#A89BC7',     // Muted purple
+  education: '#7A9BC7',    // Muted blue
+  social: '#7AB8B8',       // Muted teal
+  creative: '#C9A07B',     // Terracotta
+  other: '#B8C4D0',        // Neutral
 };
 
 const ThemeContext = createContext<ThemeContextType | null>(null);

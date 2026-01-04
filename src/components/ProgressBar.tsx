@@ -18,21 +18,15 @@ export function ProgressBar({ progress, size = 'md', showLabel = true }: Progres
     lg: '1rem',
   };
 
-  // Rugged, outdoorsy progress colors
+  // Simplified gold-based progress colors
   const getProgressColor = (p: number) => {
-    if (theme === 'light') {
-      if (p === 100) return '#047857';
-      if (p >= 75) return '#059669';
-      if (p >= 50) return '#0369a1';
-      if (p >= 25) return '#b45309';
-      return '#dc2626';
-    } else {
-      if (p === 100) return '#10b981';
-      if (p >= 75) return '#34d399';
-      if (p >= 50) return '#38bdf8';
-      if (p >= 25) return '#fbbf24';
-      return '#f87171';
+    // Use gold as the primary progress color
+    // Only 100% gets a special "complete" color (muted green)
+    if (p === 100) {
+      return theme === 'light' ? '#6B8E6B' : '#7FB07F'; // Muted sage for completion
     }
+    // All other progress uses gold
+    return colors.accent; // Gold (#C4A35A)
   };
 
   return (

@@ -15,11 +15,12 @@ const YEAR_COLORS = {
   gold: '#C4A35A',         // Gold accent
 };
 
+// Slightly reduced sizes for refinement
 const sizes = {
-  sm: { fontSize: 18 },
-  md: { fontSize: 24 },
-  lg: { fontSize: 32 },
-  xl: { fontSize: 48 },
+  sm: { fontSize: 16 },
+  md: { fontSize: 20 },
+  lg: { fontSize: 26 },
+  xl: { fontSize: 40 },
 };
 
 export function Logo({ size = 'md', className = '', animated = false }: LogoProps) {
@@ -37,9 +38,9 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
       style={{
         display: 'inline-flex',
         alignItems: 'baseline',
-        fontFamily: 'Georgia, "Times New Roman", Times, serif',
+        fontFamily: 'var(--font-libre-baskerville), Georgia, "Times New Roman", Times, serif',
         fontSize,
-        letterSpacing: '-0.02em',
+        letterSpacing: '0.01em',
         lineHeight: 1,
         userSelect: 'none',
         color: textColor,
