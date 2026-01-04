@@ -306,13 +306,13 @@ export function DashboardStats() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
                     <span style={{
                       fontSize: '0.75rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       color: colors.text,
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.375rem',
                     }}>
-                      <span style={{ opacity: 0.5 }}><CategoryIcon category={cat.value} size={11} /></span>
+                      <span style={{ opacity: 0.6 }}><CategoryIcon category={cat.value} size={11} /></span>
                       {cat.label}
                     </span>
                     <span style={{ fontSize: '0.6875rem', color: colors.textMuted, fontWeight: 400, opacity: 0.7 }}>

@@ -158,7 +158,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <span
                 style={{
-                  padding: '0.25rem 0.625rem',
+                  padding: '0.125rem 0.625rem',
                   borderRadius: '0.375rem',
                   fontSize: '0.6875rem',
                   fontWeight: 500,
@@ -171,7 +171,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                   gap: '0.375rem',
                 }}
               >
-                <span style={{ opacity: 0.7 }}>
+                <span style={{ opacity: 0.6 }}>
                   <CategoryIcon category={resolution.category} size={12} />
                 </span>
                 {categoryInfo.label}

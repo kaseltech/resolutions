@@ -254,7 +254,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <span style={{ opacity: 0.7 }}>
+                    <span style={{ opacity: 0.6 }}>
                       <CategoryIcon category={cat.value} size={14} />
                     </span>
                     {cat.label}
