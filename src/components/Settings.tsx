@@ -409,7 +409,7 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
               borderRadius: '0.75rem',
             }}>
               <div style={{ fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>
-                2026 Resolutions
+                YearVow
               </div>
               <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
                 Version 1.0.0

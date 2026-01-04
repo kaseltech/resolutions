@@ -54,7 +54,7 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'linear-gradient(180deg, #0a0f1a 0%, #0f172a 50%, #1e293b 100%)',
+        background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -75,7 +75,7 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            backgroundColor: '#ffffff',
+            backgroundColor: '#F6F4EF',
             borderRadius: '50%',
             opacity: 0,
             animation: phase !== 'initial'
@@ -93,32 +93,28 @@ export function AnimatedSplash({ onComplete, duration = 2000 }: AnimatedSplashPr
           transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
-        <Logo size={160} />
+        <Logo size="xl" />
       </div>
 
-      {/* App name */}
-      <h1
+      {/* Tagline */}
+      <p
         style={{
-          marginTop: '1.5rem',
-          fontSize: '1.75rem',
-          fontWeight: 600,
-          background: 'linear-gradient(135deg, #5eead4 0%, #2dd4bf 50%, #0d9488 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          letterSpacing: '0.05em',
+          marginTop: '1rem',
+          fontSize: '1rem',
+          color: '#94A3B8',
+          letterSpacing: '0.02em',
           opacity: phase !== 'initial' ? 1 : 0,
           transform: phase !== 'initial' ? 'translateY(0)' : 'translateY(10px)',
           transition: 'all 0.5s ease-out 0.2s',
         }}
       >
-        2026 Resolutions
-      </h1>
+        Make your resolutions count
+      </p>
 
       <style jsx>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.2; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.2); }
+          50% { opacity: 0.8; transform: scale(1.2); }
         }
       `}</style>
     </div>

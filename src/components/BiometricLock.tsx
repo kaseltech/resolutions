@@ -69,13 +69,13 @@ export function BiometricLock({ children }: BiometricLockProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
         <div style={{ animation: 'pulse 2s ease-in-out infinite' }}>
-          <Logo size={100} />
+          <Logo size="xl" />
         </div>
         <style jsx>{`
           @keyframes pulse {
@@ -98,13 +98,13 @@ export function BiometricLock({ children }: BiometricLockProps) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
           cursor: 'pointer',
         }}
       >
-        <Logo size={100} />
+        <Logo size="xl" />
 
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>

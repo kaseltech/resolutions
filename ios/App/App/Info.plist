@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>2026 Resolutions</string>
+	<string>YearVow</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -59,6 +59,6 @@
 		</dict>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use Face ID for quick and secure access to your resolutions</string>
+	<string>Use Face ID for quick and secure access to YearVow</string>
 </dict>
 </plist>

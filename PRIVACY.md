@@ -1,10 +1,10 @@
-# Privacy Policy for 2026 Resolutions
+# Privacy Policy for YearVow
 
-**Last updated: January 2, 2026**
+**Last updated: January 4, 2026**
 
 ## Overview
 
-2026 Resolutions ("the App") is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information.
+YearVow ("the App") is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your information.
 
 ## Information We Collect
 

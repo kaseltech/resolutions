@@ -258,3 +258,85 @@ Added social login (Apple/Google), spotlight tutorial for onboarding, help/feedb
 - Email backend for feedback form
 - Push notification improvements
 - Achievement badges system (planned)
+
+---
+
+## Session: January 4, 2026
+
+### Overview
+Major rebrand from "2026 Resolutions" to "YearVow" with new brand identity, colors, and logo.
+
+---
+
+### Changes Made
+
+#### 1. Complete App Rebrand - YearVow
+**Brand Identity:**
+- Name: YearVow
+- Logo: Text-only wordmark ("Year" light + "Vow" bold)
+- Primary Color: Midnight Blue `#0F1C2E`
+- Secondary/Background: Warm Neutral `#F6F4EF`
+
+**Files Modified:**
+- `src/components/Logo.tsx` - New text-based wordmark logo
+- `src/context/ThemeContext.tsx` - Updated color palette
+- `capacitor.config.ts` - appId: com.yearvow.app, appName: YearVow
+- `public/manifest.json` - Updated names and theme colors
+- `package.json` - name: yearvow
+- `src/app/layout.tsx` - Updated metadata
+- `ios/App/App/Info.plist` - CFBundleDisplayName: YearVow
+- `ios/App/App.xcodeproj/project.pbxproj` - PRODUCT_NAME updates
+- `src/app/page.tsx` - Header uses wordmark logo
+- `src/components/AnimatedSplash.tsx` - New splash with wordmark
+- `src/components/AuthForm.tsx` - Updated branding
+- `src/components/AuthGuard.tsx` - Updated colors
+- `src/components/Settings.tsx` - About section
+- `scripts/generate-assets.js` - YV monogram app icon
+- `src/lib/biometric.ts` - Updated prompts
+- `PRIVACY.md` - Updated app name
+
+---
+
+### New Color Palette
+```javascript
+// Light theme
+const lightColors = {
+  bg: '#F6F4EF',           // Warm neutral background
+  cardBg: '#ffffff',
+  accent: '#0F1C2E',       // Midnight blue accent
+  text: '#0F1C2E',         // Midnight blue text
+};
+
+// Dark theme
+const darkColors = {
+  bg: '#0F1C2E',           // Midnight blue background
+  cardBg: '#1A2B3C',
+  accent: '#5B8CB8',       // Lighter blue accent
+  text: '#F6F4EF',         // Warm neutral text
+};
+```
+
+---
+
+### Logo Component
+- Text-only wordmark using system fonts
+- "Year" in light weight (300), muted color
+- "Vow" in bold weight (700), standout color
+- Sizes: sm (18px), md (24px), lg (32px), xl (48px)
+- Supports light/dark themes
+
+---
+
+### App Icon
+- "YV" monogram on midnight blue gradient background
+- iOS automatically rounds corners
+- Generated at all required iOS sizes
+
+---
+
+### To Apply Changes
+1. Run `npm run build`
+2. Run `npx cap sync`
+3. Clean Xcode build: Product > Clean Build Folder
+4. Delete app from simulator/device
+5. Rebuild and run

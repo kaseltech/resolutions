@@ -188,7 +188,7 @@ export function AuthForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+      background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
       position: 'relative',
       overflow: 'hidden',
       paddingTop: 'calc(1rem + env(safe-area-inset-top))',
@@ -244,19 +244,10 @@ export function AuthForm() {
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Logo size={120} />
+            <Logo size="xl" />
           </div>
-          <h1 style={{
-            fontSize: '2.25rem',
-            fontWeight: '700',
-            color: '#f1f5f9',
-            letterSpacing: '0.02em',
-            marginBottom: '0.5rem'
-          }}>
-            2026 Resolutions
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '400' }}>
-            Chart your course for the year ahead
+          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem' }}>
+            Make your resolutions count
           </p>
         </div>
 

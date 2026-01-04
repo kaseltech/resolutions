@@ -181,10 +181,7 @@ export default function Home() {
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Logo size={44} />
-              <div>
-                <h1 style={{ fontSize: '1.125rem', fontWeight: '500', color: colors.text, margin: 0 }}>2026 Resolutions</h1>
-              </div>
+              <Logo size="lg" />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {/* Dark mode toggle */}
@@ -459,7 +456,7 @@ export default function Home() {
             <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎯</div>
             <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, marginBottom: '0.5rem' }}>No resolutions yet</h2>
             <p style={{ color: colors.textMuted, marginBottom: '1rem', fontSize: '0.875rem' }}>
-              Start your 2026 journey!
+              Start your journey!
             </p>
             <button
               onClick={handleOpenForm}

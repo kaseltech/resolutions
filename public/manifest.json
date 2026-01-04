@@ -1,11 +1,11 @@
 {
-  "name": "2026 Resolutions",
-  "short_name": "Resolutions",
-  "description": "Track your 2026 New Year's resolutions",
+  "name": "YearVow",
+  "short_name": "YearVow",
+  "description": "Make your resolutions count with YearVow",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#047857",
+  "background_color": "#0F1C2E",
+  "theme_color": "#0F1C2E",
   "orientation": "portrait-primary",
   "icons": [
     {

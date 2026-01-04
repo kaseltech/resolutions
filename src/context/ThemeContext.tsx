@@ -10,17 +10,17 @@ interface ThemeContextType {
   colors: typeof lightColors;
 }
 
-// Rugged outdoorsy light theme - slate, forest, earth tones
+// YearVow light theme - midnight blue accent with warm neutral
 const lightColors = {
-  bg: '#f1f5f9',
+  bg: '#F6F4EF',           // Warm neutral background
   cardBg: '#ffffff',
-  border: '#cbd5e1',
-  text: '#1e293b',
+  border: '#E5E2DB',       // Warm neutral border
+  text: '#0F1C2E',         // Midnight blue text
   textMuted: '#64748b',
-  accent: '#047857',
-  accentHover: '#065f46',
+  accent: '#0F1C2E',       // Midnight blue accent
+  accentHover: '#1A2B3C',
   inputBg: '#ffffff',
-  // Earthy category colors
+  // Category colors
   health: '#059669',
   career: '#0369a1',
   finance: '#b45309',
@@ -31,16 +31,16 @@ const lightColors = {
   other: '#475569',
 };
 
-// Dark theme - deep wilderness night
+// YearVow dark theme - midnight blue depths
 const darkColors = {
-  bg: '#0f172a',
-  cardBg: '#1e293b',
-  border: '#334155',
-  text: '#f1f5f9',
+  bg: '#0F1C2E',           // Midnight blue background
+  cardBg: '#1A2B3C',       // Lighter midnight
+  border: '#2A3B4C',
+  text: '#F6F4EF',         // Warm neutral text
   textMuted: '#94a3b8',
-  accent: '#10b981',
-  accentHover: '#34d399',
-  inputBg: '#1e293b',
+  accent: '#5B8CB8',       // Lighter blue accent for dark mode
+  accentHover: '#7AA8D4',
+  inputBg: '#1A2B3C',
   // Vibrant category colors for dark
   health: '#34d399',
   career: '#38bdf8',

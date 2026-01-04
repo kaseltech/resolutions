@@ -4,7 +4,7 @@ import { Preferences } from '@capacitor/preferences';
 
 const BIOMETRIC_ENABLED_KEY = 'biometric_login_enabled';
 const CREDENTIALS_STORED_KEY = 'biometric_credentials_stored';
-const CREDENTIALS_SERVER = 'com.resolutions.app';
+const CREDENTIALS_SERVER = 'com.yearvow.app';
 
 export async function isBiometricAvailable(): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) {
@@ -120,7 +120,7 @@ export async function getStoredCredentials(): Promise<{ email: string; password:
     // Verify identity with Face ID
     console.log('getStoredCredentials: Requesting Face ID verification');
     await NativeBiometric.verifyIdentity({
-      reason: 'Sign in to your 2026 Resolutions',
+      reason: 'Sign in to YearVow',
       title: 'Sign In',
       subtitle: 'Authenticate to access your account',
       description: '',
@@ -175,7 +175,7 @@ export async function authenticateWithBiometric(): Promise<boolean> {
 
   try {
     await NativeBiometric.verifyIdentity({
-      reason: 'Access your 2026 Resolutions',
+      reason: 'Access YearVow',
       title: 'Unlock App',
       subtitle: 'Use biometric authentication to continue',
       description: '',

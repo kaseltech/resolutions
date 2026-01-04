@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.resolutions2026.app',
-  appName: '2026 Resolutions',
+  appId: 'com.yearvow.app',
+  appName: 'YearVow',
   webDir: 'out',
   ios: {
     contentInset: 'automatic',
@@ -15,7 +15,7 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchShowDuration: 2000,
       launchAutoHide: true,
-      backgroundColor: '#0f172a',
+      backgroundColor: '#0F1C2E',
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,

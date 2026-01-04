@@ -34,7 +34,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       <div
         style={{
           minHeight: '100vh',
-          background: 'linear-gradient(180deg, #0a0f1a 0%, #0f172a 40%, #1e293b 100%)',
+          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
         }}
       />
     );
@@ -54,7 +54,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+          background: 'linear-gradient(180deg, #0F1C2E 0%, #1A2B3C 50%, #0F1C2E 100%)',
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
@@ -64,8 +64,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
           style={{
             width: '24px',
             height: '24px',
-            border: '2px solid rgba(16, 185, 129, 0.2)',
-            borderTopColor: '#10b981',
+            border: '2px solid rgba(91, 140, 184, 0.2)',
+            borderTopColor: '#5B8CB8',
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
           }}

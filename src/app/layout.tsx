@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "2026 Resolutions Tracker",
-  description: "Track and achieve your 2026 New Year's resolutions",
+  title: "YearVow - Resolution Tracker",
+  description: "Make your resolutions count with YearVow",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ backgroundColor: '#F5F5F0' }}
+        style={{ backgroundColor: '#F6F4EF' }}
       >
         <Providers>
           {children}
