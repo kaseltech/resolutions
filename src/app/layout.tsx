@@ -22,6 +22,14 @@ const libreBaskerville = Libre_Baskerville({
 export const metadata: Metadata = {
   title: "YearVow - Resolution Tracker",
   description: "Make your resolutions count with YearVow",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/icon-16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({

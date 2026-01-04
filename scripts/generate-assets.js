@@ -1,40 +1,38 @@
 const sharp = require('sharp');
+const fs = require('fs');
 const path = require('path');
 
-// YearVow Color Theme - Navy & Cream
+// YearVow Color Theme
 const COLORS = {
-  navy: '#1E3A5F',         // Deep navy blue
-  navyLight: '#2A4A6F',    // Lighter navy
-  cream: '#F5F1EA',        // Warm cream
-  gold: '#C4A35A',         // Gold accent
+  navy: '#1F3A5A',         // Deep navy blue (background)
+  cream: '#F5F4EF',        // Off-white (letter)
+  gold: '#C9A75A',         // Gold accent (optional)
   textMuted: '#B8C4D0',
 };
 
-// Generate YearVow "YV" monogram app icon SVG
+// Generate YearVow "Y" favicon/icon SVG
+// - Centered Y with optical vertical centering (slightly above true center)
+// - Letter height ~65-70% of canvas
+// - Solid navy background, no gradient/shadow/border
 function generateAppIconSVG(size) {
+  // Optical centering: y position slightly above center
+  // For a 100-unit viewBox, center would be y=50, we go ~48 for optical
+  // Font size ~68% of canvas height for letter height 65-70%
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${COLORS.navy}" />
-      <stop offset="100%" stop-color="${COLORS.navyLight}" />
-    </linearGradient>
-  </defs>
+  <!-- Solid navy background -->
+  <rect x="0" y="0" width="100" height="100" fill="${COLORS.navy}" />
 
-  <!-- Full square navy background - iOS will round the corners -->
-  <rect x="0" y="0" width="100" height="100" fill="url(#bgGrad)" />
-
-  <!-- YV Monogram in serif font -->
+  <!-- Y in serif font, optically centered -->
   <text
     x="50"
-    y="64"
+    y="67"
     text-anchor="middle"
-    font-family="Georgia, 'Times New Roman', Times, serif"
-    font-size="44"
-    font-weight="400"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="68"
+    font-weight="500"
     fill="${COLORS.cream}"
-    letter-spacing="-1"
-  >YV</text>
+  >Y</text>
 </svg>`;
 }
 
@@ -58,7 +56,7 @@ function generateSplashSVG(size) {
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="${COLORS.navy}" />
-      <stop offset="50%" stop-color="${COLORS.navyLight}" />
+      <stop offset="50%" stop-color="#2A4A6F" />
       <stop offset="100%" stop-color="${COLORS.navy}" />
     </linearGradient>
   </defs>
@@ -75,7 +73,7 @@ function generateSplashSVG(size) {
     y="${centerY}"
     text-anchor="middle"
     dominant-baseline="middle"
-    font-family="Georgia, 'Times New Roman', Times, serif"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
     font-size="140"
     font-weight="400"
     fill="${COLORS.cream}"
@@ -87,7 +85,7 @@ function generateSplashSVG(size) {
     x="${centerX}"
     y="${centerY + 90}"
     text-anchor="middle"
-    font-family="Georgia, 'Times New Roman', Times, serif"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
     font-size="36"
     fill="${COLORS.textMuted}"
     opacity="0.8"
@@ -97,9 +95,16 @@ function generateSplashSVG(size) {
 
 async function generateAssets() {
   const iosAssetsPath = path.join(__dirname, '../ios/App/App/Assets.xcassets');
+  const publicPath = path.join(__dirname, '../public');
+  const iconsPath = path.join(publicPath, 'icons');
+
+  // Ensure icons directory exists
+  if (!fs.existsSync(iconsPath)) {
+    fs.mkdirSync(iconsPath, { recursive: true });
+  }
 
   // App Icon sizes for iOS
-  const iconSizes = [
+  const iosIconSizes = [
     { size: 20, scales: [1, 2, 3] },
     { size: 29, scales: [2, 3] },
     { size: 40, scales: [1, 2, 3] },
@@ -110,11 +115,15 @@ async function generateAssets() {
     { size: 1024, scales: [1] },
   ];
 
+  // Web favicon sizes
+  const webIconSizes = [16, 32, 48, 64, 180, 192, 512];
+
   console.log('Generating YearVow app icons...');
 
   const iconSvg = Buffer.from(generateAppIconSVG(1024));
 
-  for (const { size, scales } of iconSizes) {
+  // Generate iOS icons
+  for (const { size, scales } of iosIconSizes) {
     for (const scale of scales) {
       const pixelSize = Math.round(size * scale);
       const filename = scale === 1
@@ -131,6 +140,41 @@ async function generateAssets() {
       console.log(`  Created ${filename} (${pixelSize}x${pixelSize})`);
     }
   }
+
+  console.log('\nGenerating web favicons...');
+
+  // Generate web favicons (PNG)
+  for (const size of webIconSizes) {
+    const filename = `icon-${size}.png`;
+    const outputPath = path.join(iconsPath, filename);
+
+    await sharp(iconSvg)
+      .resize(size, size)
+      .png()
+      .toFile(outputPath);
+
+    console.log(`  Created ${filename}`);
+  }
+
+  // Generate SVG favicon
+  const svgFavicon = generateAppIconSVG(32);
+  fs.writeFileSync(path.join(publicPath, 'favicon.svg'), svgFavicon);
+  console.log('  Created favicon.svg');
+
+  // Generate apple-touch-icon (180x180)
+  await sharp(iconSvg)
+    .resize(180, 180)
+    .png()
+    .toFile(path.join(publicPath, 'apple-touch-icon.png'));
+  console.log('  Created apple-touch-icon.png');
+
+  // Generate favicon.ico (multi-size)
+  // For simplicity, we'll use the 32x32 as the main .ico
+  await sharp(iconSvg)
+    .resize(32, 32)
+    .png()
+    .toFile(path.join(publicPath, 'favicon.png'));
+  console.log('  Created favicon.png');
 
   console.log('\nGenerating splash screens...');
 

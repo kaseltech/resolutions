@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Solid navy background -->
+  <rect x="0" y="0" width="100" height="100" fill="#1F3A5A" />
+
+  <!-- Y in serif font, optically centered -->
+  <text
+    x="50"
+    y="67"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="68"
+    font-weight="500"
+    fill="#F5F4EF"
+  >Y</text>
+</svg>
