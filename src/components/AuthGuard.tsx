@@ -1,13 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { AuthForm } from './AuthForm';
 import { AnimatedSplash } from './AnimatedSplash';
+import { Capacitor } from '@capacitor/core';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const [splashState, setSplashState] = useState<'checking' | 'show' | 'hidden'>('checking');
+
+  // Hide the native splash screen
+  const hideNativeSplash = useCallback(async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await SplashScreen.hide();
+      } catch (e) {
+        // Splash screen may already be hidden
+      }
+    }
+  }, []);
 
   // Check if this is a fresh app launch (not a hot reload)
   useEffect(() => {
@@ -17,10 +30,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const seen = sessionStorage.getItem('splashSeen');
     if (seen) {
       setSplashState('hidden');
+      // Hide native splash immediately if we're skipping the animated splash
+      hideNativeSplash();
     } else {
       setSplashState('show');
+      // Hide native splash so our animated splash can show
+      hideNativeSplash();
     }
-  }, []);
+  }, [hideNativeSplash]);
 
   const handleSplashComplete = () => {
     sessionStorage.setItem('splashSeen', 'true');
