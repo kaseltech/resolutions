@@ -141,7 +141,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
           Week {currentWeek} of 52
         </span>
         <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>
-          {daysRemaining} days left in 2026
+          <span style={{ color: '#C9A75A', fontWeight: 600 }}>{daysRemaining}</span> days left in <span style={{ color: '#C9A75A' }}>2026</span>
         </span>
       </div>
 
