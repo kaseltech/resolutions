@@ -416,9 +416,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   placeholder="250"
                   style={{ ...inputStyle, flex: 1 }}
                 />
-                <span style={{ fontSize: '0.875rem', color: colors.textMuted, width: '4rem', textAlign: 'center' }}>
-                  {formData.unit || 'units'}
-                </span>
+                <input
+                  type="text"
+                  value={formData.unit}
+                  onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                  placeholder="lbs"
+                  style={{ ...inputStyle, width: '4rem', textAlign: 'center' }}
+                />
               </div>
 
               {/* Current value - only show when editing */}
@@ -433,9 +437,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       placeholder="235"
                       style={{ ...inputStyle, flex: 1 }}
                     />
-                    <span style={{ fontSize: '0.875rem', color: colors.textMuted, width: '4rem', textAlign: 'center' }}>
-                      {formData.unit || 'units'}
-                    </span>
+                    <input
+                      type="text"
+                      value={formData.unit}
+                      onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                      placeholder="lbs"
+                      style={{ ...inputStyle, width: '4rem', textAlign: 'center' }}
+                    />
                   </div>
                 </div>
               )}

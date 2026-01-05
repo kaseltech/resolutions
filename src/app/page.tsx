@@ -382,7 +382,7 @@ export default function Home() {
         {/* Dashboard View */}
         {view === 'dashboard' && (
           <div style={{ marginBottom: '1.5rem' }}>
-            <DashboardStats />
+            <DashboardStats onEditResolution={handleEdit} />
           </div>
         )}
 

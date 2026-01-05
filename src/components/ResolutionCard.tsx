@@ -283,9 +283,9 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         position: 'relative',
       }}
     >
-      {/* Tappable card header area - clicking opens edit */}
+      {/* Tappable card header area - clicking expands journal/notes */}
       <div
-        onClick={() => onEdit(resolution)}
+        onClick={() => setExpanded(!expanded)}
         style={{
           padding: '1.25rem',
           paddingBottom: '0',
