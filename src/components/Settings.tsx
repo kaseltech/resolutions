@@ -17,7 +17,6 @@ import { Toggle } from './Toggle';
 import { lightTap } from '@/lib/haptics';
 import { resetOnboarding } from './SpotlightTutorial';
 import { HelpFeedback } from './HelpFeedback';
-import { useViewMode, VIEW_MODE_INFO, ViewMode } from '@/context/ViewModeContext';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -27,7 +26,6 @@ interface SettingsProps {
 
 export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
   const { colors } = useTheme();
-  const { viewMode, setViewMode } = useViewMode();
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricOn, setBiometricOn] = useState(false);
   const [biometryType, setBiometryType] = useState('Face ID');
@@ -236,69 +234,6 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
                   Enable notifications to receive reminders for your resolutions.
                 </p>
               )}
-            </div>
-          </div>
-
-          {/* View Mode Section */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: colors.textMuted,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              margin: '0 0 1rem',
-            }}>
-              View Mode
-            </h3>
-
-            <div style={{
-              backgroundColor: colors.bg,
-              borderRadius: '0.75rem',
-              overflow: 'hidden',
-            }}>
-              {(Object.keys(VIEW_MODE_INFO) as ViewMode[]).map((mode, index) => {
-                const info = VIEW_MODE_INFO[mode];
-                const isSelected = viewMode === mode;
-                const isLast = index === Object.keys(VIEW_MODE_INFO).length - 1;
-
-                return (
-                  <button
-                    key={mode}
-                    onClick={() => { lightTap(); setViewMode(mode); }}
-                    style={{
-                      width: '100%',
-                      padding: '1rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      backgroundColor: isSelected ? colors.progressMuted : 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      borderBottom: isLast ? 'none' : `1px solid ${colors.border}`,
-                      transition: 'background-color 0.15s ease',
-                    }}
-                  >
-                    <span style={{ fontSize: '1.25rem' }}>{info.icon}</span>
-                    <div style={{ flex: 1, textAlign: 'left' }}>
-                      <div style={{
-                        fontWeight: 500,
-                        color: isSelected ? colors.progress : colors.text,
-                      }}>
-                        {info.label}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
-                        {info.description}
-                      </div>
-                    </div>
-                    {isSelected && (
-                      <svg style={{ width: '1.25rem', height: '1.25rem', color: colors.progress }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </button>
-                );
-              })}
             </div>
           </div>
 

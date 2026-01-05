@@ -9,9 +9,10 @@ import { CategoryIcon } from './CategoryIcon';
 interface CategoryFilterProps {
   selected: Category | 'all';
   onChange: (category: Category | 'all') => void;
+  variant?: 'dropdown' | 'list';
 }
 
-export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
+export function CategoryFilter({ selected, onChange, variant = 'dropdown' }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { getUsedCategories, resolutions } = useResolutions();
@@ -45,6 +46,63 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
 
   if (categoriesWithCounts.length === 0) {
     return null;
+  }
+
+  // List variant - renders inline buttons for use in dropdowns
+  if (variant === 'list') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+        <button
+          onClick={() => onChange('all')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            padding: '0.5rem 0.5rem',
+            backgroundColor: selected === 'all' ? `${colors.accent}15` : 'transparent',
+            border: 'none',
+            borderRadius: '0.375rem',
+            fontSize: '0.8125rem',
+            color: selected === 'all' ? colors.accent : colors.text,
+            cursor: 'pointer',
+            textAlign: 'left',
+          }}
+        >
+          {selected === 'all' && (
+            <svg style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.5rem' }} fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+          )}
+          <span style={{ marginLeft: selected === 'all' ? 0 : '1.25rem' }}>All</span>
+        </button>
+        {categoriesWithCounts.map((cat) => (
+          <button
+            key={cat.value}
+            onClick={() => onChange(cat.value)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              padding: '0.5rem 0.5rem',
+              backgroundColor: selected === cat.value ? `${colors.accent}15` : 'transparent',
+              border: 'none',
+              borderRadius: '0.375rem',
+              fontSize: '0.8125rem',
+              color: selected === cat.value ? colors.accent : colors.text,
+              cursor: 'pointer',
+              textAlign: 'left',
+            }}
+          >
+            {selected === cat.value && (
+              <svg style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.5rem' }} fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            )}
+            <span style={{ marginLeft: selected === cat.value ? 0 : '1.25rem' }}>{cat.label}</span>
+          </button>
+        ))}
+      </div>
+    );
   }
 
   return (

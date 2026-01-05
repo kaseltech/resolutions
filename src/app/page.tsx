@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
-import { useViewMode } from '@/context/ViewModeContext';
 import { Resolution, Category } from '@/types';
 import { ResolutionCard } from '@/components/ResolutionCard';
 import { ResolutionForm } from '@/components/ResolutionForm';
@@ -22,17 +21,13 @@ export default function Home() {
   const { resolutions, loading, getResolutionsByCategory, reorderResolutions, updateProgress, showCelebration, celebrationMessage, dismissCelebration } = useResolutions();
   const { signOut } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
-  const { viewMode } = useViewMode();
 
-  // Mode-specific settings
-  const showStats = viewMode !== 'focus';  // Hide stats in Focus mode
-  const showViewToggle = viewMode !== 'focus';  // Hide view toggle in Focus mode
-  const showAtmosphere = viewMode === 'reflect';  // Show atmosphere in Reflect mode
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('custom');
-  const [view, setView] = useState<'dashboard' | 'list'>('dashboard');
+  const [view, setView] = useState<'today' | 'all'>('today');
+  const [showFilterSort, setShowFilterSort] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
@@ -199,22 +194,6 @@ export default function Home() {
         transition: 'background-color 0.3s ease, border-color 0.3s ease',
         paddingTop: 'env(safe-area-inset-top)',
       }}>
-        {/* Atmospheric texture - Reflect mode only */}
-        {showAtmosphere && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            opacity: theme === 'dark' ? 0.15 : 0.08,
-            pointerEvents: 'none',
-            background: `radial-gradient(1px 1px at 20px 30px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
-                        radial-gradient(1px 1px at 40px 70px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
-                        radial-gradient(1px 1px at 50px 160px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
-                        radial-gradient(1px 1px at 90px 40px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
-                        radial-gradient(1px 1px at 130px 80px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
-                        radial-gradient(1px 1px at 160px 120px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent)`,
-            backgroundSize: '200px 200px',
-          }} />
-        )}
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -323,89 +302,190 @@ export default function Home() {
 
       {/* Main Content */}
       <main style={{ maxWidth: '72rem', margin: '0 auto', padding: '1rem' }}>
-        {/* View Toggle & Sort - Responsive (hidden in Focus mode) */}
+        {/* Today / All Goals Navigation */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
+          justifyContent: 'space-between',
           marginBottom: '1rem',
-          flexWrap: 'wrap'
         }}>
-          {showViewToggle && (
-            <div
-              data-tutorial="view-toggle"
-              style={{
+          {/* Primary Nav Tabs */}
+          <div
+            data-tutorial="view-toggle"
+            style={{
               display: 'flex',
               backgroundColor: colors.cardBg,
               borderRadius: '0.5rem',
               padding: '0.25rem',
               border: `1px solid ${colors.border}`,
-              flex: '0 0 auto'
-            }}>
-              <button
-                onClick={() => setView('dashboard')}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: '0.375rem',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  border: 'none',
-                  cursor: 'pointer',
-                  backgroundColor: view === 'dashboard' ? colors.accent : 'transparent',
-                  color: view === 'dashboard' ? 'white' : colors.textMuted,
-                }}
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => setView('list')}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: '0.375rem',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  border: 'none',
-                  cursor: 'pointer',
-                  backgroundColor: view === 'list' ? colors.accent : 'transparent',
-                  color: view === 'list' ? 'white' : colors.textMuted,
-                }}
-              >
-                List
-              </button>
-            </div>
-          )}
-
-          {resolutions.length > 0 && (
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
+            }}
+          >
+            <button
+              onClick={() => setView('today')}
               style={{
-                padding: '0.5rem 0.625rem',
-                backgroundColor: colors.cardBg,
-                border: `1px solid ${colors.border}`,
-                borderRadius: '0.5rem',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.375rem',
                 fontSize: '0.8125rem',
-                color: colors.text,
-                flex: '0 0 auto',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: view === 'today' ? colors.accent : 'transparent',
+                color: view === 'today' ? 'white' : colors.textMuted,
               }}
             >
-              <option value="custom">Custom Order</option>
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="progress-high">Most Progress</option>
-              <option value="progress-low">Least Progress</option>
-              <option value="deadline">By Deadline</option>
-            </select>
-          )}
+              Today
+            </button>
+            <button
+              onClick={() => setView('all')}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: view === 'all' ? colors.accent : 'transparent',
+                color: view === 'all' ? 'white' : colors.textMuted,
+              }}
+            >
+              All Goals
+            </button>
+          </div>
 
-          {/* Category Filter - inline on mobile */}
-          {resolutions.length > 0 && (
-            <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
+          {/* Filter/Sort Button - Only show in All Goals view when there are resolutions */}
+          {view === 'all' && resolutions.length > 0 && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowFilterSort(!showFilterSort)}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  backgroundColor: (sortBy !== 'custom' || selectedCategory !== 'all') ? `${colors.accent}15` : colors.cardBg,
+                  border: `1px solid ${(sortBy !== 'custom' || selectedCategory !== 'all') ? colors.accent : colors.border}`,
+                  borderRadius: '0.5rem',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  color: (sortBy !== 'custom' || selectedCategory !== 'all') ? colors.accent : colors.textMuted,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.375rem',
+                }}
+              >
+                <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                </svg>
+                Filter
+                {(sortBy !== 'custom' || selectedCategory !== 'all') && (
+                  <span style={{
+                    width: '0.375rem',
+                    height: '0.375rem',
+                    borderRadius: '50%',
+                    backgroundColor: colors.accent,
+                  }} />
+                )}
+              </button>
+
+              {/* Filter/Sort Dropdown */}
+              {showFilterSort && (
+                <>
+                  <div
+                    style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                    onClick={() => setShowFilterSort(false)}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '0.5rem',
+                    backgroundColor: colors.cardBg,
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: '0.75rem',
+                    boxShadow: theme === 'light'
+                      ? '0 4px 16px rgba(0,0,0,0.1)'
+                      : '0 4px 16px rgba(0,0,0,0.3)',
+                    zIndex: 50,
+                    minWidth: '200px',
+                    overflow: 'hidden',
+                  }}>
+                    {/* Sort Section */}
+                    <div style={{ padding: '0.75rem', borderBottom: `1px solid ${colors.border}` }}>
+                      <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: colors.textMuted, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Sort by
+                      </div>
+                      {[
+                        { value: 'custom', label: 'Manual order' },
+                        { value: 'deadline', label: 'Due date' },
+                        { value: 'progress-high', label: 'Most progress' },
+                        { value: 'progress-low', label: 'Least progress' },
+                        { value: 'newest', label: 'Newest' },
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => setSortBy(option.value as SortOption)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            padding: '0.5rem 0.5rem',
+                            backgroundColor: sortBy === option.value ? `${colors.accent}15` : 'transparent',
+                            border: 'none',
+                            borderRadius: '0.375rem',
+                            fontSize: '0.8125rem',
+                            color: sortBy === option.value ? colors.accent : colors.text,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                          }}
+                        >
+                          {sortBy === option.value && (
+                            <svg style={{ width: '0.75rem', height: '0.75rem', marginRight: '0.5rem' }} fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                            </svg>
+                          )}
+                          <span style={{ marginLeft: sortBy === option.value ? 0 : '1.25rem' }}>{option.label}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Category Section */}
+                    <div style={{ padding: '0.75rem' }}>
+                      <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: colors.textMuted, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Category
+                      </div>
+                      <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} variant="list" />
+                    </div>
+
+                    {/* Reset Button */}
+                    {(sortBy !== 'custom' || selectedCategory !== 'all') && (
+                      <div style={{ padding: '0.5rem 0.75rem', borderTop: `1px solid ${colors.border}` }}>
+                        <button
+                          onClick={() => {
+                            setSortBy('custom');
+                            setSelectedCategory('all');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            borderRadius: '0.375rem',
+                            fontSize: '0.75rem',
+                            color: colors.textMuted,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Reset filters
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Dashboard View - hidden in Focus mode */}
-        {view === 'dashboard' && showStats && (
+        {/* Today View - Stats + Actionable Items */}
+        {view === 'today' && (
           <div style={{ marginBottom: '1.5rem' }}>
             <DashboardStats onEditResolution={handleEdit} />
           </div>
@@ -488,10 +568,10 @@ export default function Home() {
           <div style={{ textAlign: 'center', padding: '2rem 1rem', color: colors.textMuted }}>
             No resolutions in this category yet.
           </div>
-        ) : view === 'list' ? (
+        ) : view === 'all' ? (
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎯</div>
-            <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, marginBottom: '0.5rem' }}>No resolutions yet</h2>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, marginBottom: '0.5rem' }}>No goals yet</h2>
             <p style={{ color: colors.textMuted, marginBottom: '1rem', fontSize: '0.875rem' }}>
               Start your journey!
             </p>
@@ -508,7 +588,7 @@ export default function Home() {
                 fontSize: '0.875rem',
               }}
             >
-              Create Resolution
+              Create Goal
             </button>
           </div>
         ) : null}
