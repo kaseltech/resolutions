@@ -6,33 +6,65 @@ const path = require('path');
 const COLORS = {
   navy: '#1F3A5A',         // Deep navy blue (background)
   cream: '#F5F4EF',        // Off-white (letter)
-  gold: '#C9A75A',         // Gold accent (optional)
+  gold: '#C9A75A',         // Gold accent
   textMuted: '#B8C4D0',
 };
 
-// Generate YearVow "Y" favicon/icon SVG
-// - Centered Y with optical vertical centering (slightly above true center)
-// - Letter height ~65-70% of canvas
-// - Solid navy background, no gradient/shadow/border
+// Current year for the icon
+const CURRENT_YEAR = '2026';
+
+// Generate YearVow "V + Year" app icon SVG
+// - Integrated design: Large V with year tucked underneath
+// - Polished, cohesive feel like a luxury monogram
 function generateAppIconSVG(size) {
-  // Optical centering: y position slightly above center
-  // For a 100-unit viewBox, center would be y=50, we go ~48 for optical
-  // Font size ~68% of canvas height for letter height 65-70%
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Solid navy background with subtle rounded corners for app icon feel -->
+  <rect x="0" y="0" width="100" height="100" fill="${COLORS.navy}" />
+
+  <!-- Large serif V - the primary mark -->
+  <text
+    x="50"
+    y="58"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="58"
+    font-weight="400"
+    fill="${COLORS.gold}"
+    letter-spacing="-1"
+  >V</text>
+
+  <!-- Year tucked underneath, integrated with the V -->
+  <text
+    x="50"
+    y="80"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="18"
+    font-weight="400"
+    fill="${COLORS.gold}"
+    letter-spacing="3"
+  >${CURRENT_YEAR}</text>
+</svg>`;
+}
+
+// Generate V-only favicon SVG (no year, just the V mark)
+function generateFaviconSVG(size) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <!-- Solid navy background -->
   <rect x="0" y="0" width="100" height="100" fill="${COLORS.navy}" />
 
-  <!-- Y in serif font, optically centered -->
+  <!-- Serif V centered -->
   <text
     x="50"
-    y="67"
+    y="68"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="68"
-    font-weight="500"
-    fill="${COLORS.cream}"
-  >Y</text>
+    font-size="65"
+    font-weight="400"
+    fill="${COLORS.gold}"
+  >V</text>
 </svg>`;
 }
 
@@ -67,23 +99,34 @@ function generateSplashSVG(size) {
   <!-- Twinkling stars -->
   ${stars.join('\n  ')}
 
-  <!-- YearVow wordmark in serif -->
+  <!-- Large V mark -->
   <text
     x="${centerX}"
-    y="${centerY}"
+    y="${centerY - 20}"
     text-anchor="middle"
     dominant-baseline="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="140"
+    font-size="200"
     font-weight="400"
-    fill="${COLORS.cream}"
-    letter-spacing="-2"
-  >YearVow</text>
+    fill="${COLORS.gold}"
+  >V</text>
+
+  <!-- Year below -->
+  <text
+    x="${centerX}"
+    y="${centerY + 100}"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="60"
+    font-weight="400"
+    fill="${COLORS.gold}"
+    letter-spacing="8"
+  >${CURRENT_YEAR}</text>
 
   <!-- Tagline -->
   <text
     x="${centerX}"
-    y="${centerY + 90}"
+    y="${centerY + 180}"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
     font-size="36"
@@ -115,14 +158,15 @@ async function generateAssets() {
     { size: 1024, scales: [1] },
   ];
 
-  // Web favicon sizes
-  const webIconSizes = [16, 32, 48, 64, 180, 192, 512];
+  // Web icon sizes (use V + year for larger, V only for small)
+  const webIconSizes = [192, 512];
+  const faviconSizes = [16, 32, 48, 64, 180];
 
-  console.log('Generating YearVow app icons...');
+  console.log('Generating YearVow V + 2026 app icons...');
 
-  const iconSvg = Buffer.from(generateAppIconSVG(1024));
+  const appIconSvg = Buffer.from(generateAppIconSVG(1024));
 
-  // Generate iOS icons
+  // Generate iOS icons (V + Year)
   for (const { size, scales } of iosIconSizes) {
     for (const scale of scales) {
       const pixelSize = Math.round(size * scale);
@@ -132,7 +176,7 @@ async function generateAssets() {
 
       const outputPath = path.join(iosAssetsPath, 'AppIcon.appiconset', filename);
 
-      await sharp(iconSvg)
+      await sharp(appIconSvg)
         .resize(pixelSize, pixelSize)
         .png()
         .toFile(outputPath);
@@ -141,14 +185,14 @@ async function generateAssets() {
     }
   }
 
-  console.log('\nGenerating web favicons...');
+  console.log('\nGenerating web icons (V + 2026)...');
 
-  // Generate web favicons (PNG)
+  // Generate larger web icons (V + year)
   for (const size of webIconSizes) {
     const filename = `icon-${size}.png`;
     const outputPath = path.join(iconsPath, filename);
 
-    await sharp(iconSvg)
+    await sharp(appIconSvg)
       .resize(size, size)
       .png()
       .toFile(outputPath);
@@ -156,21 +200,37 @@ async function generateAssets() {
     console.log(`  Created ${filename}`);
   }
 
-  // Generate SVG favicon
-  const svgFavicon = generateAppIconSVG(32);
+  console.log('\nGenerating favicons (V only)...');
+
+  const faviconSvg = Buffer.from(generateFaviconSVG(512));
+
+  // Generate favicon sizes (V only - cleaner at small sizes)
+  for (const size of faviconSizes) {
+    const filename = `icon-${size}.png`;
+    const outputPath = path.join(iconsPath, filename);
+
+    await sharp(faviconSvg)
+      .resize(size, size)
+      .png()
+      .toFile(outputPath);
+
+    console.log(`  Created ${filename}`);
+  }
+
+  // Generate SVG favicon (V only)
+  const svgFavicon = generateFaviconSVG(32);
   fs.writeFileSync(path.join(publicPath, 'favicon.svg'), svgFavicon);
   console.log('  Created favicon.svg');
 
-  // Generate apple-touch-icon (180x180)
-  await sharp(iconSvg)
+  // Generate apple-touch-icon (180x180) - V only for clarity
+  await sharp(faviconSvg)
     .resize(180, 180)
     .png()
     .toFile(path.join(publicPath, 'apple-touch-icon.png'));
   console.log('  Created apple-touch-icon.png');
 
-  // Generate favicon.ico (multi-size)
-  // For simplicity, we'll use the 32x32 as the main .ico
-  await sharp(iconSvg)
+  // Generate favicon.png (32x32) - V only
+  await sharp(faviconSvg)
     .resize(32, 32)
     .png()
     .toFile(path.join(publicPath, 'favicon.png'));
@@ -198,7 +258,8 @@ async function generateAssets() {
     console.log(`  Created ${filename}`);
   }
 
-  console.log('\nDone! Run `npx cap sync` to update the iOS project.');
+  console.log('\n✓ Done! New V + 2026 icons generated.');
+  console.log('  Run `npx cap sync` to update the iOS project.');
 }
 
 generateAssets().catch(console.error);
