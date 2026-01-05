@@ -211,14 +211,14 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
             )}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {frequencyProgress.slice(0, 4).map(({ resolution, count, target, period }) => {
+            {frequencyProgress.slice(0, 4).map(({ resolution, count, target }) => {
               const progress = Math.min(100, (count / target) * 100);
               const isBehind = fallingBehind.some(f => f.resolution.id === resolution.id);
-              const periodLabel = period === 'day' ? 'today' : period === 'week' ? 'this week' : 'this month';
 
               return (
-                <div
+                <button
                   key={resolution.id}
+                  onClick={() => onEditResolution?.(resolution)}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -228,12 +228,16 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                     borderRadius: '0.5rem',
                     width: '100%',
                     textAlign: 'left',
+                    border: 'none',
+                    cursor: onEditResolution ? 'pointer' : 'default',
+                    transition: 'background-color 0.15s ease',
                   }}
+                  className="habit-row"
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{
                       fontSize: '0.8125rem',
-                      color: colors.text,
+                      color: isBehind ? colors.textMuted : colors.text,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -241,13 +245,23 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                       marginRight: '0.5rem',
                     }}>
                       {resolution.title}
+                      {isBehind && (
+                        <span style={{
+                          marginLeft: '0.375rem',
+                          fontSize: '0.625rem',
+                          color: theme === 'light' ? '#C4A0A0' : '#f87171',
+                          fontWeight: 500,
+                        }}>
+                          behind
+                        </span>
+                      )}
                     </span>
                     <span style={{
                       fontSize: '0.75rem',
                       fontWeight: 500,
-                      color: count >= target ? colors.accent : (isBehind ? colors.textMuted : colors.text),
+                      color: count >= target ? colors.accent : colors.textMuted,
                     }}>
-                      {count}/{target} {periodLabel}
+                      {count}/{target}
                     </span>
                   </div>
                   {/* Mini progress bar */}
@@ -260,12 +274,12 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                     <div style={{
                       width: `${progress}%`,
                       height: '100%',
-                      backgroundColor: count >= target ? colors.accent : (theme === 'light' ? '#1F3A5A' : '#60a5fa'),
+                      backgroundColor: count >= target ? colors.accent : (isBehind ? (theme === 'light' ? '#C4A0A0' : '#f87171') : (theme === 'light' ? '#1F3A5A' : '#60a5fa')),
                       borderRadius: '9999px',
                       transition: 'width 0.3s ease',
                     }} />
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -285,61 +299,6 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
               {showDetails ? 'Show less' : `+${frequencyProgress.length - 4} more`}
             </button>
           )}
-        </div>
-      )}
-
-      {/* Falling Behind Alert - only shows when significantly behind */}
-      {fallingBehind.length > 0 && (
-        <div style={{
-          ...cardStyle,
-          borderLeft: `3px solid ${colors.textMuted}`,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: colors.textMuted }}>
-              Falling behind
-            </span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-            {fallingBehind.slice(0, 3).map(({ resolution, count, target }) => {
-              const periodLabel = resolution.frequencyPeriod === 'day' ? 'today' : resolution.frequencyPeriod === 'week' ? 'this week' : 'this month';
-              return (
-                <button
-                  key={resolution.id}
-                  onClick={() => onEditResolution?.(resolution)}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '0.5rem 0.625rem',
-                    backgroundColor: colors.bg,
-                    borderRadius: '0.375rem',
-                    border: 'none',
-                    width: '100%',
-                    cursor: onEditResolution ? 'pointer' : 'default',
-                    textAlign: 'left',
-                  }}
-                >
-                  <span style={{
-                    fontSize: '0.8125rem',
-                    color: colors.text,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flex: 1,
-                    marginRight: '0.5rem',
-                  }}>
-                    {resolution.title}
-                  </span>
-                  <span style={{
-                    fontSize: '0.6875rem',
-                    color: colors.textMuted,
-                  }}>
-                    {count}/{target} {periodLabel}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       )}
 

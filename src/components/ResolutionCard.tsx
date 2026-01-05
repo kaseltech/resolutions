@@ -84,6 +84,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [menuAnchorPosition, setMenuAnchorPosition] = useState<{ x: number; y: number } | undefined>();
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [showQuickUpdate, setShowQuickUpdate] = useState(false);
+  const [showJournalPrompt, setShowJournalPrompt] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution } = useResolutions();
   const { theme, colors } = useTheme();
@@ -423,7 +424,10 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                     </div>
                     {!checkedInToday ? (
                       <button
-                        onClick={() => addCheckIn(resolution.id)}
+                        onClick={() => {
+                          addCheckIn(resolution.id);
+                          setShowJournalPrompt(true);
+                        }}
                         style={{
                           padding: '0.5rem 1rem',
                           fontSize: '0.875rem',
@@ -445,7 +449,10 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       </button>
                     ) : (
                       <button
-                        onClick={() => todayCheckIn && removeCheckIn(resolution.id, todayCheckIn.id)}
+                        onClick={() => {
+                          todayCheckIn && removeCheckIn(resolution.id, todayCheckIn.id);
+                          setShowJournalPrompt(false);
+                        }}
                         style={{
                           padding: '0.5rem 1rem',
                           fontSize: '0.875rem',
@@ -482,6 +489,69 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       transition: 'width 0.3s ease',
                     }} />
                   </div>
+
+                  {/* Contextual journal prompt after check-in */}
+                  {checkedInToday && showJournalPrompt && (
+                    <div
+                      style={{
+                        marginTop: '0.75rem',
+                        padding: '0.625rem 0.75rem',
+                        backgroundColor: theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)',
+                        borderRadius: '0.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <span style={{ fontSize: '0.8125rem', color: colors.textMuted }}>
+                        How did it go?
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <button
+                          onClick={() => {
+                            setExpanded(true);
+                            setShowJournalForm(true);
+                            setShowJournalPrompt(false);
+                          }}
+                          style={{
+                            padding: '0.375rem 0.75rem',
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            backgroundColor: colors.accent,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '0.375rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                          }}
+                        >
+                          <svg style={{ width: '0.75rem', height: '0.75rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                          Add note
+                        </button>
+                        <button
+                          onClick={() => setShowJournalPrompt(false)}
+                          style={{
+                            padding: '0.25rem',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: colors.textMuted,
+                            opacity: 0.6,
+                          }}
+                          title="Dismiss"
+                        >
+                          <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </>
               );
             })()}
@@ -659,46 +729,81 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
           )}
         </div>
 
-        <button
-          onClick={() => setExpanded(!expanded)}
-          style={{
-            marginTop: '0.75rem',
-            fontSize: '0.875rem',
-            color: colors.accent,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.375rem',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-          }}
-        >
-          {expanded ? 'Hide' : 'Journal & Notes'}
-          {!expanded && resolution.journal && resolution.journal.length > 0 && (
+        {/* Journal indicator - icon only, contextual */}
+        <div style={{
+          marginTop: '0.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          {/* Journal icon + count - only show if entries exist or expanded */}
+          {(resolution.journal && resolution.journal.length > 0) || expanded ? (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              style={{
+                fontSize: '0.8125rem',
+                color: colors.textMuted,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0.25rem 0',
+                transition: 'color 0.15s ease',
+              }}
+              className="journal-toggle"
+            >
+              {/* Pen/writing icon */}
+              <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" />
+              </svg>
+              {resolution.journal && resolution.journal.length > 0 && (
+                <span style={{
+                  backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.1)',
+                  padding: '0.125rem 0.375rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
+                }}>
+                  {resolution.journal.length}
+                </span>
+              )}
+              {expanded && (
+                <span style={{ fontSize: '0.75rem' }}>
+                  {resolution.journal && resolution.journal.length > 0 ? 'Journal' : 'Add note'}
+                </span>
+              )}
+              <svg
+                style={{
+                  width: '0.75rem',
+                  height: '0.75rem',
+                  transition: 'transform 0.2s',
+                  transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  opacity: 0.5,
+                }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          ) : (
+            <div /> /* Empty placeholder for layout */
+          )}
+
+          {/* Notes indicator if notes exist and not expanded */}
+          {!expanded && resolution.notes && (
             <span style={{
-              backgroundColor: `${colors.accent}20`,
-              padding: '0.125rem 0.375rem',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
+              fontSize: '0.6875rem',
+              color: colors.textMuted,
+              opacity: 0.7,
             }}>
-              {resolution.journal.length}
+              Has notes
             </span>
           )}
-          <svg
-            style={{
-              width: '1rem',
-              height: '1rem',
-              transition: 'transform 0.2s',
-              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            }}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+        </div>
       </div>
 
       {expanded && (

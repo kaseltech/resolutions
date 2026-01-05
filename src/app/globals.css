@@ -341,6 +341,42 @@ input[type="time"] {
   }
 }
 
+/* Habit row hover effect */
+.habit-row {
+  transition: background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .habit-row:hover {
+    background-color: rgba(31, 58, 90, 0.06) !important;
+  }
+
+  [data-theme="dark"] .habit-row:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+  }
+}
+
+@media (hover: none) {
+  .habit-row:active {
+    background-color: rgba(31, 58, 90, 0.1) !important;
+  }
+
+  [data-theme="dark"] .habit-row:active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+/* Journal toggle hover effect */
+.journal-toggle {
+  transition: color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .journal-toggle:hover {
+    color: var(--foreground) !important;
+  }
+}
+
 /* Premium card style */
 .card-premium {
   background: var(--card-bg);
