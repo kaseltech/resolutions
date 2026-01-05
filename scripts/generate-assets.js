@@ -69,15 +69,15 @@ function generateFaviconSVG(size) {
 </svg>`;
 }
 
-// Generate splash screen SVG - navy gradient with stars and centered wordmark
+// Generate splash screen SVG - matches app icon style (year above, V below)
 function generateSplashSVG(size) {
-  // Generate random stars
+  // Generate subtle stars
   const stars = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 40; i++) {
     const x = Math.random() * size;
     const y = Math.random() * size;
-    const r = Math.random() * 2 + 0.5;
-    const opacity = Math.random() * 0.4 + 0.2;
+    const r = Math.random() * 1.5 + 0.5;
+    const opacity = Math.random() * 0.3 + 0.1;
     stars.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="${COLORS.cream}" opacity="${opacity}" />`);
   }
 
@@ -86,53 +86,45 @@ function generateSplashSVG(size) {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="${COLORS.navy}" />
-      <stop offset="50%" stop-color="#2A4A6F" />
-      <stop offset="100%" stop-color="${COLORS.navy}" />
-    </linearGradient>
-  </defs>
+  <!-- Solid navy background -->
+  <rect width="${size}" height="${size}" fill="${COLORS.navy}" />
 
-  <!-- Background gradient -->
-  <rect width="${size}" height="${size}" fill="url(#bgGrad)" />
-
-  <!-- Twinkling stars -->
+  <!-- Subtle stars -->
   ${stars.join('\n  ')}
 
-  <!-- Large V mark -->
+  <!-- Year above - subtle, matching icon style -->
   <text
     x="${centerX}"
-    y="${centerY - 20}"
+    y="${centerY - 120}"
     text-anchor="middle"
-    dominant-baseline="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="200"
+    font-size="50"
+    font-weight="400"
+    fill="${COLORS.gold}"
+    opacity="0.7"
+    letter-spacing="12"
+  >${CURRENT_YEAR}</text>
+
+  <!-- Large V mark - the hero -->
+  <text
+    x="${centerX}"
+    y="${centerY + 80}"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="280"
     font-weight="400"
     fill="${COLORS.gold}"
   >V</text>
 
-  <!-- Year below -->
-  <text
-    x="${centerX}"
-    y="${centerY + 100}"
-    text-anchor="middle"
-    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="60"
-    font-weight="400"
-    fill="${COLORS.gold}"
-    letter-spacing="8"
-  >${CURRENT_YEAR}</text>
-
   <!-- Tagline -->
   <text
     x="${centerX}"
-    y="${centerY + 180}"
+    y="${centerY + 220}"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
     font-size="36"
-    fill="${COLORS.textMuted}"
-    opacity="0.8"
+    fill="${COLORS.gold}"
+    opacity="0.5"
   >Make your resolutions count</text>
 </svg>`;
 }
