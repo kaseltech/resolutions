@@ -51,26 +51,26 @@ export type TrackingType = 'frequency' | 'cumulative' | 'target' | 'reflection';
 export const TRACKING_TYPES: { value: TrackingType; label: string; description: string; icon: string }[] = [
   {
     value: 'frequency',
-    label: 'Regular Check-ins',
-    description: 'Track how often you do something (e.g., meditate 4x per week)',
+    label: 'Check-ins',
+    description: 'e.g., meditate 4x/week',
     icon: '📅'
   },
   {
     value: 'cumulative',
-    label: 'Build Toward a Goal',
-    description: 'Add progress toward a total (e.g., save $5,000, read 20 books)',
+    label: 'Cumulative',
+    description: 'e.g., save $5,000',
     icon: '📈'
   },
   {
     value: 'target',
-    label: 'Reach a Target',
-    description: 'Track a value moving toward a goal (e.g., reach 220lbs, run 7-min mile)',
+    label: 'Target',
+    description: 'e.g., reach 180lbs',
     icon: '🎯'
   },
   {
     value: 'reflection',
-    label: 'Reflection Only',
-    description: 'Journal your journey without tracking numbers (e.g., be more present)',
+    label: 'Journal',
+    description: 'no numbers, just notes',
     icon: '📝'
   },
 ];

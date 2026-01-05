@@ -274,8 +274,8 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
 
           {/* Tracking Type Selection */}
           <div>
-            <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>How do you want to track this?</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Tracking type</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.375rem' }}>
               {TRACKING_TYPES.map((type) => {
                 const isSelected = formData.trackingType === type.value;
                 const accentColor = TYPE_ACCENTS[type.value as keyof typeof TYPE_ACCENTS]?.color || colors.accent;
@@ -285,33 +285,31 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, trackingType: type.value }))}
                     style={{
-                      padding: '0.75rem',
-                      paddingLeft: '0.875rem',
+                      padding: '0.5rem 0.625rem',
                       borderRadius: '0.5rem',
-                      border: `1px solid ${isSelected ? `${accentColor}40` : theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)'}`,
-                      borderLeft: `3px solid ${isSelected ? accentColor : `${accentColor}20`}`,
+                      border: `1px solid ${isSelected ? `${accentColor}50` : theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)'}`,
                       backgroundColor: isSelected
-                        ? (theme === 'light' ? `${accentColor}08` : `${accentColor}15`)
+                        ? (theme === 'light' ? `${accentColor}12` : `${accentColor}20`)
                         : inputBgColor,
                       cursor: 'pointer',
                       textAlign: 'left',
                       transition: 'all 0.15s ease',
-                      boxShadow: isSelected ? `0 0 0 1px ${accentColor}20` : 'none',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                       <span style={{
-                        fontSize: '1.25rem',
-                        filter: isSelected ? 'none' : 'grayscale(30%)',
-                        opacity: isSelected ? 1 : 0.7,
+                        fontSize: '1rem',
+                        filter: isSelected ? 'none' : 'grayscale(40%)',
+                        opacity: isSelected ? 1 : 0.6,
                       }}>{type.icon}</span>
                       <div>
                         <div style={{
-                          fontSize: '0.875rem',
+                          fontSize: '0.8125rem',
                           fontWeight: isSelected ? 600 : 500,
                           color: isSelected ? colors.text : colors.textMuted,
+                          lineHeight: 1.2,
                         }}>{type.label}</div>
-                        <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.125rem' }}>{type.description}</div>
+                        <div style={{ fontSize: '0.625rem', color: colors.textMuted, opacity: 0.8 }}>{type.description}</div>
                       </div>
                     </div>
                   </button>
