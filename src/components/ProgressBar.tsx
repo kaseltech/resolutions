@@ -10,44 +10,42 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ progress, size = 'md', showLabel = true }: ProgressBarProps) {
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
 
-  // Reduced heights - fully rounded
+  // 6px base height (design token recommendation)
   const heights = {
-    sm: '0.3125rem',
-    md: '0.4375rem',
-    lg: '0.5625rem',
-  };
-
-  // Gold only - with subtle success state for 100%
-  const getProgressColor = (p: number) => {
-    if (p === 100) {
-      return colors.success || '#4C8B6F'; // Muted success green
-    }
-    return '#C9A75A'; // Gold
+    sm: '4px',
+    md: '6px',
+    lg: '8px',
   };
 
   return (
     <div style={{ width: '100%' }}>
       <div style={{
         width: '100%',
-        backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.12)' : 'rgba(255, 255, 255, 0.12)',
-        borderRadius: '9999px',  // Fully rounded
+        backgroundColor: colors.borderSubtle,
+        borderRadius: '3px',
         height: heights[size],
         overflow: 'hidden',
       }}>
         <div
           style={{
             height: '100%',
-            backgroundColor: getProgressColor(progress),
-            borderRadius: '9999px',  // Fully rounded
+            backgroundColor: progress === 100 ? colors.progress : colors.accent,
+            borderRadius: '3px',
             transition: 'width 0.3s ease',
             width: `${progress}%`,
           }}
         />
       </div>
       {showLabel && (
-        <p style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.25rem', textAlign: 'right', marginBottom: 0, opacity: 0.85 }}>
+        <p style={{
+          fontSize: '0.75rem',
+          color: colors.textTertiary,
+          marginTop: '0.25rem',
+          textAlign: 'right',
+          marginBottom: 0,
+        }}>
           {progress}%
         </p>
       )}

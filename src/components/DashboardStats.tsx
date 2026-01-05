@@ -272,18 +272,18 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                       {count}/{target}
                     </span>
                   </div>
-                  {/* Mini progress bar */}
+                  {/* Mini progress bar - 5px per design tokens */}
                   <div style={{
-                    height: '0.25rem',
-                    backgroundColor: colors.border,
-                    borderRadius: '9999px',
+                    height: '5px',
+                    backgroundColor: colors.borderSubtle,
+                    borderRadius: '3px',
                     overflow: 'hidden',
                   }}>
                     <div style={{
                       width: `${progress}%`,
                       height: '100%',
-                      backgroundColor: count >= target ? colors.accent : (isBehind ? (theme === 'light' ? '#C4A0A0' : '#f87171') : (theme === 'light' ? '#1F3A5A' : '#60a5fa')),
-                      borderRadius: '9999px',
+                      backgroundColor: count >= target ? colors.progress : (isBehind ? colors.error : colors.progress),
+                      borderRadius: '3px',
                       transition: 'width 0.3s ease',
                     }} />
                   </div>

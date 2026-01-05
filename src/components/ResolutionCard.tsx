@@ -843,39 +843,35 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             </div>
           )}
 
-          {/* Journal Section */}
-          <div style={{ marginTop: '1.5rem' }}>
+          {/* Journal Section - Lighter styling per design tokens */}
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: `1px solid ${colors.borderSubtle}` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <h4 style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                📝 Journal
+              <h4 style={{ fontSize: '0.8125rem', fontWeight: 500, color: colors.textTertiary, margin: 0 }}>
+                Journal
                 {resolution.journal && resolution.journal.length > 0 && (
                   <span style={{
-                    backgroundColor: colors.border,
-                    padding: '0.125rem 0.5rem',
-                    borderRadius: '9999px',
+                    marginLeft: '0.5rem',
                     fontSize: '0.75rem',
-                    color: colors.textMuted,
+                    color: colors.textDisabled,
                   }}>
-                    {resolution.journal.length}
+                    ({resolution.journal.length})
                   </span>
                 )}
               </h4>
               <button
                 onClick={() => setShowJournalForm(!showJournalForm)}
                 style={{
-                  padding: '0.375rem 0.75rem',
-                  fontSize: '0.75rem',
-                  backgroundColor: showJournalForm ? colors.border : colors.accent,
-                  color: 'white',
+                  padding: '0.375rem 0.625rem',
+                  fontSize: '0.8125rem',
+                  backgroundColor: 'transparent',
+                  color: showJournalForm ? colors.textTertiary : colors.accent,
                   border: 'none',
                   borderRadius: '0.375rem',
                   cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
+                  fontWeight: 500,
                 }}
               >
-                {showJournalForm ? 'Cancel' : '+ Add Entry'}
+                {showJournalForm ? 'Cancel' : '+ Add entry'}
               </button>
             </div>
 
@@ -1005,16 +1001,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               </div>
             ) : !showJournalForm && (
               <p style={{
-                fontSize: '0.875rem',
-                color: colors.textMuted,
+                fontSize: '0.8125rem',
+                color: colors.textTertiary,
                 fontStyle: 'italic',
                 margin: 0,
-                textAlign: 'center',
-                padding: '1rem',
-                backgroundColor: colors.bg,
-                borderRadius: '0.5rem',
+                padding: '0.5rem 0',
               }}>
-                No journal entries yet. Start documenting your journey!
+                No journal entries yet — reflect after your first check-in.
               </p>
             )}
           </div>
