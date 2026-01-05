@@ -217,9 +217,8 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
               const periodLabel = period === 'day' ? 'today' : period === 'week' ? 'this week' : 'this month';
 
               return (
-                <button
+                <div
                   key={resolution.id}
-                  onClick={() => onEditResolution?.(resolution)}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -227,11 +226,8 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                     padding: '0.625rem',
                     backgroundColor: colors.bg,
                     borderRadius: '0.5rem',
-                    border: 'none',
                     width: '100%',
-                    cursor: onEditResolution ? 'pointer' : 'default',
                     textAlign: 'left',
-                    transition: 'background-color 0.15s ease',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -269,7 +265,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                       transition: 'width 0.3s ease',
                     }} />
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
