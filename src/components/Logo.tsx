@@ -38,6 +38,7 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
       style={{
         display: 'inline-flex',
         alignItems: 'baseline',
+        position: 'relative',
         fontFamily: 'var(--font-libre-baskerville), Georgia, "Times New Roman", Times, serif',
         fontSize,
         letterSpacing: '0.02em',  // +2% letter-spacing
@@ -50,9 +51,13 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
     >
       YearVow
       <span style={{
+        position: 'absolute',
+        bottom: '-0.15em',
+        right: '-1.8em',
         color: YEAR_COLORS.gold,
-        marginLeft: '0.3em',
+        fontSize: '0.45em',
         fontWeight: 600,
+        letterSpacing: '0.05em',
       }}>
         2026
       </span>
