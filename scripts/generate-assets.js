@@ -14,37 +14,38 @@ const COLORS = {
 const CURRENT_YEAR = '2026';
 
 // Generate YearVow "V + Year" app icon SVG
-// - Integrated design: Large V with year tucked underneath
-// - Polished, cohesive feel like a luxury monogram
+// - Year above (subtle, 75% opacity), large V below
+// - Clean navy background
+// - Good vertical breathing room between elements
 function generateAppIconSVG(size) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Solid navy background with subtle rounded corners for app icon feel -->
+  <!-- Solid navy background -->
   <rect x="0" y="0" width="100" height="100" fill="${COLORS.navy}" />
 
-  <!-- Large serif V - the primary mark -->
+  <!-- Year above - subtle, reduced opacity -->
   <text
     x="50"
-    y="58"
+    y="24"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="58"
+    font-size="12"
     font-weight="400"
     fill="${COLORS.gold}"
-    letter-spacing="-1"
-  >V</text>
-
-  <!-- Year tucked underneath, integrated with the V -->
-  <text
-    x="50"
-    y="80"
-    text-anchor="middle"
-    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="18"
-    font-weight="400"
-    fill="${COLORS.gold}"
+    opacity="0.75"
     letter-spacing="3"
   >${CURRENT_YEAR}</text>
+
+  <!-- Large serif V - the hero -->
+  <text
+    x="50"
+    y="74"
+    text-anchor="middle"
+    font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
+    font-size="50"
+    font-weight="400"
+    fill="${COLORS.gold}"
+  >V</text>
 </svg>`;
 }
 
