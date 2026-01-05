@@ -18,13 +18,13 @@ const tutorialSteps: TutorialStep[] = [
   {
     target: 'add-button',
     title: 'Create Resolutions',
-    description: 'Tap here to add a new resolution. Set your goal, deadline, and category.',
+    description: 'Tap here to add a new resolution. Choose a tracking type: habits, savings goals, weight targets, or reflections.',
     position: 'top',
   },
   {
     target: 'resolution-card',
     title: 'Your Resolutions',
-    description: 'Tap any card to edit it and update your progress. Swipe left to edit, swipe right to add a journal entry.',
+    description: 'Tap a card to expand notes. Long-press (or tap the menu) to edit, log progress, or delete.',
     position: 'bottom',
   },
   {
