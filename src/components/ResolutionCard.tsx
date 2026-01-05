@@ -113,6 +113,55 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
     setShowContextMenu(true);
   };
 
+  // Build tracking-specific menu item
+  const getTrackingMenuItem = () => {
+    if (resolution.trackingType === 'frequency') {
+      return {
+        label: hasCheckedInToday(resolution.checkIns) ? 'Checked in today!' : 'Check in',
+        icon: (
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        ),
+        onClick: () => {
+          if (!hasCheckedInToday(resolution.checkIns)) {
+            addCheckIn(resolution.id);
+          }
+        },
+      };
+    }
+    if (resolution.trackingType === 'cumulative') {
+      return {
+        label: resolution.currentValue !== undefined && resolution.targetValue !== undefined && resolution.currentValue >= resolution.targetValue ? 'Goal reached!' : 'Log progress',
+        icon: (
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        ),
+        onClick: () => onEdit(resolution),
+      };
+    }
+    if (resolution.trackingType === 'reflection') {
+      return null; // No progress action for reflection
+    }
+    // Legacy/default percentage tracking
+    return {
+      label: resolution.progress < 100 ? 'Update Progress (+10%)' : 'Completed!',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      ),
+      onClick: () => {
+        if (resolution.progress < 100) {
+          updateProgress(resolution.id, Math.min(100, resolution.progress + 10));
+        }
+      },
+    };
+  };
+
+  const trackingMenuItem = getTrackingMenuItem();
+
   // Context menu items - reordered: Edit, Journal, Progress, Delete (with divider)
   const contextMenuItems = [
     {
@@ -136,41 +185,8 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         setShowJournalForm(true);
       },
     },
-    // Tracking type-specific action
-    ...(resolution.trackingType === 'frequency' ? [{
-      label: hasCheckedInToday(resolution.checkIns) ? 'Checked in today!' : 'Check in',
-      icon: (
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      onClick: () => {
-        if (!hasCheckedInToday(resolution.checkIns)) {
-          addCheckIn(resolution.id);
-        }
-      },
-    }] : resolution.trackingType === 'cumulative' ? [{
-      label: resolution.currentValue !== undefined && resolution.targetValue !== undefined && resolution.currentValue >= resolution.targetValue ? 'Goal reached!' : 'Log progress',
-      icon: (
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-      ),
-      onClick: () => onEdit(resolution), // Open edit to update value
-    }] : resolution.trackingType === 'reflection' ? [] : [{
-      // Legacy/default percentage tracking
-      label: resolution.progress < 100 ? 'Update Progress (+10%)' : 'Completed!',
-      icon: (
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-        </svg>
-      ),
-      onClick: () => {
-        if (resolution.progress < 100) {
-          updateProgress(resolution.id, Math.min(100, resolution.progress + 10));
-        }
-      },
-    }]),
+    // Add tracking menu item if it exists
+    ...(trackingMenuItem ? [trackingMenuItem] : []),
     {
       label: 'Delete',
       icon: (
