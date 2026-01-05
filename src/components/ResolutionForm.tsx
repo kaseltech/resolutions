@@ -193,7 +193,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           maxWidth: isMobile ? '100%' : '28rem',
           border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : colors.border}`,
           borderRadius: isMobile ? '1.5rem 1.5rem 0 0' : '1.25rem',  // Slightly larger corner radius
-          maxHeight: isMobile ? '90vh' : 'none',
+          maxHeight: isMobile ? '90vh' : '85vh',
           overflowY: 'auto',
           marginBottom: isMobile ? 0 : '2rem',
           paddingBottom: isMobile ? 'env(safe-area-inset-bottom)' : 0,

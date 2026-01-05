@@ -6,11 +6,19 @@ import { useTheme } from '@/context/ThemeContext';
 import { Resolution } from '@/types';
 import { getMotivationalQuote } from '@/lib/messages';
 
+// Helper to get local date string (YYYY-MM-DD) in user's timezone
+function getLocalDateString(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // Helper to get check-ins for a period
 function getCheckInsForPeriod(resolution: Resolution): number {
   if (!resolution.checkIns || !resolution.frequencyPeriod) return 0;
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const today = getLocalDateString(now);
 
   return resolution.checkIns.filter(c => {
     const checkInDate = new Date(c.date);

@@ -18,11 +18,19 @@ const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   struggling: '😔',
 };
 
+// Helper to get local date string (YYYY-MM-DD) in user's timezone
+function getLocalDateString(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // Helper to get check-ins for the current period
 function getCheckInsForPeriod(checkIns: CheckIn[] | undefined, period: 'day' | 'week' | 'month'): CheckIn[] {
   if (!checkIns) return [];
   const now = new Date();
-  const today = now.toISOString().split('T')[0];
+  const today = getLocalDateString(now);
 
   return checkIns.filter(c => {
     const checkInDate = new Date(c.date);
@@ -45,14 +53,14 @@ function getCheckInsForPeriod(checkIns: CheckIn[] | undefined, period: 'day' | '
 // Helper to check if user already checked in today
 function hasCheckedInToday(checkIns: CheckIn[] | undefined): boolean {
   if (!checkIns) return false;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
   return checkIns.some(c => c.date === today);
 }
 
 // Helper to get today's check-in
 function getTodayCheckIn(checkIns: CheckIn[] | undefined): CheckIn | undefined {
   if (!checkIns) return undefined;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
   return checkIns.find(c => c.date === today);
 }
 

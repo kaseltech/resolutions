@@ -7,6 +7,14 @@ import { Preferences } from '@capacitor/preferences';
 import { celebrationHaptic, progressHaptic } from '@/lib/haptics';
 import { scheduleReminder, cancelReminder, syncReminders, initNotificationListeners } from '@/lib/reminders';
 
+// Helper to get local date string (YYYY-MM-DD) in user's timezone
+function getLocalDateString(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 interface ResolutionContextType {
   resolutions: Resolution[];
   loading: boolean;
@@ -349,7 +357,7 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
 
   // Add a check-in for frequency tracking
   const addCheckIn = useCallback(async (resolutionId: string, checkIn?: Partial<CheckIn>) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateString();
     const newCheckIn: CheckIn = {
       id: generateId(),
       date: today,
