@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Logo } from './Logo';
 import {
@@ -192,35 +192,44 @@ export function AuthForm() {
     }
   `;
 
+  // Generate stable stars using useMemo to avoid hydration mismatch
+  const loginStars = useMemo(() => {
+    return Array.from({ length: 30 }, (_, i) => ({
+      x: (i * 37 + 13) % 100,
+      y: ((i * 23 + 7) % 60),
+      size: 1 + (i % 3),
+      opacity: 0.2 + (i % 4) * 0.1,
+    }));
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(180deg, #1E3A5F 0%, #2A4A6F 50%, #1E3A5F 100%)',
+      background: 'linear-gradient(180deg, #152838 0%, #1E3A5F 40%, #1E3A5F 100%)',
       position: 'relative',
       overflow: 'hidden',
       paddingTop: 'calc(1rem + env(safe-area-inset-top))',
       paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))',
     }}>
-      {/* Stars background */}
+      {/* Stars background - static, low opacity */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {/* Static stars */}
-        {[...Array(50)].map((_, i) => (
+        {loginStars.map((star, i) => (
           <div
             key={i}
             style={{
               position: 'absolute',
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 2 + 1}px`,
-              height: `${Math.random() * 2 + 1}px`,
-              backgroundColor: '#e2e8f0',
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              backgroundColor: '#F5F1EA',
               borderRadius: '50%',
-              opacity: Math.random() * 0.7 + 0.3,
+              opacity: star.opacity,
             }}
           />
         ))}
       </div>
 
-      {/* Mountain silhouette */}
+      {/* Mountain layers */}
       <svg
         style={{
           position: 'absolute',
@@ -228,22 +237,40 @@ export function AuthForm() {
           left: 0,
           right: 0,
           width: '100%',
-          height: '40%',
+          height: '45%',
         }}
-        viewBox="0 0 1440 400"
+        viewBox="0 0 100 45"
         preserveAspectRatio="none"
-        fill="none"
       >
-        {/* Back mountains */}
+        {/* Back mountains - darkest */}
         <path
-          d="M0 400 L0 280 L180 180 L320 250 L480 120 L600 200 L780 80 L900 180 L1080 100 L1200 200 L1350 140 L1440 220 L1440 400 Z"
-          fill="#1e293b"
+          d="M0,45 L0,30 L15,18 L25,25 L35,12 L50,22 L60,15 L75,20 L85,10 L100,20 L100,45 Z"
+          fill="#0D1C28"
         />
-        {/* Front mountains */}
+        {/* Peak highlights - back */}
         <path
-          d="M0 400 L0 320 L150 240 L280 300 L420 180 L560 280 L720 160 L880 260 L1020 200 L1180 300 L1320 220 L1440 280 L1440 400 Z"
-          fill="#0f172a"
-          opacity="0.8"
+          d="M35,12 L36,13 L34,13 Z M85,10 L86,11 L84,11 Z"
+          fill="#1A3045"
+        />
+        {/* Mid-ground mountains */}
+        <path
+          d="M0,45 L0,35 L10,28 L20,32 L30,22 L45,30 L55,20 L70,28 L80,18 L95,28 L100,25 L100,45 Z"
+          fill="#152838"
+        />
+        {/* Peak highlights - mid */}
+        <path
+          d="M30,22 L31,23.5 L29,23.5 Z M55,20 L56,21.5 L54,21.5 Z M80,18 L81,19.5 L79,19.5 Z"
+          fill="#1E3A50"
+        />
+        {/* Foreground mountains - lightest */}
+        <path
+          d="M0,45 L0,38 L12,32 L25,38 L40,28 L55,35 L65,30 L78,36 L90,30 L100,35 L100,45 Z"
+          fill="#1E3A5F"
+        />
+        {/* Peak highlights - foreground */}
+        <path
+          d="M40,28 L41.5,30 L38.5,30 Z M65,30 L66.5,32 L63.5,32 Z M90,30 L91.5,32 L88.5,32 Z"
+          fill="#264A6F"
         />
       </svg>
 

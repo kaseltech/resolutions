@@ -12,14 +12,17 @@ interface ThemeContextType {
 
 // YearVow light theme - cream background with gold accent
 const lightColors = {
-  bg: '#F5F1EA',           // Warm cream background
-  cardBg: '#ffffff',
+  bg: '#EBE7E0',           // Slightly darker cream for depth
+  cardBg: '#FDFCFA',       // Bright card surface
   border: 'rgba(30, 58, 95, 0.08)',  // Subtle navy-tinted border
   text: '#1F3A5A',         // Primary navy
   textMuted: 'rgba(31, 58, 90, 0.6)', // 60% opacity navy
   accent: '#C9A75A',       // Gold accent (ONE brand color)
   accentHover: '#B8964A',
   inputBg: '#ffffff',
+  // Secondary accent - soft sage for progress/completion
+  progress: '#5C8B6F',     // Soft sage green
+  progressMuted: 'rgba(92, 139, 111, 0.15)',
   // Status colors (muted - use sparingly)
   success: '#4C8B6F',
   warning: '#C97C5D',
@@ -35,16 +38,19 @@ const lightColors = {
   other: '#8B8B8B',        // Neutral gray
 };
 
-// YearVow dark theme - navy background with gold accent
+// YearVow dark theme - deeper navy background with gold accent
 const darkColors = {
-  bg: '#1F3A5A',           // Primary navy background
-  cardBg: '#2A4A6F',       // Surface cards
-  border: 'rgba(255, 255, 255, 0.06)', // Subtle white border
+  bg: '#152838',           // Deeper navy for more depth
+  cardBg: '#1F3A5A',       // Cards use original navy (now lighter than bg)
+  border: 'rgba(255, 255, 255, 0.08)', // Subtle white border
   text: '#F5F1EA',         // Cream text
   textMuted: 'rgba(245, 241, 234, 0.7)', // 70% opacity cream
   accent: '#C9A75A',       // Gold accent (same as light)
   accentHover: '#D9B76A',
-  inputBg: '#2A4A6F',
+  inputBg: '#1F3A5A',
+  // Secondary accent - soft sage for progress/completion
+  progress: '#6B9B7F',     // Soft sage green (brighter for dark mode)
+  progressMuted: 'rgba(107, 155, 127, 0.2)',
   // Status colors (muted)
   success: '#5C9B7F',
   warning: '#D98C6D',
