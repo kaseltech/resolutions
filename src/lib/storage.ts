@@ -23,6 +23,8 @@ export function createResolution(partial: Partial<Resolution>): Resolution {
     notes: '',
     createdAt: now,
     updatedAt: now,
+    // Default tracking type (will be overridden by partial if provided)
+    trackingType: 'frequency',
     ...partial,
   };
 }
@@ -43,6 +45,14 @@ function rowToResolution(row: Record<string, unknown>): Resolution {
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
     completedAt: row.completed_at as string | undefined,
+    // Tracking fields - leave undefined for legacy resolutions
+    trackingType: row.tracking_type as Resolution['trackingType'] | undefined,
+    targetFrequency: row.target_frequency as number | undefined,
+    frequencyPeriod: row.frequency_period as Resolution['frequencyPeriod'] | undefined,
+    checkIns: (row.check_ins as Resolution['checkIns']) || [],
+    targetValue: row.target_value as number | undefined,
+    currentValue: row.current_value as number | undefined,
+    unit: row.unit as string | undefined,
   };
 }
 
@@ -63,6 +73,14 @@ function resolutionToRow(resolution: Resolution, userId: string): Record<string,
     created_at: resolution.createdAt,
     updated_at: resolution.updatedAt,
     completed_at: resolution.completedAt || null,
+    // Tracking fields
+    tracking_type: resolution.trackingType,
+    target_frequency: resolution.targetFrequency || null,
+    frequency_period: resolution.frequencyPeriod || null,
+    check_ins: resolution.checkIns || [],
+    target_value: resolution.targetValue || null,
+    current_value: resolution.currentValue || null,
+    unit: resolution.unit || null,
   };
 }
 

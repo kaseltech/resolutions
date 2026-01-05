@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Resolution, Category, CATEGORIES } from '@/types';
+import { Resolution, Category, CATEGORIES, TrackingType, TRACKING_TYPES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CategoryIcon } from './CategoryIcon';
@@ -41,6 +41,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     reminderEnabled: false,
     reminderFrequency: 'weekly' as 'daily' | 'weekly' | 'monthly',
     reminderTime: '09:00',
+    // New tracking fields
+    trackingType: 'frequency' as TrackingType,
+    targetFrequency: 3,
+    frequencyPeriod: 'week' as 'day' | 'week' | 'month',
+    targetValue: 0,
+    currentValue: 0,
+    unit: '',
   });
 
   useEffect(() => {
@@ -54,6 +61,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
         reminderEnabled: resolution.reminder?.enabled ?? false,
         reminderFrequency: resolution.reminder?.frequency ?? 'weekly',
         reminderTime: resolution.reminder?.time ?? '09:00',
+        // New tracking fields
+        trackingType: resolution.trackingType ?? 'frequency',
+        targetFrequency: resolution.targetFrequency ?? 3,
+        frequencyPeriod: resolution.frequencyPeriod ?? 'week',
+        targetValue: resolution.targetValue ?? 0,
+        currentValue: resolution.currentValue ?? 0,
+        unit: resolution.unit ?? '',
       });
     }
   }, [resolution]);
@@ -77,6 +91,14 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             enabled: true,
           }
         : undefined,
+      // New tracking fields
+      trackingType: formData.trackingType,
+      targetFrequency: formData.trackingType === 'frequency' ? formData.targetFrequency : undefined,
+      frequencyPeriod: formData.trackingType === 'frequency' ? formData.frequencyPeriod : undefined,
+      targetValue: formData.trackingType === 'cumulative' ? formData.targetValue : undefined,
+      unit: formData.trackingType === 'cumulative' ? formData.unit : undefined,
+      currentValue: formData.trackingType === 'cumulative' ? formData.currentValue : undefined,
+      checkIns: formData.trackingType === 'frequency' ? (resolution?.checkIns ?? []) : undefined,
     };
 
     if (isEditing && resolution) {
@@ -224,6 +246,143 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               style={{ ...inputStyle, resize: 'none' }}
             />
           </div>
+
+          {/* Tracking Type Selection */}
+          <div>
+            <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>How do you want to track this?</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {TRACKING_TYPES.map((type) => {
+                const isSelected = formData.trackingType === type.value;
+                return (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, trackingType: type.value }))}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: '0.5rem',
+                      border: `1px solid ${isSelected ? colors.accent : colors.border}`,
+                      backgroundColor: isSelected
+                        ? (theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)')
+                        : colors.cardBg,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '1.25rem' }}>{type.icon}</span>
+                      <div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>{type.label}</div>
+                        <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.125rem' }}>{type.description}</div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Frequency-specific fields */}
+          {formData.trackingType === 'frequency' && (
+            <div style={{
+              padding: '0.75rem',
+              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${colors.border}`,
+            }}>
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Target frequency</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="number"
+                  min="1"
+                  max="31"
+                  value={formData.targetFrequency}
+                  onChange={(e) => setFormData(prev => ({ ...prev, targetFrequency: parseInt(e.target.value) || 1 }))}
+                  style={{ ...inputStyle, width: '4rem', textAlign: 'center' }}
+                />
+                <span style={{ color: colors.textMuted, fontSize: '0.875rem' }}>times per</span>
+                <select
+                  value={formData.frequencyPeriod}
+                  onChange={(e) => setFormData(prev => ({ ...prev, frequencyPeriod: e.target.value as 'day' | 'week' | 'month' }))}
+                  style={{ ...inputStyle, width: 'auto' }}
+                >
+                  <option value="day">day</option>
+                  <option value="week">week</option>
+                  <option value="month">month</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Cumulative-specific fields */}
+          {formData.trackingType === 'cumulative' && (
+            <div style={{
+              padding: '0.75rem',
+              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${colors.border}`,
+            }}>
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>What's your target?</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="text"
+                  value={formData.unit}
+                  onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                  placeholder="$"
+                  style={{ ...inputStyle, width: '3.5rem', textAlign: 'center' }}
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.targetValue || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, targetValue: parseInt(e.target.value) || 0 }))}
+                  placeholder="5000"
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+              </div>
+              <p style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.5rem', marginBottom: 0 }}>
+                e.g., $ 5000 for saving money, or leave unit blank for "20 books"
+              </p>
+
+              {/* Current progress - only show when editing */}
+              {isEditing && (
+                <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: `1px solid ${colors.border}` }}>
+                  <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Current progress</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.875rem', color: colors.textMuted, minWidth: '2rem' }}>
+                      {formData.unit || ''}
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={formData.currentValue || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, currentValue: parseInt(e.target.value) || 0 }))}
+                      placeholder="0"
+                      style={{ ...inputStyle, flex: 1 }}
+                    />
+                    <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                      of {formData.unit}{formData.targetValue?.toLocaleString() || 0}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Reflection-only info */}
+          {formData.trackingType === 'reflection' && (
+            <div style={{
+              padding: '0.75rem',
+              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${colors.border}`,
+            }}>
+              <p style={{ fontSize: '0.875rem', color: colors.textMuted, margin: 0 }}>
+                No numbers to track. You'll journal your thoughts and reflections as you go.
+              </p>
+            </div>
+          )}
 
           <div>
             <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Category</label>

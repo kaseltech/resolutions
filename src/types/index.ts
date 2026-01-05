@@ -45,12 +45,44 @@ export interface Reminder {
   lastShown?: string;
 }
 
+// Tracking types for different kinds of resolutions
+export type TrackingType = 'frequency' | 'cumulative' | 'reflection';
+
+export const TRACKING_TYPES: { value: TrackingType; label: string; description: string; icon: string }[] = [
+  {
+    value: 'frequency',
+    label: 'Regular Check-ins',
+    description: 'Track how often you do something (e.g., meditate 4x per week)',
+    icon: '📅'
+  },
+  {
+    value: 'cumulative',
+    label: 'Build Toward a Goal',
+    description: 'Add progress toward a total (e.g., save $5,000, read 20 books)',
+    icon: '📈'
+  },
+  {
+    value: 'reflection',
+    label: 'Reflection Only',
+    description: 'Journal your journey without tracking numbers (e.g., be more present)',
+    icon: '📝'
+  },
+];
+
+// Check-in record for frequency-based tracking
+export interface CheckIn {
+  id: string;
+  date: string; // YYYY-MM-DD
+  value?: number; // Optional value (e.g., miles run, minutes meditated)
+  note?: string;
+}
+
 export interface Resolution {
   id: string;
   title: string;
   description: string;
   category: Category;
-  progress: number; // 0-100
+  progress: number; // 0-100 (legacy, used for cumulative)
   milestones: Milestone[];
   journal: JournalEntry[];
   notes: string;
@@ -59,6 +91,19 @@ export interface Resolution {
   createdAt: string;
   updatedAt: string;
   completedAt?: string;
+
+  // New tracking fields (optional for backward compatibility with legacy resolutions)
+  trackingType?: TrackingType;
+
+  // Frequency tracking (e.g., "meditate 4x per week")
+  targetFrequency?: number; // How many times
+  frequencyPeriod?: 'day' | 'week' | 'month'; // Per what period
+  checkIns?: CheckIn[]; // Record of check-ins
+
+  // Cumulative tracking (e.g., "save $5000")
+  targetValue?: number; // The goal number
+  currentValue?: number; // Current accumulated value
+  unit?: string; // e.g., "$", "books", "miles"
 }
 
 export interface AppData {

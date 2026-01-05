@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Resolution, getCategoryInfo, JournalEntry } from '@/types';
+import { Resolution, getCategoryInfo, JournalEntry, CheckIn, TRACKING_TYPES } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { ProgressBar } from './ProgressBar';
@@ -15,6 +15,51 @@ const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   good: '🙂',
   okay: '😐',
   struggling: '😔',
+};
+
+// Helper to get check-ins for the current period
+function getCheckInsForPeriod(checkIns: CheckIn[] | undefined, period: 'day' | 'week' | 'month'): CheckIn[] {
+  if (!checkIns) return [];
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+
+  return checkIns.filter(c => {
+    const checkInDate = new Date(c.date);
+
+    if (period === 'day') {
+      return c.date === today;
+    } else if (period === 'week') {
+      // Get start of current week (Sunday)
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      return checkInDate >= startOfWeek && checkInDate <= now;
+    } else if (period === 'month') {
+      return checkInDate.getMonth() === now.getMonth() && checkInDate.getFullYear() === now.getFullYear();
+    }
+    return false;
+  });
+}
+
+// Helper to check if user already checked in today
+function hasCheckedInToday(checkIns: CheckIn[] | undefined): boolean {
+  if (!checkIns) return false;
+  const today = new Date().toISOString().split('T')[0];
+  return checkIns.some(c => c.date === today);
+}
+
+// Helper to get today's check-in
+function getTodayCheckIn(checkIns: CheckIn[] | undefined): CheckIn | undefined {
+  if (!checkIns) return undefined;
+  const today = new Date().toISOString().split('T')[0];
+  return checkIns.find(c => c.date === today);
+}
+
+// Period label for display
+const periodLabels: Record<string, string> = {
+  day: 'today',
+  week: 'this week',
+  month: 'this month',
 };
 
 interface ResolutionCardProps {
@@ -38,7 +83,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [menuAnchorPosition, setMenuAnchorPosition] = useState<{ x: number; y: number } | undefined>();
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const { deleteResolution, updateProgress, addJournalEntry, deleteJournalEntry } = useResolutions();
+  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry } = useResolutions();
   const { theme, colors } = useTheme();
 
   // Detect touch device
@@ -91,7 +136,29 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         setShowJournalForm(true);
       },
     },
-    {
+    // Tracking type-specific action
+    ...(resolution.trackingType === 'frequency' ? [{
+      label: hasCheckedInToday(resolution.checkIns) ? 'Checked in today!' : 'Check in',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      onClick: () => {
+        if (!hasCheckedInToday(resolution.checkIns)) {
+          addCheckIn(resolution.id);
+        }
+      },
+    }] : resolution.trackingType === 'cumulative' ? [{
+      label: resolution.currentValue !== undefined && resolution.targetValue !== undefined && resolution.currentValue >= resolution.targetValue ? 'Goal reached!' : 'Log progress',
+      icon: (
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      ),
+      onClick: () => onEdit(resolution), // Open edit to update value
+    }] : resolution.trackingType === 'reflection' ? [] : [{
+      // Legacy/default percentage tracking
       label: resolution.progress < 100 ? 'Update Progress (+10%)' : 'Completed!',
       icon: (
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
@@ -103,7 +170,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
           updateProgress(resolution.id, Math.min(100, resolution.progress + 10));
         }
       },
-    },
+    }]),
     {
       label: 'Delete',
       icon: (
@@ -134,7 +201,25 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
     : null;
 
   const isOverdue = daysRemaining !== null && daysRemaining < 0;
-  const isCompleted = resolution.progress === 100;
+
+  // Determine completion based on tracking type
+  const isCompleted = (() => {
+    // Legacy resolutions (no trackingType) use percentage
+    if (!resolution.trackingType) {
+      return resolution.progress === 100;
+    }
+    if (resolution.trackingType === 'cumulative') {
+      return resolution.currentValue !== undefined && resolution.targetValue !== undefined && resolution.currentValue >= resolution.targetValue;
+    }
+    if (resolution.trackingType === 'reflection') {
+      return false; // Reflection goals don't "complete"
+    }
+    if (resolution.trackingType === 'frequency') {
+      return false; // Frequency goals are ongoing
+    }
+    // Fallback to percentage-based
+    return resolution.progress === 100;
+  })();
 
   const borderColor = isCompleted
     ? colors.accent
@@ -274,60 +359,204 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       {/* Non-tappable card content area */}
       <div style={{ padding: '0 1.25rem 1.25rem' }}>
 
-        <div style={{ marginTop: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Progress</span>
-            {!isCompleted && (
-              <div className="progress-controls" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', opacity: 0, transition: 'opacity 0.15s ease' }}>
-                <button
-                  onClick={() => updateProgress(resolution.id, Math.max(0, resolution.progress - 10))}
-                  className="action-btn"
-                  style={{
-                    width: '1.75rem',
-                    height: '1.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: colors.textMuted,
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    transition: 'all 0.15s ease',
-                  }}
-                  title="Decrease progress"
-                >
-                  −
-                </button>
-                <button
-                  onClick={() => updateProgress(resolution.id, Math.min(100, resolution.progress + 10))}
-                  className="action-btn action-btn-success"
-                  style={{
-                    width: '1.75rem',
-                    height: '1.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: colors.textMuted,
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    borderRadius: '0.375rem',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    transition: 'all 0.15s ease',
-                  }}
-                  title="Increase progress"
-                >
-                  +
-                </button>
-              </div>
-            )}
+        {/* Tracking Progress Section - renders differently based on trackingType */}
+        {resolution.trackingType === 'frequency' && resolution.frequencyPeriod && resolution.targetFrequency ? (
+          // FREQUENCY TRACKING: Show check-ins for current period
+          <div style={{ marginTop: '1rem' }}>
+            {(() => {
+              const periodCheckIns = getCheckInsForPeriod(resolution.checkIns, resolution.frequencyPeriod);
+              const count = periodCheckIns.length;
+              const target = resolution.targetFrequency;
+              const isMetGoal = count >= target;
+              const checkedInToday = hasCheckedInToday(resolution.checkIns);
+              const todayCheckIn = getTodayCheckIn(resolution.checkIns);
+
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isMetGoal ? colors.accent : colors.text }}>
+                        {count}
+                      </span>
+                      <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                        {' '}of {target} {periodLabels[resolution.frequencyPeriod]}
+                      </span>
+                      {isMetGoal && (
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: colors.accent }}>Goal met!</span>
+                      )}
+                    </div>
+                    {!checkedInToday ? (
+                      <button
+                        onClick={() => addCheckIn(resolution.id)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          fontWeight: 500,
+                          backgroundColor: colors.accent,
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.5rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.375rem',
+                        }}
+                      >
+                        <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Check in
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => todayCheckIn && removeCheckIn(resolution.id, todayCheckIn.id)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          fontWeight: 500,
+                          backgroundColor: `${colors.accent}20`,
+                          color: colors.accent,
+                          border: `1px solid ${colors.accent}40`,
+                          borderRadius: '0.5rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.375rem',
+                        }}
+                      >
+                        <svg style={{ width: '1rem', height: '1rem' }} fill="currentColor" viewBox="0 0 24 24">
+                          <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                        </svg>
+                        Done today
+                      </button>
+                    )}
+                  </div>
+                  {/* Visual progress bar for frequency */}
+                  <div style={{
+                    height: '0.5rem',
+                    backgroundColor: colors.border,
+                    borderRadius: '9999px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      width: `${Math.min(100, (count / target) * 100)}%`,
+                      height: '100%',
+                      backgroundColor: isMetGoal ? colors.accent : (theme === 'light' ? '#1e40af' : '#60a5fa'),
+                      borderRadius: '9999px',
+                      transition: 'width 0.3s ease',
+                    }} />
+                  </div>
+                </>
+              );
+            })()}
           </div>
-          <ProgressBar progress={resolution.progress} size="md" />
-        </div>
+        ) : resolution.trackingType === 'cumulative' && resolution.targetValue ? (
+          // CUMULATIVE TRACKING: Show current/target with progress bar
+          <div style={{ marginTop: '1rem' }}>
+            {(() => {
+              const current = resolution.currentValue || 0;
+              const target = resolution.targetValue;
+              const progress = Math.min(100, (current / target) * 100);
+              const unit = resolution.unit || '';
+              const isComplete = current >= target;
+
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isComplete ? colors.accent : colors.text }}>
+                        {unit}{current.toLocaleString()}
+                      </span>
+                      <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                        {' '}/ {unit}{target.toLocaleString()}
+                      </span>
+                      {isComplete && (
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: colors.accent }}>Goal reached!</span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.textMuted }}>
+                      {Math.round(progress)}%
+                    </span>
+                  </div>
+                  <ProgressBar progress={progress} size="md" />
+                </>
+              );
+            })()}
+          </div>
+        ) : resolution.trackingType === 'reflection' ? (
+          // REFLECTION TRACKING: Show journal count only
+          <div style={{ marginTop: '1rem' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.75rem',
+              backgroundColor: colors.bg,
+              borderRadius: '0.5rem',
+            }}>
+              <span style={{ fontSize: '1.25rem' }}>📝</span>
+              <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                {resolution.journal?.length || 0} journal {(resolution.journal?.length || 0) === 1 ? 'entry' : 'entries'}
+              </span>
+            </div>
+          </div>
+        ) : (
+          // LEGACY/DEFAULT: Show percentage progress (for resolutions without trackingType)
+          <div style={{ marginTop: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text }}>Progress</span>
+              {!isCompleted && (
+                <div className="progress-controls" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', opacity: 0, transition: 'opacity 0.15s ease' }}>
+                  <button
+                    onClick={() => updateProgress(resolution.id, Math.max(0, resolution.progress - 10))}
+                    className="action-btn"
+                    style={{
+                      width: '1.75rem',
+                      height: '1.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: colors.textMuted,
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      transition: 'all 0.15s ease',
+                    }}
+                    title="Decrease progress"
+                  >
+                    −
+                  </button>
+                  <button
+                    onClick={() => updateProgress(resolution.id, Math.min(100, resolution.progress + 10))}
+                    className="action-btn action-btn-success"
+                    style={{
+                      width: '1.75rem',
+                      height: '1.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: colors.textMuted,
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      transition: 'all 0.15s ease',
+                    }}
+                    title="Increase progress"
+                  >
+                    +
+                  </button>
+                </div>
+              )}
+            </div>
+            <ProgressBar progress={resolution.progress} size="md" />
+          </div>
+        )}
 
         <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem' }}>
           {resolution.deadline && (

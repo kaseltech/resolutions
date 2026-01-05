@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { Resolution, Milestone, Category, JournalEntry } from '@/types';
+import { Resolution, Milestone, Category, JournalEntry, CheckIn, TrackingType } from '@/types';
 import { loadResolutions, saveResolution, deleteResolutionFromDb, generateId, createResolution } from '@/lib/storage';
 import { Preferences } from '@capacitor/preferences';
 import { celebrationHaptic, progressHaptic } from '@/lib/haptics';
@@ -22,6 +22,9 @@ interface ResolutionContextType {
   deleteMilestone: (resolutionId: string, milestoneId: string) => Promise<void>;
   toggleMilestone: (resolutionId: string, milestoneId: string) => Promise<void>;
   updateProgress: (resolutionId: string, progress: number) => Promise<void>;
+  addCheckIn: (resolutionId: string, checkIn?: Partial<CheckIn>) => Promise<void>;
+  removeCheckIn: (resolutionId: string, checkInId: string) => Promise<void>;
+  updateCumulativeValue: (resolutionId: string, value: number) => Promise<void>;
   addJournalEntry: (resolutionId: string, entry: Partial<JournalEntry>) => Promise<void>;
   deleteJournalEntry: (resolutionId: string, entryId: string) => Promise<void>;
   getResolutionsByCategory: (category: Category | 'all') => Resolution[];
@@ -344,6 +347,97 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
     }
   }, [triggerCelebration]);
 
+  // Add a check-in for frequency tracking
+  const addCheckIn = useCallback(async (resolutionId: string, checkIn?: Partial<CheckIn>) => {
+    const today = new Date().toISOString().split('T')[0];
+    const newCheckIn: CheckIn = {
+      id: generateId(),
+      date: today,
+      ...checkIn,
+    };
+
+    let updatedResolution: Resolution | null = null;
+
+    setResolutions(prev => prev.map(r => {
+      if (r.id === resolutionId) {
+        updatedResolution = {
+          ...r,
+          checkIns: [...(r.checkIns || []), newCheckIn],
+          updatedAt: new Date().toISOString(),
+        };
+        return updatedResolution;
+      }
+      return r;
+    }));
+
+    if (updatedResolution) {
+      await saveResolution(updatedResolution);
+      progressHaptic();
+    }
+  }, []);
+
+  // Remove a check-in (e.g., undo today's check-in)
+  const removeCheckIn = useCallback(async (resolutionId: string, checkInId: string) => {
+    let updatedResolution: Resolution | null = null;
+
+    setResolutions(prev => prev.map(r => {
+      if (r.id === resolutionId) {
+        updatedResolution = {
+          ...r,
+          checkIns: (r.checkIns || []).filter(c => c.id !== checkInId),
+          updatedAt: new Date().toISOString(),
+        };
+        return updatedResolution;
+      }
+      return r;
+    }));
+
+    if (updatedResolution) {
+      await saveResolution(updatedResolution);
+    }
+  }, []);
+
+  // Update cumulative value (e.g., add $100 to savings goal)
+  const updateCumulativeValue = useCallback(async (resolutionId: string, value: number) => {
+    let updatedResolution: Resolution | null = null;
+    let wasAlreadyComplete = false;
+    let title = '';
+    let reachedTarget = false;
+
+    setResolutions(prev => prev.map(r => {
+      if (r.id === resolutionId) {
+        wasAlreadyComplete = r.currentValue !== undefined && r.targetValue !== undefined && r.currentValue >= r.targetValue;
+        title = r.title;
+        const newValue = Math.max(0, value);
+        reachedTarget = r.targetValue !== undefined && newValue >= r.targetValue;
+
+        // Calculate progress percentage for cumulative type
+        const progress = r.targetValue ? Math.round((newValue / r.targetValue) * 100) : 0;
+
+        updatedResolution = {
+          ...r,
+          currentValue: newValue,
+          progress: Math.min(100, progress),
+          updatedAt: new Date().toISOString(),
+          completedAt: reachedTarget && !wasAlreadyComplete ? new Date().toISOString() : r.completedAt,
+        };
+        return updatedResolution;
+      }
+      return r;
+    }));
+
+    if (updatedResolution) {
+      await saveResolution(updatedResolution);
+
+      if (reachedTarget && !wasAlreadyComplete) {
+        triggerCelebration(title);
+        cancelReminder(resolutionId).catch(console.error);
+      } else {
+        progressHaptic();
+      }
+    }
+  }, [triggerCelebration]);
+
   const addJournalEntry = useCallback(async (resolutionId: string, entry: Partial<JournalEntry>) => {
     const newEntry: JournalEntry = {
       id: generateId(),
@@ -429,6 +523,9 @@ export function ResolutionProvider({ children }: { children: React.ReactNode }) 
         deleteMilestone,
         toggleMilestone,
         updateProgress,
+        addCheckIn,
+        removeCheckIn,
+        updateCumulativeValue,
         addJournalEntry,
         deleteJournalEntry,
         getResolutionsByCategory,
