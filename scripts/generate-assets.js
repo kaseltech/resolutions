@@ -14,32 +14,32 @@ const COLORS = {
 const CURRENT_YEAR = '2026';
 
 // Generate YearVow "V + Year" app icon SVG
-// - Year above (subtle, 75% opacity), large V below
-// - Clean navy background
-// - Good vertical breathing room between elements
+// - Year above (very subtle, 70% opacity, smaller)
+// - V is the hero - eye goes there first
+// - Balanced vertical spacing
 function generateAppIconSVG(size) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <!-- Solid navy background -->
   <rect x="0" y="0" width="100" height="100" fill="${COLORS.navy}" />
 
-  <!-- Year above - subtle, reduced opacity -->
+  <!-- Year above - smaller, more subtle -->
   <text
     x="50"
-    y="24"
+    y="22"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
-    font-size="12"
+    font-size="11"
     font-weight="400"
     fill="${COLORS.gold}"
-    opacity="0.75"
+    opacity="0.7"
     letter-spacing="3"
   >${CURRENT_YEAR}</text>
 
-  <!-- Large serif V - the hero -->
+  <!-- Large serif V - the hero, nudged down -->
   <text
     x="50"
-    y="74"
+    y="76"
     text-anchor="middle"
     font-family="'Libre Baskerville', Georgia, 'Times New Roman', Times, serif"
     font-size="50"
