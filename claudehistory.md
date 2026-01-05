@@ -420,3 +420,141 @@ const COLORS = {
 3. Clean Xcode build: Product > Clean Build Folder
 4. Delete app from simulator/device
 5. Rebuild and run
+
+---
+
+## Session: January 4-5, 2026 (Continued)
+
+### Overview
+Added tracking types for resolutions (frequency, cumulative, target, reflection), QuickUpdateModal for faster progress logging, and various UX improvements.
+
+---
+
+### Changes Made
+
+#### 1. Resolution Tracking Types
+**Files:**
+- `src/types/index.ts`
+- `src/lib/storage.ts`
+- `src/components/ResolutionForm.tsx`
+- `src/components/ResolutionCard.tsx`
+
+Four tracking types for different goal styles:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Frequency** | Repeating habit goals | "Meditate 3x/week" |
+| **Cumulative** | Additive progress toward total | "Save $20,000" |
+| **Target** | Move a value toward a goal | "Reach 220 lbs" |
+| **Reflection** | Journal-only, no metrics | "Be more mindful" |
+
+**New Fields Added:**
+- `trackingType`: 'frequency' | 'cumulative' | 'target' | 'reflection'
+- `targetFrequency`: number (for frequency type)
+- `frequencyPeriod`: 'day' | 'week' | 'month'
+- `checkIns`: array of dated check-ins
+- `targetValue`, `currentValue`, `unit`: for cumulative/target
+- `startingValue`: for target type (to calculate direction)
+
+#### 2. Type-Aware Context Menu
+**Files:** `src/components/ResolutionCard.tsx`
+
+Context menu actions adapt to resolution type:
+- **Frequency:** "Check in" button (or "Checked in today!")
+- **Cumulative:** "Log progress" → opens QuickUpdateModal
+- **Target:** "Update value" → opens QuickUpdateModal
+- **Reflection:** No progress action (journal only)
+
+#### 3. QuickUpdateModal Component
+**Files:** `src/components/QuickUpdateModal.tsx` (NEW)
+
+Lightweight modal for quick value updates:
+- Shows current value vs target
+- Simple number input
+- Preview of new value
+- "Update" button
+- Uses React portal to render at document.body (avoids clipping)
+
+#### 4. Redesigned Insights/Dashboard
+**Files:** `src/components/DashboardStats.tsx`
+
+Replaced flashy green/yellow cards with subtle, theme-matched design:
+- **"Habit Check-ins"** section showing frequency goal progress
+  - Mini progress bars for each habit
+  - "1/3 this week" style display
+- **"Falling behind"** alert only when significantly behind (2+ missed after Thursday)
+- Removed "On Track" section (too noisy)
+- Uses app theme colors throughout
+
+#### 5. Card Tap Behavior Change
+**Files:** `src/components/ResolutionCard.tsx`
+
+- **Before:** Tapping card opened edit mode
+- **After:** Tapping card expands journal/notes section
+- Edit only accessible via context menu (3-dot or long-press)
+
+#### 6. Context Menu Positioning Fix
+**Files:** `src/components/ContextMenu.tsx`
+
+- Fixed flash at (0,0) before positioning by adding `isPositioned` state
+- Menu hidden until position calculated
+- Added React portal to prevent clipping by parent containers
+
+#### 7. React Portals for Modals
+**Files:**
+- `src/components/QuickUpdateModal.tsx`
+- `src/components/ContextMenu.tsx`
+
+Both components now use `createPortal` to render directly to `document.body`:
+- Prevents clipping by parent overflow
+- Proper z-index layering (ContextMenu: 100, QuickUpdateModal: 110)
+- Required `mounted` state for SSR hydration
+
+---
+
+### Database Changes
+Added columns to `resolutions` table:
+- `tracking_type` (text)
+- `target_frequency` (integer)
+- `frequency_period` (text)
+- `check_ins` (jsonb)
+- `target_value` (numeric)
+- `current_value` (numeric)
+- `unit` (text)
+- `starting_value` (numeric)
+
+---
+
+### Key Commits
+| Commit | Description |
+|--------|-------------|
+| `4f3298e` | Redesign insights with actionable tracking-aware metrics |
+| `e27da4d` | Add 'target' tracking type and fix context menu positioning |
+| `075de9e` | Improve UX: tap expands cards, redesign insights section |
+| `a5e4ab2` | Remove tap-to-edit from Habit Check-ins display |
+| `366e991` | Add QuickUpdateModal for cumulative and target types |
+| `fac84f4` | Fix QuickUpdateModal: z-index, size, simplify UI |
+| `4e4ae8a` | Use React portals for modals/menus to fix clipping |
+
+---
+
+### Other: Fooocus Management Script
+**Files:** `~/Fooocus/fooocus.sh`
+
+Created helper script for managing Fooocus AI image generator:
+```bash
+./fooocus.sh start    # Start Fooocus
+./fooocus.sh stop     # Stop Fooocus
+./fooocus.sh restart  # Restart
+./fooocus.sh status   # Check status
+```
+
+Also patched `~/Fooocus/modules/upscaler.py` to handle RuntimeError gracefully (upscale bug workaround).
+
+---
+
+### Pending/Future
+- Frequency check-in history view
+- Undo check-in functionality
+- Weekly/monthly progress summaries
+- Achievement badges for streaks
