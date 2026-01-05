@@ -53,7 +53,7 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
       <span style={{
         position: 'absolute',
         bottom: '-0.15em',
-        right: '-1.8em',
+        right: '-2.3em',
         color: YEAR_COLORS.gold,
         fontSize: '0.45em',
         fontWeight: 600,
