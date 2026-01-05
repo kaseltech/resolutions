@@ -18,8 +18,12 @@ echo "=== Directory contents: ==="
 ls -la
 
 echo "=== Installing Node.js via Homebrew ==="
-brew install node@20
-brew link node@20
+brew install node@20 || true
+brew link --overwrite node@20 || true
+
+# Add node to PATH in case link didn't work
+export PATH="/usr/local/opt/node@20/bin:$PATH"
+export PATH="/opt/homebrew/opt/node@20/bin:$PATH"
 
 echo "=== Node.js version ==="
 node --version
