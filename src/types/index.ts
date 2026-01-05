@@ -46,7 +46,7 @@ export interface Reminder {
 }
 
 // Tracking types for different kinds of resolutions
-export type TrackingType = 'frequency' | 'cumulative' | 'reflection';
+export type TrackingType = 'frequency' | 'cumulative' | 'target' | 'reflection';
 
 export const TRACKING_TYPES: { value: TrackingType; label: string; description: string; icon: string }[] = [
   {
@@ -60,6 +60,12 @@ export const TRACKING_TYPES: { value: TrackingType; label: string; description: 
     label: 'Build Toward a Goal',
     description: 'Add progress toward a total (e.g., save $5,000, read 20 books)',
     icon: '📈'
+  },
+  {
+    value: 'target',
+    label: 'Reach a Target',
+    description: 'Track a value moving toward a goal (e.g., reach 220lbs, run 7-min mile)',
+    icon: '🎯'
   },
   {
     value: 'reflection',
@@ -104,6 +110,9 @@ export interface Resolution {
   targetValue?: number; // The goal number
   currentValue?: number; // Current accumulated value
   unit?: string; // e.g., "$", "books", "miles"
+
+  // Target tracking (e.g., "reach 220lbs") - reuses targetValue, currentValue, unit
+  startingValue?: number; // Where you started (for calculating progress direction)
 }
 
 export interface AppData {

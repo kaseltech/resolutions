@@ -24,10 +24,18 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
   const { colors, theme } = useTheme();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [isPositioned, setIsPositioned] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       lightTap();
+    }
+  }, [isOpen]);
+
+  // Reset positioned state when menu closes
+  useEffect(() => {
+    if (!isOpen) {
+      setIsPositioned(false);
     }
   }, [isOpen]);
 
@@ -64,6 +72,7 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
     }
 
     setMenuPosition({ top, left });
+    setIsPositioned(true);
   }, [isOpen, mode, anchorPosition]);
 
   useEffect(() => {
@@ -238,7 +247,10 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
           boxShadow: theme === 'dark'
             ? '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08)'
             : '0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06)',
-          animation: 'popoverIn 0.12s ease-out',
+          // Hide until positioned to prevent flash at (0,0)
+          opacity: isPositioned ? 1 : 0,
+          visibility: isPositioned ? 'visible' : 'hidden',
+          animation: isPositioned ? 'popoverIn 0.12s ease-out' : 'none',
         }}
       >
         {items.map((item, index) => (

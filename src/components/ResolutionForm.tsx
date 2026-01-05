@@ -47,6 +47,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     frequencyPeriod: 'week' as 'day' | 'week' | 'month',
     targetValue: 0,
     currentValue: 0,
+    startingValue: 0,
     unit: '',
   });
 
@@ -67,6 +68,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
         frequencyPeriod: resolution.frequencyPeriod ?? 'week',
         targetValue: resolution.targetValue ?? 0,
         currentValue: resolution.currentValue ?? 0,
+        startingValue: resolution.startingValue ?? 0,
         unit: resolution.unit ?? '',
       });
     }
@@ -95,9 +97,10 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
       trackingType: formData.trackingType,
       targetFrequency: formData.trackingType === 'frequency' ? formData.targetFrequency : undefined,
       frequencyPeriod: formData.trackingType === 'frequency' ? formData.frequencyPeriod : undefined,
-      targetValue: formData.trackingType === 'cumulative' ? formData.targetValue : undefined,
-      unit: formData.trackingType === 'cumulative' ? formData.unit : undefined,
-      currentValue: formData.trackingType === 'cumulative' ? formData.currentValue : undefined,
+      targetValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.targetValue : undefined,
+      unit: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.unit : undefined,
+      currentValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.currentValue : undefined,
+      startingValue: formData.trackingType === 'target' ? formData.startingValue : undefined,
       checkIns: formData.trackingType === 'frequency' ? (resolution?.checkIns ?? []) : undefined,
     };
 
@@ -367,6 +370,79 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Target-specific fields (e.g., reach 220lbs) */}
+          {formData.trackingType === 'target' && (
+            <div style={{
+              padding: '0.75rem',
+              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${colors.border}`,
+            }}>
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>What's your target?</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <input
+                  type="number"
+                  value={formData.targetValue || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, targetValue: parseFloat(e.target.value) || 0 }))}
+                  placeholder="220"
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <input
+                  type="text"
+                  value={formData.unit}
+                  onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                  placeholder="lbs"
+                  style={{ ...inputStyle, width: '4rem', textAlign: 'center' }}
+                />
+              </div>
+
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Where did you start?</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <input
+                  type="number"
+                  value={formData.startingValue || ''}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value) || 0;
+                    setFormData(prev => ({
+                      ...prev,
+                      startingValue: val,
+                      // Also set currentValue to starting if not editing
+                      currentValue: isEditing ? prev.currentValue : val,
+                    }));
+                  }}
+                  placeholder="250"
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <span style={{ fontSize: '0.875rem', color: colors.textMuted, width: '4rem', textAlign: 'center' }}>
+                  {formData.unit || 'units'}
+                </span>
+              </div>
+
+              {/* Current value - only show when editing */}
+              {isEditing && (
+                <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: `1px solid ${colors.border}` }}>
+                  <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Current value</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="number"
+                      value={formData.currentValue || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, currentValue: parseFloat(e.target.value) || 0 }))}
+                      placeholder="235"
+                      style={{ ...inputStyle, flex: 1 }}
+                    />
+                    <span style={{ fontSize: '0.875rem', color: colors.textMuted, width: '4rem', textAlign: 'center' }}>
+                      {formData.unit || 'units'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <p style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.75rem', marginBottom: 0 }}>
+                Progress is calculated based on how far you've moved from your starting point toward your target.
+              </p>
             </div>
           )}
 

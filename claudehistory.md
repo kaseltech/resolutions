@@ -334,6 +334,86 @@ const darkColors = {
 
 ---
 
+#### 2. Dashboard Simplification
+**Files:** `src/components/DashboardStats.tsx`
+
+- Redesigned to follow "Reflection > Tracking > Metrics" philosophy
+- Main view shows only:
+  - Time awareness bar ("Week X of 52 | X days left in 2026")
+  - Daily inspirational quote (refreshable)
+- All metrics moved to collapsible "Insights" section (opt-in):
+  - Summary stats (resolutions, completed, overall %)
+  - Overall progress bar
+  - Achievement progress
+  - Category breakdown
+- Gentler empty state messaging
+- Feels like "private notebook, not dashboard"
+
+#### 3. Desktop Interaction Fixes
+**Files:** `src/components/ContextMenu.tsx`, `src/components/ResolutionCard.tsx`, `src/app/page.tsx`
+
+- Split interactions by input type (mobile vs desktop)
+- **Mobile (touch):**
+  - Long-press (500ms) opens action menu
+  - Swipe gestures for Edit/Journal
+- **Desktop (mouse):**
+  - Long-press disabled (was causing accidental triggers)
+  - Menu button (⋮) visible on card hover
+  - Drag handle visible on card hover (top-right)
+  - Drag only initiates from handle, not whole card
+
+#### 4. Desktop Menu UX - Popover
+**Files:** `src/components/ContextMenu.tsx`, `src/components/ResolutionCard.tsx`
+
+- Desktop: Lightweight popover anchored to ⋮ button
+  - Smaller icons, lighter font weight
+  - No backdrop blur, click outside to dismiss
+  - Closes on scroll
+- Mobile: Keeps full action sheet with Cancel button
+- Menu items reordered by intent:
+  1. Edit (primary)
+  2. Add Journal Entry (primary)
+  3. Update Progress (+10%)
+  4. ─────── (divider)
+  5. Delete (danger, red)
+- Removed trash icon from card tiles (delete only in menu)
+
+#### 5. Xcode Cloud CI Fix
+**Files:** `ios/App/ci_scripts/ci_post_clone.sh` (NEW)
+
+- Added post-clone script for Xcode Cloud builds
+- Installs Node.js via Homebrew
+- Runs `npm ci` to install dependencies
+- Runs `npm run build` for Next.js
+- Runs `npx cap sync ios`
+- Fixes "package cannot be accessed" errors (node_modules not in git)
+
+#### 6. New Logo - V + 2026
+**Files:** `scripts/generate-assets.js`, all icon assets
+
+- Replaced YV monogram with V + year design
+- **App Icon:** Year above (subtle, 70% opacity, 11px), V below (hero, full gold)
+- **Favicon:** V only (cleaner at small sizes)
+- **Splash Screen:** Matches icon - year above, large V, tagline below
+- Gold (#C9A75A) on navy (#1F3A5A)
+- Year can be updated annually by changing `CURRENT_YEAR` constant
+- Explored 12+ mockup variations before final selection
+
+---
+
+### New Color Palette (Updated)
+```javascript
+// YearVow Brand Colors
+const COLORS = {
+  navy: '#1F3A5A',         // Primary navy (background)
+  gold: '#C9A75A',         // Gold accent (logo, highlights)
+  cream: '#F5F4EF',        // Off-white (text on dark)
+  textMuted: '#B8C4D0',    // Muted text
+};
+```
+
+---
+
 ### To Apply Changes
 1. Run `npm run build`
 2. Run `npx cap sync`

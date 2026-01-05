@@ -53,6 +53,7 @@ function rowToResolution(row: Record<string, unknown>): Resolution {
     targetValue: row.target_value as number | undefined,
     currentValue: row.current_value as number | undefined,
     unit: row.unit as string | undefined,
+    startingValue: row.starting_value as number | undefined,
   };
 }
 
@@ -81,6 +82,7 @@ function resolutionToRow(resolution: Resolution, userId: string): Record<string,
     target_value: resolution.targetValue || null,
     current_value: resolution.currentValue || null,
     unit: resolution.unit || null,
+    starting_value: resolution.startingValue || null,
   };
 }
 

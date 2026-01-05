@@ -141,6 +141,17 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         onClick: () => onEdit(resolution),
       };
     }
+    if (resolution.trackingType === 'target') {
+      return {
+        label: 'Update value',
+        icon: (
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }}>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+          </svg>
+        ),
+        onClick: () => onEdit(resolution),
+      };
+    }
     if (resolution.trackingType === 'reflection') {
       return null; // No progress action for reflection
     }
@@ -226,6 +237,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
     }
     if (resolution.trackingType === 'cumulative') {
       return resolution.currentValue !== undefined && resolution.targetValue !== undefined && resolution.currentValue >= resolution.targetValue;
+    }
+    if (resolution.trackingType === 'target') {
+      if (resolution.currentValue === undefined || resolution.targetValue === undefined || resolution.startingValue === undefined) {
+        return false;
+      }
+      const isGoingDown = resolution.targetValue < resolution.startingValue;
+      return isGoingDown ? (resolution.currentValue <= resolution.targetValue) : (resolution.currentValue >= resolution.targetValue);
     }
     if (resolution.trackingType === 'reflection') {
       return false; // Reflection goals don't "complete"
@@ -495,6 +513,51 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                     </span>
                   </div>
                   <ProgressBar progress={progress} size="md" />
+                </>
+              );
+            })()}
+          </div>
+        ) : resolution.trackingType === 'target' && resolution.targetValue !== undefined && resolution.startingValue !== undefined ? (
+          // TARGET TRACKING: Show current value moving toward target
+          <div style={{ marginTop: '1rem' }}>
+            {(() => {
+              const current = resolution.currentValue ?? resolution.startingValue;
+              const start = resolution.startingValue;
+              const target = resolution.targetValue;
+              const unit = resolution.unit || '';
+
+              // Calculate progress - works for both directions
+              const totalDistance = Math.abs(target - start);
+              const currentDistance = Math.abs(current - start);
+              const progress = totalDistance > 0 ? Math.min(100, (currentDistance / totalDistance) * 100) : 0;
+
+              // Check if moving in right direction
+              const isGoingDown = target < start; // e.g., losing weight
+              const isMovingRight = isGoingDown ? (current <= start) : (current >= start);
+              const isComplete = isGoingDown ? (current <= target) : (current >= target);
+
+              return (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isComplete ? colors.accent : colors.text }}>
+                        {current}{unit}
+                      </span>
+                      <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                        {' '}→ {target}{unit}
+                      </span>
+                      {isComplete && (
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: colors.accent }}>Goal reached!</span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.textMuted }}>
+                      {Math.round(isMovingRight ? progress : 0)}%
+                    </span>
+                  </div>
+                  <ProgressBar progress={isMovingRight ? progress : 0} size="md" />
+                  <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.25rem' }}>
+                    Started at {start}{unit}
+                  </div>
                 </>
               );
             })()}
