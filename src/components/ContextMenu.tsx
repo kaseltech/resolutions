@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTheme } from '@/context/ThemeContext';
 import { lightTap } from '@/lib/haptics';
 
@@ -25,6 +26,12 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [isPositioned, setIsPositioned] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Mount portal after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -107,11 +114,11 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
     };
   }, [isOpen, onClose, mode]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   // Mobile action sheet
   if (mode === 'sheet') {
-    return (
+    const sheetContent = (
       <div
         style={{
           position: 'fixed',
@@ -226,10 +233,12 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
         `}</style>
       </div>
     );
+
+    return createPortal(sheetContent, document.body);
   }
 
   // Desktop popover
-  return (
+  const popoverContent = (
     <>
       <div
         ref={menuRef}
@@ -321,6 +330,8 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
       `}</style>
     </>
   );
+
+  return createPortal(popoverContent, document.body);
 }
 
 // Hook for long press detection - TOUCH ONLY (no mouse/desktop)

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Resolution } from '@/types';
 import { useTheme } from '@/context/ThemeContext';
 
@@ -14,7 +15,13 @@ interface QuickUpdateModalProps {
 export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickUpdateModalProps) {
   const { colors, theme } = useTheme();
   const [value, setValue] = useState('');
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Mount portal after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Reset when modal opens
   useEffect(() => {
@@ -25,7 +32,7 @@ export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickU
     }
   }, [isOpen, resolution]);
 
-  if (!isOpen || !resolution) return null;
+  if (!mounted || !isOpen || !resolution) return null;
 
   const isCumulative = resolution.trackingType === 'cumulative';
   const isTarget = resolution.trackingType === 'target';
@@ -75,7 +82,7 @@ export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickU
     return '';
   };
 
-  return (
+  const modalContent = (
     <div
       onClick={handleBackdropClick}
       style={{
@@ -257,4 +264,6 @@ export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickU
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
