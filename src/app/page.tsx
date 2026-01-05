@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useViewMode } from '@/context/ViewModeContext';
 import { Resolution, Category } from '@/types';
 import { ResolutionCard } from '@/components/ResolutionCard';
 import { ResolutionForm } from '@/components/ResolutionForm';
@@ -21,6 +22,12 @@ export default function Home() {
   const { resolutions, loading, getResolutionsByCategory, reorderResolutions, updateProgress, showCelebration, celebrationMessage, dismissCelebration } = useResolutions();
   const { signOut } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
+  const { viewMode } = useViewMode();
+
+  // Mode-specific settings
+  const showStats = viewMode !== 'focus';  // Hide stats in Focus mode
+  const showViewToggle = viewMode !== 'focus';  // Hide view toggle in Focus mode
+  const showAtmosphere = viewMode === 'reflect';  // Show atmosphere in Reflect mode
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
@@ -192,6 +199,22 @@ export default function Home() {
         transition: 'background-color 0.3s ease, border-color 0.3s ease',
         paddingTop: 'env(safe-area-inset-top)',
       }}>
+        {/* Atmospheric texture - Reflect mode only */}
+        {showAtmosphere && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: theme === 'dark' ? 0.15 : 0.08,
+            pointerEvents: 'none',
+            background: `radial-gradient(1px 1px at 20px 30px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
+                        radial-gradient(1px 1px at 40px 70px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
+                        radial-gradient(1px 1px at 50px 160px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
+                        radial-gradient(1px 1px at 90px 40px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
+                        radial-gradient(1px 1px at 130px 80px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent),
+                        radial-gradient(1px 1px at 160px 120px, ${theme === 'dark' ? '#F5F1EA' : '#1F3A5A'}, transparent)`,
+            backgroundSize: '200px 200px',
+          }} />
+        )}
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -300,7 +323,7 @@ export default function Home() {
 
       {/* Main Content */}
       <main style={{ maxWidth: '72rem', margin: '0 auto', padding: '1rem' }}>
-        {/* View Toggle & Sort - Responsive */}
+        {/* View Toggle & Sort - Responsive (hidden in Focus mode) */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -308,47 +331,49 @@ export default function Home() {
           marginBottom: '1rem',
           flexWrap: 'wrap'
         }}>
-          <div
-            data-tutorial="view-toggle"
-            style={{
-            display: 'flex',
-            backgroundColor: colors.cardBg,
-            borderRadius: '0.5rem',
-            padding: '0.25rem',
-            border: `1px solid ${colors.border}`,
-            flex: '0 0 auto'
-          }}>
-            <button
-              onClick={() => setView('dashboard')}
+          {showViewToggle && (
+            <div
+              data-tutorial="view-toggle"
               style={{
-                padding: '0.5rem 0.75rem',
-                borderRadius: '0.375rem',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                border: 'none',
-                cursor: 'pointer',
-                backgroundColor: view === 'dashboard' ? colors.accent : 'transparent',
-                color: view === 'dashboard' ? 'white' : colors.textMuted,
-              }}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => setView('list')}
-              style={{
-                padding: '0.5rem 0.75rem',
-                borderRadius: '0.375rem',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                border: 'none',
-                cursor: 'pointer',
-                backgroundColor: view === 'list' ? colors.accent : 'transparent',
-                color: view === 'list' ? 'white' : colors.textMuted,
-              }}
-            >
-              List
-            </button>
-          </div>
+              display: 'flex',
+              backgroundColor: colors.cardBg,
+              borderRadius: '0.5rem',
+              padding: '0.25rem',
+              border: `1px solid ${colors.border}`,
+              flex: '0 0 auto'
+            }}>
+              <button
+                onClick={() => setView('dashboard')}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: '0.375rem',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: view === 'dashboard' ? colors.accent : 'transparent',
+                  color: view === 'dashboard' ? 'white' : colors.textMuted,
+                }}
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => setView('list')}
+                style={{
+                  padding: '0.5rem 0.75rem',
+                  borderRadius: '0.375rem',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: view === 'list' ? colors.accent : 'transparent',
+                  color: view === 'list' ? 'white' : colors.textMuted,
+                }}
+              >
+                List
+              </button>
+            </div>
+          )}
 
           {resolutions.length > 0 && (
             <select
@@ -379,8 +404,8 @@ export default function Home() {
           )}
         </div>
 
-        {/* Dashboard View */}
-        {view === 'dashboard' && (
+        {/* Dashboard View - hidden in Focus mode */}
+        {view === 'dashboard' && showStats && (
           <div style={{ marginBottom: '1.5rem' }}>
             <DashboardStats onEditResolution={handleEdit} />
           </div>

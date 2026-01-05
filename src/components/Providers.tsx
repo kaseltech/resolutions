@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { AuthProvider } from '@/context/AuthContext';
 import { ResolutionProvider } from '@/context/ResolutionContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { ViewModeProvider } from '@/context/ViewModeContext';
 import { AuthGuard } from './AuthGuard';
 import { initOneSignal } from '@/lib/onesignal';
 
@@ -20,9 +21,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <OneSignalInit />
         <AuthGuard>
-          <ResolutionProvider>
-            {children}
-          </ResolutionProvider>
+          <ViewModeProvider>
+            <ResolutionProvider>
+              {children}
+            </ResolutionProvider>
+          </ViewModeProvider>
         </AuthGuard>
       </AuthProvider>
     </ThemeProvider>
