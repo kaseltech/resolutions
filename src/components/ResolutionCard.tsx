@@ -9,6 +9,7 @@ import { MilestoneList } from './MilestoneList';
 import { CategoryIcon } from './CategoryIcon';
 import { ConfirmModal } from './ConfirmModal';
 import { ContextMenu, useLongPress } from './ContextMenu';
+import { QuickUpdateModal } from './QuickUpdateModal';
 
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
   great: '😄',
@@ -82,8 +83,9 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [menuAnchorPosition, setMenuAnchorPosition] = useState<{ x: number; y: number } | undefined>();
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [showQuickUpdate, setShowQuickUpdate] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry } = useResolutions();
+  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution } = useResolutions();
   const { theme, colors } = useTheme();
 
   // Detect touch device
@@ -138,7 +140,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
         ),
-        onClick: () => onEdit(resolution),
+        onClick: () => setShowQuickUpdate(true),
       };
     }
     if (resolution.trackingType === 'target') {
@@ -149,7 +151,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
           </svg>
         ),
-        onClick: () => onEdit(resolution),
+        onClick: () => setShowQuickUpdate(true),
       };
     }
     if (resolution.trackingType === 'reflection') {
@@ -946,6 +948,16 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       items={contextMenuItems}
       mode={isTouchDevice ? 'sheet' : 'popover'}
       anchorPosition={menuAnchorPosition}
+    />
+
+    {/* Quick Update Modal for cumulative/target types */}
+    <QuickUpdateModal
+      resolution={resolution}
+      isOpen={showQuickUpdate}
+      onClose={() => setShowQuickUpdate(false)}
+      onSave={(resolutionId, newValue) => {
+        updateResolution(resolutionId, { currentValue: newValue });
+      }}
     />
     </>
   );
