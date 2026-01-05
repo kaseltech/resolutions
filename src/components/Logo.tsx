@@ -49,6 +49,13 @@ export function Logo({ size = 'md', className = '', animated = false }: LogoProp
       }}
     >
       YearVow
+      <span style={{
+        color: YEAR_COLORS.gold,
+        marginLeft: '0.3em',
+        fontWeight: 600,
+      }}>
+        2026
+      </span>
     </span>
   );
 }
