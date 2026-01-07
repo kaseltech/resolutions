@@ -760,23 +760,44 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
-                                {/* Checkmark or circle */}
-                                <div style={{
-                                  width: '1rem',
-                                  height: '1rem',
-                                  borderRadius: '50%',
-                                  backgroundColor: isItemComplete ? colors.accent : (theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : 'rgba(255, 255, 255, 0.1)'),
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  flexShrink: 0,
-                                }}>
+                                {/* Checkmark or circle - tappable to toggle complete */}
+                                <button
+                                  onClick={() => {
+                                    if (isItemComplete) {
+                                      // Unmark - reset to 0
+                                      updateMilestone(resolution.id, milestone.id, {
+                                        currentAmount: 0,
+                                        completed: false,
+                                      });
+                                    } else {
+                                      // Mark complete - set to full amount
+                                      updateMilestone(resolution.id, milestone.id, {
+                                        currentAmount: targetAmt,
+                                        completed: true,
+                                      });
+                                    }
+                                  }}
+                                  style={{
+                                    width: '1.25rem',
+                                    height: '1.25rem',
+                                    borderRadius: '50%',
+                                    backgroundColor: isItemComplete ? colors.accent : 'transparent',
+                                    border: isItemComplete ? 'none' : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                  }}
+                                  title={isItemComplete ? 'Mark incomplete' : 'Mark complete'}
+                                >
                                   {isItemComplete && (
-                                    <svg style={{ width: '0.625rem', height: '0.625rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg style={{ width: '0.75rem', height: '0.75rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
                                   )}
-                                </div>
+                                </button>
                                 {/* Title */}
                                 <span style={{
                                   flex: 1,
@@ -1129,12 +1150,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
 
       {expanded && (
         <div style={{ padding: '0 1.25rem 1.25rem', borderTop: `1px solid ${colors.border}`, paddingTop: '1rem' }}>
-          {resolution.milestones.length > 0 && (
+          {/* Hide MilestoneList for checklist type since it's already shown as main content */}
+          {resolution.milestones.length > 0 && resolution.trackingType !== 'checklist' && (
             <MilestoneList resolution={resolution} />
           )}
 
           {resolution.notes && (
-            <div style={{ marginTop: resolution.milestones.length > 0 ? '1rem' : 0 }}>
+            <div style={{ marginTop: (resolution.milestones.length > 0 && resolution.trackingType !== 'checklist') ? '1rem' : 0 }}>
               <h4 style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text, marginBottom: '0.25rem', marginTop: 0 }}>Notes</h4>
               <p style={{
                 fontSize: '0.875rem',
