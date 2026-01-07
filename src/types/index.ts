@@ -26,7 +26,8 @@ export interface Milestone {
   completed: boolean;
   completedAt?: string;
   dueDate?: string;
-  amount?: number; // Optional dollar/value amount for checklist items
+  amount?: number; // Optional target amount for checklist items
+  currentAmount?: number; // Current progress toward amount (for partial tracking)
 }
 
 export interface JournalEntry {

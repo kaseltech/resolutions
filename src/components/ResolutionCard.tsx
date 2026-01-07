@@ -93,9 +93,12 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [showQuickUpdate, setShowQuickUpdate] = useState(false);
   const [showJournalPrompt, setShowJournalPrompt] = useState(false);
+  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
+  const [milestoneAmountInput, setMilestoneAmountInput] = useState('');
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const journalFormRef = useRef<HTMLDivElement>(null);
-  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution, toggleMilestone } = useResolutions();
+  const milestoneInputRef = useRef<HTMLInputElement>(null);
+  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution, toggleMilestone, updateMilestone } = useResolutions();
   const { theme, colors } = useTheme();
 
   // Detect touch device
@@ -124,6 +127,14 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       }, 100);
     }
   }, [showJournalForm]);
+
+  // Focus milestone input when editing
+  useEffect(() => {
+    if (editingMilestoneId && milestoneInputRef.current) {
+      milestoneInputRef.current.focus();
+      milestoneInputRef.current.select();
+    }
+  }, [editingMilestoneId]);
 
   // Long press handler for context menu (mobile only)
   const longPressHandlers = useLongPress(
@@ -668,7 +679,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               const unit = resolution.unit || '';
               const hasAmounts = unit && milestones.some(m => m.amount !== undefined);
               const totalAmount = milestones.reduce((sum, m) => sum + (m.amount || 0), 0);
-              const completedAmount = milestones.filter(m => m.completed).reduce((sum, m) => sum + (m.amount || 0), 0);
+              // For amount-based: sum of currentAmount (or full amount if completed without currentAmount)
+              const completedAmount = milestones.reduce((sum, m) => {
+                if (m.amount === undefined) return sum;
+                if (m.currentAmount !== undefined) return sum + m.currentAmount;
+                if (m.completed) return sum + m.amount;
+                return sum;
+              }, 0);
 
               // Use amount-based progress if amounts exist, otherwise count-based
               const progress = hasAmounts
@@ -721,69 +738,197 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                   {/* Checklist items */}
                   {milestones.length > 0 && (
                     <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-                      {milestones.map((milestone) => (
-                        <button
-                          key={milestone.id}
-                          onClick={() => toggleMilestone(resolution.id, milestone.id)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            padding: '0.5rem 0.625rem',
-                            backgroundColor: milestone.completed
-                              ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
-                              : colors.bg,
-                            borderRadius: '0.375rem',
-                            border: 'none',
-                            cursor: 'pointer',
-                            textAlign: 'left',
-                            width: '100%',
-                            transition: 'background-color 0.15s ease',
-                          }}
-                        >
-                          {/* Checkbox */}
-                          <div style={{
-                            width: '1.125rem',
-                            height: '1.125rem',
-                            borderRadius: '0.25rem',
-                            border: milestone.completed
-                              ? 'none'
-                              : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
-                            backgroundColor: milestone.completed ? colors.accent : 'transparent',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}>
-                            {milestone.completed && (
-                              <svg style={{ width: '0.75rem', height: '0.75rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                          {/* Title */}
-                          <span style={{
-                            flex: 1,
-                            fontSize: '0.875rem',
-                            color: milestone.completed ? colors.textMuted : colors.text,
-                            textDecoration: milestone.completed ? 'line-through' : 'none',
-                            opacity: milestone.completed ? 0.7 : 1,
-                          }}>
-                            {milestone.title}
-                          </span>
-                          {/* Amount if exists */}
-                          {milestone.amount !== undefined && unit && (
-                            <span style={{
-                              fontSize: '0.8125rem',
-                              fontWeight: 500,
-                              color: milestone.completed ? colors.textMuted : colors.accent,
-                              opacity: milestone.completed ? 0.6 : 1,
+                      {milestones.map((milestone) => {
+                        const hasAmount = milestone.amount !== undefined && unit;
+                        const currentAmt = milestone.currentAmount ?? 0;
+                        const targetAmt = milestone.amount ?? 0;
+                        const itemProgress = hasAmount && targetAmt > 0 ? Math.round((currentAmt / targetAmt) * 100) : 0;
+                        const isItemComplete = hasAmount ? currentAmt >= targetAmt : milestone.completed;
+                        const isEditing = editingMilestoneId === milestone.id;
+
+                        // For items WITH amounts - show progress and allow editing
+                        if (hasAmount) {
+                          return (
+                            <div
+                              key={milestone.id}
+                              style={{
+                                padding: '0.5rem 0.625rem',
+                                backgroundColor: isItemComplete
+                                  ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
+                                  : colors.bg,
+                                borderRadius: '0.375rem',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
+                                {/* Checkmark or circle */}
+                                <div style={{
+                                  width: '1rem',
+                                  height: '1rem',
+                                  borderRadius: '50%',
+                                  backgroundColor: isItemComplete ? colors.accent : (theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : 'rgba(255, 255, 255, 0.1)'),
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0,
+                                }}>
+                                  {isItemComplete && (
+                                    <svg style={{ width: '0.625rem', height: '0.625rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                                {/* Title */}
+                                <span style={{
+                                  flex: 1,
+                                  fontSize: '0.8125rem',
+                                  color: isItemComplete ? colors.textMuted : colors.text,
+                                  opacity: isItemComplete ? 0.7 : 1,
+                                }}>
+                                  {milestone.title}
+                                </span>
+                                {/* Amount progress */}
+                                {isEditing ? (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                    <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>{unit}</span>
+                                    <input
+                                      ref={milestoneInputRef}
+                                      type="number"
+                                      value={milestoneAmountInput}
+                                      onChange={(e) => setMilestoneAmountInput(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                          const newAmount = parseFloat(milestoneAmountInput) || 0;
+                                          updateMilestone(resolution.id, milestone.id, {
+                                            currentAmount: newAmount,
+                                            completed: newAmount >= targetAmt,
+                                          });
+                                          setEditingMilestoneId(null);
+                                          setMilestoneAmountInput('');
+                                        } else if (e.key === 'Escape') {
+                                          setEditingMilestoneId(null);
+                                          setMilestoneAmountInput('');
+                                        }
+                                      }}
+                                      onBlur={() => {
+                                        const newAmount = parseFloat(milestoneAmountInput) || 0;
+                                        if (milestoneAmountInput) {
+                                          updateMilestone(resolution.id, milestone.id, {
+                                            currentAmount: newAmount,
+                                            completed: newAmount >= targetAmt,
+                                          });
+                                        }
+                                        setEditingMilestoneId(null);
+                                        setMilestoneAmountInput('');
+                                      }}
+                                      style={{
+                                        width: '4rem',
+                                        padding: '0.25rem 0.375rem',
+                                        fontSize: '0.75rem',
+                                        textAlign: 'right',
+                                        backgroundColor: colors.cardBg,
+                                        border: `1px solid ${colors.accent}`,
+                                        borderRadius: '0.25rem',
+                                        color: colors.text,
+                                        outline: 'none',
+                                      }}
+                                    />
+                                    <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>/ {unit}{targetAmt.toLocaleString()}</span>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      setEditingMilestoneId(milestone.id);
+                                      setMilestoneAmountInput(currentAmt.toString());
+                                    }}
+                                    style={{
+                                      padding: '0.125rem 0.375rem',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 500,
+                                      color: isItemComplete ? colors.textMuted : colors.accent,
+                                      backgroundColor: 'transparent',
+                                      border: `1px solid ${isItemComplete ? colors.border : colors.accent}40`,
+                                      borderRadius: '0.25rem',
+                                      cursor: 'pointer',
+                                      opacity: isItemComplete ? 0.6 : 1,
+                                    }}
+                                  >
+                                    {unit}{currentAmt.toLocaleString()} / {unit}{targetAmt.toLocaleString()}
+                                  </button>
+                                )}
+                              </div>
+                              {/* Mini progress bar */}
+                              <div style={{
+                                height: '3px',
+                                backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '2px',
+                                overflow: 'hidden',
+                              }}>
+                                <div style={{
+                                  height: '100%',
+                                  width: `${Math.min(100, itemProgress)}%`,
+                                  backgroundColor: isItemComplete ? colors.accent : colors.progress,
+                                  borderRadius: '2px',
+                                  transition: 'width 0.3s ease',
+                                }} />
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // For items WITHOUT amounts - simple checkbox toggle
+                        return (
+                          <button
+                            key={milestone.id}
+                            onClick={() => toggleMilestone(resolution.id, milestone.id)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              padding: '0.5rem 0.625rem',
+                              backgroundColor: milestone.completed
+                                ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
+                                : colors.bg,
+                              borderRadius: '0.375rem',
+                              border: 'none',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%',
+                              transition: 'background-color 0.15s ease',
+                            }}
+                          >
+                            {/* Checkbox */}
+                            <div style={{
+                              width: '1.125rem',
+                              height: '1.125rem',
+                              borderRadius: '0.25rem',
+                              border: milestone.completed
+                                ? 'none'
+                                : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
+                              backgroundColor: milestone.completed ? colors.accent : 'transparent',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
                             }}>
-                              {unit}{milestone.amount.toLocaleString()}
+                              {milestone.completed && (
+                                <svg style={{ width: '0.75rem', height: '0.75rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            {/* Title */}
+                            <span style={{
+                              flex: 1,
+                              fontSize: '0.875rem',
+                              color: milestone.completed ? colors.textMuted : colors.text,
+                              textDecoration: milestone.completed ? 'line-through' : 'none',
+                              opacity: milestone.completed ? 0.7 : 1,
+                            }}>
+                              {milestone.title}
                             </span>
-                          )}
-                        </button>
-                      ))}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
