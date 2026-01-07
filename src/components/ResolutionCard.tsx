@@ -11,6 +11,7 @@ import { ConfirmModal } from './ConfirmModal';
 import { ContextMenu, useLongPress } from './ContextMenu';
 import { QuickUpdateModal } from './QuickUpdateModal';
 import { JournalModal } from './JournalModal';
+import { CheckInCalendarModal } from './CheckInCalendarModal';
 import { FeatherPenIcon } from './FeatherPenIcon';
 
 // Helper to get local date string (YYYY-MM-DD) in user's timezone
@@ -87,6 +88,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
   const [milestoneAmountInput, setMilestoneAmountInput] = useState('');
   const [showJournalModal, setShowJournalModal] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const milestoneInputRef = useRef<HTMLInputElement>(null);
   const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateResolution, toggleMilestone, updateMilestone } = useResolutions();
@@ -364,37 +366,6 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 </svg>
               </div>
             )}
-            {/* Journal button - gold feathered pen */}
-            <button
-              onClick={() => setShowJournalModal(true)}
-              className="action-btn"
-              style={{
-                padding: '0.5rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                position: 'relative',
-              }}
-              title="Journal"
-            >
-              <FeatherPenIcon
-                size={18}
-                color={(resolution.journal?.length || 0) > 0 ? colors.accent : (theme === 'light' ? '#B8A070' : '#8A7A5A')}
-              />
-              {(resolution.journal?.length || 0) > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: '0.125rem',
-                  right: '0.125rem',
-                  width: '0.5rem',
-                  height: '0.5rem',
-                  backgroundColor: colors.accent,
-                  borderRadius: '50%',
-                }} />
-              )}
-            </button>
             {/* Menu button */}
             <button
               ref={menuButtonRef}
@@ -500,21 +471,48 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       </button>
                     )}
                   </div>
-                  {/* Visual progress bar for frequency */}
-                  <div style={{
-                    height: '0.5rem',
-                    backgroundColor: colors.border,
-                    borderRadius: '9999px',
-                    overflow: 'hidden'
-                  }}>
+                  {/* Visual progress bar for frequency - tappable to open calendar */}
+                  <button
+                    onClick={() => setShowCalendarModal(true)}
+                    style={{
+                      width: '100%',
+                      padding: '0.375rem 0',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'block',
+                    }}
+                    title="View check-in history"
+                  >
                     <div style={{
-                      width: `${Math.min(100, (count / target) * 100)}%`,
-                      height: '100%',
-                      backgroundColor: isMetGoal ? colors.accent : (theme === 'light' ? '#1e40af' : '#60a5fa'),
+                      height: '0.5rem',
+                      backgroundColor: colors.border,
                       borderRadius: '9999px',
-                      transition: 'width 0.3s ease',
-                    }} />
-                  </div>
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: `${Math.min(100, (count / target) * 100)}%`,
+                        height: '100%',
+                        backgroundColor: isMetGoal ? colors.accent : (theme === 'light' ? '#1e40af' : '#60a5fa'),
+                        borderRadius: '9999px',
+                        transition: 'width 0.3s ease',
+                      }} />
+                    </div>
+                    <div style={{
+                      marginTop: '0.375rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.25rem',
+                    }}>
+                      <svg style={{ width: '0.75rem', height: '0.75rem', color: colors.textMuted, opacity: 0.6 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span style={{ fontSize: '0.6875rem', color: colors.textMuted, opacity: 0.6 }}>
+                        View history
+                      </span>
+                    </div>
+                  </button>
 
                   {/* Contextual journal prompt after check-in */}
                   {checkedInToday && showJournalPrompt && (
@@ -1183,6 +1181,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       resolution={resolution}
       isOpen={showJournalModal}
       onClose={() => setShowJournalModal(false)}
+    />
+
+    {/* Check-in Calendar Modal */}
+    <CheckInCalendarModal
+      resolution={resolution}
+      isOpen={showCalendarModal}
+      onClose={() => setShowCalendarModal(false)}
     />
     </>
   );
