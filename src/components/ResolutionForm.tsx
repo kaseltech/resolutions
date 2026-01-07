@@ -112,7 +112,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
       targetFrequency: formData.trackingType === 'frequency' ? (formData.targetFrequency ?? 1) : undefined,
       frequencyPeriod: formData.trackingType === 'frequency' ? formData.frequencyPeriod : undefined,
       targetValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.targetValue : undefined,
-      unit: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.unit : undefined,
+      unit: (formData.trackingType === 'cumulative' || formData.trackingType === 'target' || formData.trackingType === 'checklist') ? formData.unit : undefined,
       currentValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.currentValue : undefined,
       startingValue: formData.trackingType === 'target' ? formData.startingValue : undefined,
       checkIns: formData.trackingType === 'frequency' ? (resolution?.checkIns ?? []) : undefined,
@@ -517,7 +517,47 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
-              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Checklist items</label>
+              {/* Unit selector */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <label style={{ fontSize: '0.8125rem', color: colors.textMuted }}>Unit (optional):</label>
+                <div style={{ display: 'flex', gap: '0.25rem' }}>
+                  {['', '$', 'hrs', 'pts'].map((u) => (
+                    <button
+                      key={u}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, unit: u }))}
+                      style={{
+                        padding: '0.25rem 0.5rem',
+                        fontSize: '0.75rem',
+                        backgroundColor: formData.unit === u
+                          ? colors.accent
+                          : (theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)'),
+                        color: formData.unit === u ? 'white' : colors.textMuted,
+                        border: 'none',
+                        borderRadius: '0.25rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {u || 'None'}
+                    </button>
+                  ))}
+                  <input
+                    type="text"
+                    value={!['', '$', 'hrs', 'pts'].includes(formData.unit) ? formData.unit : ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                    placeholder="Other"
+                    style={{
+                      ...inputStyle,
+                      width: '4rem',
+                      padding: '0.25rem 0.375rem',
+                      fontSize: '0.75rem',
+                      textAlign: 'center',
+                    }}
+                  />
+                </div>
+              </div>
+
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Items</label>
 
               {/* Add new item */}
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: formData.milestones.length > 0 ? '0.75rem' : 0 }}>
@@ -545,33 +585,35 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   placeholder="Item name..."
                   style={{ ...inputStyle, flex: 1, padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                 />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>$</span>
-                  <input
-                    type="number"
-                    value={newMilestoneAmount}
-                    onChange={(e) => setNewMilestoneAmount(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && newMilestoneTitle.trim()) {
-                        e.preventDefault();
-                        const newMilestone: Milestone = {
-                          id: `milestone-${Date.now()}`,
-                          title: newMilestoneTitle.trim(),
-                          completed: false,
-                          amount: newMilestoneAmount ? parseFloat(newMilestoneAmount) : undefined,
-                        };
-                        setFormData(prev => ({
-                          ...prev,
-                          milestones: [...prev.milestones, newMilestone],
-                        }));
-                        setNewMilestoneTitle('');
-                        setNewMilestoneAmount('');
-                      }
-                    }}
-                    placeholder="0"
-                    style={{ ...inputStyle, width: '4.5rem', padding: '0.5rem 0.5rem', fontSize: '0.875rem', textAlign: 'right' }}
-                  />
-                </div>
+                {formData.unit && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>{formData.unit}</span>
+                    <input
+                      type="number"
+                      value={newMilestoneAmount}
+                      onChange={(e) => setNewMilestoneAmount(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && newMilestoneTitle.trim()) {
+                          e.preventDefault();
+                          const newMilestone: Milestone = {
+                            id: `milestone-${Date.now()}`,
+                            title: newMilestoneTitle.trim(),
+                            completed: false,
+                            amount: newMilestoneAmount ? parseFloat(newMilestoneAmount) : undefined,
+                          };
+                          setFormData(prev => ({
+                            ...prev,
+                            milestones: [...prev.milestones, newMilestone],
+                          }));
+                          setNewMilestoneTitle('');
+                          setNewMilestoneAmount('');
+                        }
+                      }}
+                      placeholder="0"
+                      style={{ ...inputStyle, width: '4.5rem', padding: '0.5rem 0.5rem', fontSize: '0.875rem', textAlign: 'right' }}
+                    />
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -627,9 +669,9 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       <span style={{ flex: 1, fontSize: '0.875rem', color: colors.text }}>
                         {milestone.title}
                       </span>
-                      {milestone.amount !== undefined && (
+                      {milestone.amount !== undefined && formData.unit && (
                         <span style={{ fontSize: '0.8125rem', color: colors.accent, fontWeight: 500 }}>
-                          ${milestone.amount.toLocaleString()}
+                          {formData.unit}{milestone.amount.toLocaleString()}
                         </span>
                       )}
                       <button
@@ -661,8 +703,8 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                 </div>
               )}
 
-              {/* Show total if any items have amounts */}
-              {formData.milestones.some(m => m.amount !== undefined) && (
+              {/* Show total if any items have amounts and unit is set */}
+              {formData.unit && formData.milestones.some(m => m.amount !== undefined) && (
                 <div style={{
                   marginTop: '0.75rem',
                   paddingTop: '0.625rem',
@@ -673,7 +715,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                 }}>
                   <span style={{ fontSize: '0.8125rem', color: colors.textMuted }}>Total:</span>
                   <span style={{ fontSize: '0.875rem', fontWeight: 600, color: colors.text }}>
-                    ${formData.milestones.reduce((sum, m) => sum + (m.amount || 0), 0).toLocaleString()}
+                    {formData.unit}{formData.milestones.reduce((sum, m) => sum + (m.amount || 0), 0).toLocaleString()}
                   </span>
                 </div>
               )}

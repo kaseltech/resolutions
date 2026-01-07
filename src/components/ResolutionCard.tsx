@@ -664,8 +664,9 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               const completedCount = milestones.filter(m => m.completed).length;
               const totalCount = milestones.length;
 
-              // Check if any milestones have amounts (for dollar-based progress)
-              const hasAmounts = milestones.some(m => m.amount !== undefined);
+              // Check if any milestones have amounts and unit is set (for value-based progress)
+              const unit = resolution.unit || '';
+              const hasAmounts = unit && milestones.some(m => m.amount !== undefined);
               const totalAmount = milestones.reduce((sum, m) => sum + (m.amount || 0), 0);
               const completedAmount = milestones.filter(m => m.completed).reduce((sum, m) => sum + (m.amount || 0), 0);
 
@@ -686,13 +687,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       {hasAmounts ? (
                         <>
                           <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isAllDone ? colors.accent : colors.text }}>
-                            ${completedAmount.toLocaleString()}
+                            {unit}{completedAmount.toLocaleString()}
                           </span>
                           <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
-                            {' '}/ ${totalAmount.toLocaleString()}
+                            {' '}/ {unit}{totalAmount.toLocaleString()}
                           </span>
                           <span style={{ fontSize: '0.8125rem', color: colors.textMuted, marginLeft: '0.25rem' }}>
-                            paid off
+                            {unit === '$' ? 'paid off' : 'done'}
                           </span>
                         </>
                       ) : (
@@ -707,7 +708,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       )}
                       {isAllDone && (
                         <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: colors.accent }}>
-                          {hasAmounts ? 'Debt free!' : 'All done!'}
+                          {hasAmounts && unit === '$' ? 'Debt free!' : 'All done!'}
                         </span>
                       )}
                     </div>
@@ -771,14 +772,14 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                             {milestone.title}
                           </span>
                           {/* Amount if exists */}
-                          {milestone.amount !== undefined && (
+                          {milestone.amount !== undefined && unit && (
                             <span style={{
                               fontSize: '0.8125rem',
                               fontWeight: 500,
                               color: milestone.completed ? colors.textMuted : colors.accent,
                               opacity: milestone.completed ? 0.6 : 1,
                             }}>
-                              ${milestone.amount.toLocaleString()}
+                              {unit}{milestone.amount.toLocaleString()}
                             </span>
                           )}
                         </button>
