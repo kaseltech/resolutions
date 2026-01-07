@@ -94,7 +94,8 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [showQuickUpdate, setShowQuickUpdate] = useState(false);
   const [showJournalPrompt, setShowJournalPrompt] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution } = useResolutions();
+  const journalFormRef = useRef<HTMLDivElement>(null);
+  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution, toggleMilestone } = useResolutions();
   const { theme, colors } = useTheme();
 
   // Detect touch device
@@ -110,6 +111,19 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       onJournalOpened?.();
     }
   }, [openJournalOnMount, onJournalOpened]);
+
+  // Auto-scroll to journal form when it opens
+  useEffect(() => {
+    if (showJournalForm && journalFormRef.current) {
+      // Small delay to allow the DOM to update
+      setTimeout(() => {
+        journalFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Focus the textarea for immediate typing
+        const textarea = journalFormRef.current?.querySelector('textarea');
+        textarea?.focus();
+      }, 100);
+    }
+  }, [showJournalForm]);
 
   // Long press handler for context menu (mobile only)
   const longPressHandlers = useLongPress(
@@ -642,6 +656,153 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               );
             })()}
           </div>
+        ) : resolution.trackingType === 'checklist' ? (
+          // CHECKLIST TRACKING: Show milestone items
+          <div style={{ marginTop: '1rem' }}>
+            {(() => {
+              const milestones = resolution.milestones || [];
+              const completedCount = milestones.filter(m => m.completed).length;
+              const totalCount = milestones.length;
+
+              // Check if any milestones have amounts (for dollar-based progress)
+              const hasAmounts = milestones.some(m => m.amount !== undefined);
+              const totalAmount = milestones.reduce((sum, m) => sum + (m.amount || 0), 0);
+              const completedAmount = milestones.filter(m => m.completed).reduce((sum, m) => sum + (m.amount || 0), 0);
+
+              // Use amount-based progress if amounts exist, otherwise count-based
+              const progress = hasAmounts
+                ? (totalAmount > 0 ? Math.round((completedAmount / totalAmount) * 100) : 0)
+                : (totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0);
+
+              const isAllDone = hasAmounts
+                ? completedAmount >= totalAmount && totalAmount > 0
+                : completedCount === totalCount && totalCount > 0;
+
+              return (
+                <>
+                  {/* Progress summary */}
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <div>
+                      {hasAmounts ? (
+                        <>
+                          <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isAllDone ? colors.accent : colors.text }}>
+                            ${completedAmount.toLocaleString()}
+                          </span>
+                          <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                            {' '}/ ${totalAmount.toLocaleString()}
+                          </span>
+                          <span style={{ fontSize: '0.8125rem', color: colors.textMuted, marginLeft: '0.25rem' }}>
+                            paid off
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ fontSize: '1.25rem', fontWeight: 600, color: isAllDone ? colors.accent : colors.text }}>
+                            {completedCount}/{totalCount}
+                          </span>
+                          <span style={{ fontSize: '0.875rem', color: colors.textMuted, marginLeft: '0.375rem' }}>
+                            completed
+                          </span>
+                        </>
+                      )}
+                      {isAllDone && (
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: colors.accent }}>
+                          {hasAmounts ? 'Debt free!' : 'All done!'}
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.textMuted }}>
+                      {progress}%
+                    </span>
+                  </div>
+                  <ProgressBar progress={progress} size="md" />
+
+                  {/* Checklist items */}
+                  {milestones.length > 0 && (
+                    <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+                      {milestones.map((milestone) => (
+                        <button
+                          key={milestone.id}
+                          onClick={() => toggleMilestone(resolution.id, milestone.id)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 0.625rem',
+                            backgroundColor: milestone.completed
+                              ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
+                              : colors.bg,
+                            borderRadius: '0.375rem',
+                            border: 'none',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            width: '100%',
+                            transition: 'background-color 0.15s ease',
+                          }}
+                        >
+                          {/* Checkbox */}
+                          <div style={{
+                            width: '1.125rem',
+                            height: '1.125rem',
+                            borderRadius: '0.25rem',
+                            border: milestone.completed
+                              ? 'none'
+                              : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
+                            backgroundColor: milestone.completed ? colors.accent : 'transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}>
+                            {milestone.completed && (
+                              <svg style={{ width: '0.75rem', height: '0.75rem', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          {/* Title */}
+                          <span style={{
+                            flex: 1,
+                            fontSize: '0.875rem',
+                            color: milestone.completed ? colors.textMuted : colors.text,
+                            textDecoration: milestone.completed ? 'line-through' : 'none',
+                            opacity: milestone.completed ? 0.7 : 1,
+                          }}>
+                            {milestone.title}
+                          </span>
+                          {/* Amount if exists */}
+                          {milestone.amount !== undefined && (
+                            <span style={{
+                              fontSize: '0.8125rem',
+                              fontWeight: 500,
+                              color: milestone.completed ? colors.textMuted : colors.accent,
+                              opacity: milestone.completed ? 0.6 : 1,
+                            }}>
+                              ${milestone.amount.toLocaleString()}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {milestones.length === 0 && (
+                    <div style={{
+                      marginTop: '0.5rem',
+                      padding: '0.75rem',
+                      backgroundColor: colors.bg,
+                      borderRadius: '0.5rem',
+                      textAlign: 'center',
+                    }}>
+                      <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
+                        No items yet. Edit to add checklist items.
+                      </span>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
         ) : resolution.trackingType === 'reflection' ? (
           // REFLECTION TRACKING: Show journal count only
           <div style={{ marginTop: '1rem' }}>
@@ -877,20 +1038,23 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
 
             {/* Add Journal Entry Form */}
             {showJournalForm && (
-              <div style={{
-                backgroundColor: colors.bg,
-                padding: '1rem',
-                borderRadius: '0.5rem',
-                marginBottom: '1rem',
-              }}>
+              <div
+                ref={journalFormRef}
+                style={{
+                  backgroundColor: colors.bg,
+                  padding: '0.875rem',
+                  borderRadius: '0.5rem',
+                  marginBottom: '0.75rem',
+                }}
+              >
                 <textarea
                   value={journalContent}
                   onChange={(e) => setJournalContent(e.target.value)}
                   placeholder="How's it going? Write about your progress, challenges, or thoughts..."
                   style={{
                     width: '100%',
-                    minHeight: '80px',
-                    padding: '0.75rem',
+                    minHeight: '70px',
+                    padding: '0.625rem 0.75rem',
                     backgroundColor: colors.cardBg,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '0.375rem',
@@ -900,33 +1064,34 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                     boxSizing: 'border-box',
                   }}
                 />
-                <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>How are you feeling?</span>
-                    {(Object.entries(moodEmojis) as [NonNullable<JournalEntry['mood']>, string][]).map(([mood, emoji]) => (
-                      <button
-                        key={mood}
-                        onClick={() => setJournalMood(journalMood === mood ? undefined : mood)}
-                        style={{
-                          padding: '0.25rem 0.5rem',
-                          fontSize: '1rem',
-                          backgroundColor: journalMood === mood ? `${colors.accent}30` : 'transparent',
-                          border: journalMood === mood ? `1px solid ${colors.accent}` : `1px solid ${colors.border}`,
-                          borderRadius: '0.375rem',
-                          cursor: 'pointer',
-                        }}
-                        title={mood}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
+                {/* Mood selector row */}
+                <div style={{ marginTop: '0.625rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                  <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>Mood:</span>
+                  {(Object.entries(moodEmojis) as [NonNullable<JournalEntry['mood']>, string][]).map(([mood, emoji]) => (
+                    <button
+                      key={mood}
+                      onClick={() => setJournalMood(journalMood === mood ? undefined : mood)}
+                      style={{
+                        padding: '0.1875rem 0.375rem',
+                        fontSize: '0.9375rem',
+                        backgroundColor: journalMood === mood ? `${colors.accent}30` : 'transparent',
+                        border: journalMood === mood ? `1px solid ${colors.accent}` : `1px solid ${colors.border}`,
+                        borderRadius: '0.25rem',
+                        cursor: 'pointer',
+                      }}
+                      title={mood}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
                   <button
                     onClick={handleAddJournalEntry}
                     disabled={!journalContent.trim()}
                     style={{
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.875rem',
+                      marginLeft: 'auto',
+                      padding: '0.375rem 0.75rem',
+                      fontSize: '0.8125rem',
+                      fontWeight: 500,
                       backgroundColor: journalContent.trim() ? colors.accent : colors.border,
                       color: 'white',
                       border: 'none',
@@ -934,7 +1099,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       cursor: journalContent.trim() ? 'pointer' : 'not-allowed',
                     }}
                   >
-                    Save Entry
+                    Save
                   </button>
                 </div>
               </div>

@@ -26,6 +26,7 @@ export interface Milestone {
   completed: boolean;
   completedAt?: string;
   dueDate?: string;
+  amount?: number; // Optional dollar/value amount for checklist items
 }
 
 export interface JournalEntry {
@@ -46,7 +47,7 @@ export interface Reminder {
 }
 
 // Tracking types for different kinds of resolutions
-export type TrackingType = 'frequency' | 'cumulative' | 'target' | 'reflection';
+export type TrackingType = 'frequency' | 'cumulative' | 'target' | 'checklist' | 'reflection';
 
 export const TRACKING_TYPES: { value: TrackingType; label: string; description: string; icon: string }[] = [
   {
@@ -66,6 +67,12 @@ export const TRACKING_TYPES: { value: TrackingType; label: string; description: 
     label: 'Target',
     description: 'e.g., reach 180lbs',
     icon: '🎯'
+  },
+  {
+    value: 'checklist',
+    label: 'Checklist',
+    description: 'e.g., complete 5 tasks',
+    icon: '📋'
   },
   {
     value: 'reflection',

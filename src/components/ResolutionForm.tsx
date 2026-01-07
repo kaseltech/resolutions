@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Resolution, Category, CATEGORIES, TrackingType, TRACKING_TYPES } from '@/types';
+import { Resolution, Category, CATEGORIES, TrackingType, TRACKING_TYPES, Milestone } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CategoryIcon } from './CategoryIcon';
@@ -12,6 +12,7 @@ const TYPE_ACCENTS = {
   frequency: { color: '#6B8BA8', label: 'blue-gray' },      // soft blue-gray
   cumulative: { color: '#C9A75A', label: 'gold' },          // muted gold
   target: { color: '#B87D5C', label: 'terracotta' },        // soft terracotta
+  checklist: { color: '#7B9E87', label: 'sage' },           // soft sage green
   reflection: { color: '#A89B8C', label: 'parchment' },     // warm parchment
 } as const;
 
@@ -45,19 +46,24 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
     description: '',
     category: 'personal' as Category,
     deadline: '',
-    notes: '',
     reminderEnabled: false,
     reminderFrequency: 'weekly' as 'daily' | 'weekly' | 'monthly',
     reminderTime: '09:00',
-    // New tracking fields
+    // Tracking fields
     trackingType: 'frequency' as TrackingType,
-    targetFrequency: 3,
+    targetFrequency: null as number | null,
     frequencyPeriod: 'week' as 'day' | 'week' | 'month',
     targetValue: 0,
     currentValue: 0,
     startingValue: 0,
     unit: '',
+    // Checklist milestones
+    milestones: [] as Milestone[],
   });
+
+  // For adding new milestone items
+  const [newMilestoneTitle, setNewMilestoneTitle] = useState('');
+  const [newMilestoneAmount, setNewMilestoneAmount] = useState('');
 
   useEffect(() => {
     if (resolution) {
@@ -66,18 +72,19 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
         description: resolution.description,
         category: resolution.category,
         deadline: resolution.deadline ? resolution.deadline.split('T')[0] : '',
-        notes: resolution.notes,
         reminderEnabled: resolution.reminder?.enabled ?? false,
         reminderFrequency: resolution.reminder?.frequency ?? 'weekly',
         reminderTime: resolution.reminder?.time ?? '09:00',
-        // New tracking fields
+        // Tracking fields
         trackingType: resolution.trackingType ?? 'frequency',
-        targetFrequency: resolution.targetFrequency ?? 3,
+        targetFrequency: resolution.targetFrequency ?? null,
         frequencyPeriod: resolution.frequencyPeriod ?? 'week',
         targetValue: resolution.targetValue ?? 0,
         currentValue: resolution.currentValue ?? 0,
         startingValue: resolution.startingValue ?? 0,
         unit: resolution.unit ?? '',
+        // Checklist milestones
+        milestones: resolution.milestones ?? [],
       });
     }
   }, [resolution]);
@@ -92,7 +99,6 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
       description: formData.description,
       category: formData.category,
       deadline: formData.deadline || undefined,
-      notes: formData.notes,
       reminder: formData.reminderEnabled
         ? {
             id: resolution?.reminder?.id || `reminder-${Date.now()}`,
@@ -101,15 +107,17 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             enabled: true,
           }
         : undefined,
-      // New tracking fields
+      // Tracking fields
       trackingType: formData.trackingType,
-      targetFrequency: formData.trackingType === 'frequency' ? formData.targetFrequency : undefined,
+      targetFrequency: formData.trackingType === 'frequency' ? (formData.targetFrequency ?? 1) : undefined,
       frequencyPeriod: formData.trackingType === 'frequency' ? formData.frequencyPeriod : undefined,
       targetValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.targetValue : undefined,
       unit: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.unit : undefined,
       currentValue: (formData.trackingType === 'cumulative' || formData.trackingType === 'target') ? formData.currentValue : undefined,
       startingValue: formData.trackingType === 'target' ? formData.startingValue : undefined,
       checkIns: formData.trackingType === 'frequency' ? (resolution?.checkIns ?? []) : undefined,
+      // Checklist milestones
+      milestones: formData.trackingType === 'checklist' ? formData.milestones : (resolution?.milestones ?? []),
     };
 
     if (isEditing && resolution) {
@@ -332,8 +340,9 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   type="number"
                   min="1"
                   max="31"
-                  value={formData.targetFrequency}
-                  onChange={(e) => setFormData(prev => ({ ...prev, targetFrequency: parseInt(e.target.value) || 1 }))}
+                  value={formData.targetFrequency ?? ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, targetFrequency: e.target.value ? parseInt(e.target.value) : null }))}
+                  placeholder="7"
                   style={{ ...inputStyle, width: '4rem', textAlign: 'center' }}
                 />
                 <span style={{ color: colors.textMuted, fontSize: '0.875rem' }}>times per</span>
@@ -500,6 +509,183 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             </div>
           )}
 
+          {/* Checklist milestones */}
+          {formData.trackingType === 'checklist' && (
+            <div style={{
+              padding: '0.75rem',
+              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              borderRadius: '0.5rem',
+              border: `1px solid ${colors.border}`,
+            }}>
+              <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>Checklist items</label>
+
+              {/* Add new item */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: formData.milestones.length > 0 ? '0.75rem' : 0 }}>
+                <input
+                  type="text"
+                  value={newMilestoneTitle}
+                  onChange={(e) => setNewMilestoneTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newMilestoneTitle.trim()) {
+                      e.preventDefault();
+                      const newMilestone: Milestone = {
+                        id: `milestone-${Date.now()}`,
+                        title: newMilestoneTitle.trim(),
+                        completed: false,
+                        amount: newMilestoneAmount ? parseFloat(newMilestoneAmount) : undefined,
+                      };
+                      setFormData(prev => ({
+                        ...prev,
+                        milestones: [...prev.milestones, newMilestone],
+                      }));
+                      setNewMilestoneTitle('');
+                      setNewMilestoneAmount('');
+                    }
+                  }}
+                  placeholder="Item name..."
+                  style={{ ...inputStyle, flex: 1, padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>$</span>
+                  <input
+                    type="number"
+                    value={newMilestoneAmount}
+                    onChange={(e) => setNewMilestoneAmount(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && newMilestoneTitle.trim()) {
+                        e.preventDefault();
+                        const newMilestone: Milestone = {
+                          id: `milestone-${Date.now()}`,
+                          title: newMilestoneTitle.trim(),
+                          completed: false,
+                          amount: newMilestoneAmount ? parseFloat(newMilestoneAmount) : undefined,
+                        };
+                        setFormData(prev => ({
+                          ...prev,
+                          milestones: [...prev.milestones, newMilestone],
+                        }));
+                        setNewMilestoneTitle('');
+                        setNewMilestoneAmount('');
+                      }
+                    }}
+                    placeholder="0"
+                    style={{ ...inputStyle, width: '4.5rem', padding: '0.5rem 0.5rem', fontSize: '0.875rem', textAlign: 'right' }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newMilestoneTitle.trim()) {
+                      const newMilestone: Milestone = {
+                        id: `milestone-${Date.now()}`,
+                        title: newMilestoneTitle.trim(),
+                        completed: false,
+                        amount: newMilestoneAmount ? parseFloat(newMilestoneAmount) : undefined,
+                      };
+                      setFormData(prev => ({
+                        ...prev,
+                        milestones: [...prev.milestones, newMilestone],
+                      }));
+                      setNewMilestoneTitle('');
+                      setNewMilestoneAmount('');
+                    }
+                  }}
+                  disabled={!newMilestoneTitle.trim()}
+                  style={{
+                    padding: '0.5rem 0.75rem',
+                    fontSize: '0.875rem',
+                    backgroundColor: newMilestoneTitle.trim() ? colors.accent : colors.border,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    cursor: newMilestoneTitle.trim() ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* List of milestones */}
+              {formData.milestones.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+                  {formData.milestones.map((milestone, index) => (
+                    <div
+                      key={milestone.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem 0.625rem',
+                        backgroundColor: inputBgColor,
+                        borderRadius: '0.375rem',
+                        border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)'}`,
+                      }}
+                    >
+                      <span style={{ fontSize: '0.75rem', color: colors.textMuted, minWidth: '1.25rem' }}>
+                        {index + 1}.
+                      </span>
+                      <span style={{ flex: 1, fontSize: '0.875rem', color: colors.text }}>
+                        {milestone.title}
+                      </span>
+                      {milestone.amount !== undefined && (
+                        <span style={{ fontSize: '0.8125rem', color: colors.accent, fontWeight: 500 }}>
+                          ${milestone.amount.toLocaleString()}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            milestones: prev.milestones.filter(m => m.id !== milestone.id),
+                          }));
+                        }}
+                        style={{
+                          padding: '0.25rem',
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: colors.textMuted,
+                          opacity: 0.6,
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                        title="Remove"
+                      >
+                        <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Show total if any items have amounts */}
+              {formData.milestones.some(m => m.amount !== undefined) && (
+                <div style={{
+                  marginTop: '0.75rem',
+                  paddingTop: '0.625rem',
+                  borderTop: `1px solid ${colors.border}`,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.5rem',
+                }}>
+                  <span style={{ fontSize: '0.8125rem', color: colors.textMuted }}>Total:</span>
+                  <span style={{ fontSize: '0.875rem', fontWeight: 600, color: colors.text }}>
+                    ${formData.milestones.reduce((sum, m) => sum + (m.amount || 0), 0).toLocaleString()}
+                  </span>
+                </div>
+              )}
+
+              {formData.milestones.length === 0 && (
+                <p style={{ fontSize: '0.75rem', color: colors.textMuted, margin: '0.5rem 0 0 0', opacity: 0.8 }}>
+                  Add items to track. Amounts are optional (great for debt payoff, savings goals, etc.)
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Category Selection - with section background */}
           <div style={{
             padding: '1rem',
@@ -546,32 +732,35 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
             </div>
           </div>
 
+          {/* Target Date - toggleable */}
           <div>
-            <label style={labelStyle}>Target Date</label>
-            <input
-              type="date"
-              value={formData.deadline}
-              onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
-              min={new Date().toISOString().split('T')[0]}
-              style={{ ...inputStyle, colorScheme: theme }}
-            />
-          </div>
-
-          {/* Notes - warmer, more reflective feel */}
-          <div>
-            <label style={labelStyle}>Notes</label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Motivation, strategies, or personal reflections..."
-              rows={3}
-              style={{
-                ...inputStyle,
-                resize: 'none',
-                backgroundColor: theme === 'light' ? '#FFFDF9' : 'rgba(201, 167, 90, 0.05)',  // Warmer tone
-                lineHeight: 1.6,  // More readable
-              }}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: formData.deadline ? '0.5rem' : 0 }}>
+              <div>
+                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.text, display: 'block' }}>Target Date</span>
+                <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>Set a deadline for completion</span>
+              </div>
+              <Toggle
+                enabled={!!formData.deadline}
+                onChange={(enabled) => {
+                  if (enabled) {
+                    // Default to end of year
+                    setFormData(prev => ({ ...prev, deadline: '2026-12-31' }));
+                  } else {
+                    setFormData(prev => ({ ...prev, deadline: '' }));
+                  }
+                }}
+                size="md"
+              />
+            </div>
+            {formData.deadline && (
+              <input
+                type="date"
+                value={formData.deadline}
+                onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
+                min={new Date().toISOString().split('T')[0]}
+                style={{ ...inputStyle, colorScheme: theme }}
+              />
+            )}
           </div>
 
           <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: '1rem' }}>
