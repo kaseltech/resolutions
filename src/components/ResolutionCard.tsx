@@ -841,18 +841,24 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                                       setMilestoneAmountInput(currentAmt.toString());
                                     }}
                                     style={{
-                                      padding: '0.125rem 0.375rem',
+                                      padding: '0.125rem 0.5rem 0.125rem 0.375rem',
                                       fontSize: '0.75rem',
                                       fontWeight: 500,
                                       color: isItemComplete ? colors.textMuted : colors.accent,
-                                      backgroundColor: 'transparent',
-                                      border: `1px solid ${isItemComplete ? colors.border : colors.accent}40`,
+                                      backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.08)' : 'rgba(201, 167, 90, 0.15)',
+                                      border: 'none',
                                       borderRadius: '0.25rem',
                                       cursor: 'pointer',
                                       opacity: isItemComplete ? 0.6 : 1,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '0.375rem',
                                     }}
                                   >
                                     {unit}{currentAmt.toLocaleString()} / {unit}{targetAmt.toLocaleString()}
+                                    <svg style={{ width: '0.625rem', height: '0.625rem', opacity: 0.6 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
                                   </button>
                                 )}
                               </div>
