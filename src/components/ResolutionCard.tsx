@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Resolution, getCategoryInfo, JournalEntry, CheckIn, TRACKING_TYPES } from '@/types';
+import { Resolution, getCategoryInfo, CheckIn } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { ProgressBar } from './ProgressBar';
@@ -10,13 +10,8 @@ import { CategoryIcon } from './CategoryIcon';
 import { ConfirmModal } from './ConfirmModal';
 import { ContextMenu, useLongPress } from './ContextMenu';
 import { QuickUpdateModal } from './QuickUpdateModal';
-
-const moodEmojis: Record<NonNullable<JournalEntry['mood']>, string> = {
-  great: '😄',
-  good: '🙂',
-  okay: '😐',
-  struggling: '😔',
-};
+import { JournalModal } from './JournalModal';
+import { FeatherPenIcon } from './FeatherPenIcon';
 
 // Helper to get local date string (YYYY-MM-DD) in user's timezone
 function getLocalDateString(date: Date = new Date()): string {
@@ -83,11 +78,7 @@ interface ResolutionCardProps {
 
 export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJournalOpened, isDragEnabled, onDragHandleMouseDown }: ResolutionCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const [journalContent, setJournalContent] = useState('');
-  const [journalMood, setJournalMood] = useState<JournalEntry['mood']>(undefined);
-  const [showJournalForm, setShowJournalForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [journalToDelete, setJournalToDelete] = useState<string | null>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [menuAnchorPosition, setMenuAnchorPosition] = useState<{ x: number; y: number } | undefined>();
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -95,10 +86,10 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const [showJournalPrompt, setShowJournalPrompt] = useState(false);
   const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
   const [milestoneAmountInput, setMilestoneAmountInput] = useState('');
+  const [showJournalModal, setShowJournalModal] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const journalFormRef = useRef<HTMLDivElement>(null);
   const milestoneInputRef = useRef<HTMLInputElement>(null);
-  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateCumulativeValue, addJournalEntry, deleteJournalEntry, updateResolution, toggleMilestone, updateMilestone } = useResolutions();
+  const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateResolution, toggleMilestone, updateMilestone } = useResolutions();
   const { theme, colors } = useTheme();
 
   // Detect touch device
@@ -106,27 +97,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
 
-  // Open journal when triggered from parent (e.g., swipe action)
+  // Open journal modal when triggered from parent (e.g., swipe action)
   useEffect(() => {
     if (openJournalOnMount) {
-      setExpanded(true);
-      setShowJournalForm(true);
+      setShowJournalModal(true);
       onJournalOpened?.();
     }
   }, [openJournalOnMount, onJournalOpened]);
-
-  // Auto-scroll to journal form when it opens
-  useEffect(() => {
-    if (showJournalForm && journalFormRef.current) {
-      // Small delay to allow the DOM to update
-      setTimeout(() => {
-        journalFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Focus the textarea for immediate typing
-        const textarea = journalFormRef.current?.querySelector('textarea');
-        textarea?.focus();
-      }, 100);
-    }
-  }, [showJournalForm]);
 
   // Focus milestone input when editing
   useEffect(() => {
@@ -227,10 +204,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
         </svg>
       ),
-      onClick: () => {
-        setExpanded(true);
-        setShowJournalForm(true);
-      },
+      onClick: () => setShowJournalModal(true),
     },
     // Add tracking menu item if it exists
     ...(trackingMenuItem ? [trackingMenuItem] : []),
@@ -247,16 +221,6 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
     },
   ];
 
-  const handleAddJournalEntry = () => {
-    if (!journalContent.trim()) return;
-    addJournalEntry(resolution.id, {
-      content: journalContent.trim(),
-      mood: journalMood,
-    });
-    setJournalContent('');
-    setJournalMood(undefined);
-    setShowJournalForm(false);
-  };
   const categoryInfo = getCategoryInfo(resolution.category);
 
   const daysRemaining = resolution.deadline
@@ -402,6 +366,37 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 </svg>
               </div>
             )}
+            {/* Journal button - gold feathered pen */}
+            <button
+              onClick={() => setShowJournalModal(true)}
+              className="action-btn"
+              style={{
+                padding: '0.5rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                position: 'relative',
+              }}
+              title="Journal"
+            >
+              <FeatherPenIcon
+                size={18}
+                color={(resolution.journal?.length || 0) > 0 ? colors.accent : (theme === 'light' ? '#B8A070' : '#8A7A5A')}
+              />
+              {(resolution.journal?.length || 0) > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '0.125rem',
+                  right: '0.125rem',
+                  width: '0.5rem',
+                  height: '0.5rem',
+                  backgroundColor: colors.accent,
+                  borderRadius: '50%',
+                }} />
+              )}
+            </button>
             {/* Menu button */}
             <button
               ref={menuButtonRef}
@@ -543,8 +538,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <button
                           onClick={() => {
-                            setExpanded(true);
-                            setShowJournalForm(true);
+                            setShowJournalModal(true);
                             setShowJournalPrompt(false);
                           }}
                           style={{
@@ -1071,58 +1065,32 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
           )}
         </div>
 
-        {/* Journal indicator - icon only, contextual */}
-        <div style={{
-          marginTop: '0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          {/* Journal icon + count - only show if entries exist or expanded */}
-          {(resolution.journal && resolution.journal.length > 0) || expanded ? (
+        {/* Show more details toggle - only if there's content to show in expanded section */}
+        {(resolution.notes || (resolution.milestones.length > 0 && resolution.trackingType !== 'checklist') || resolution.reminder?.enabled) && (
+          <div style={{ marginTop: '0.75rem' }}>
             <button
               onClick={() => setExpanded(!expanded)}
               style={{
-                fontSize: '0.8125rem',
+                fontSize: '0.75rem',
                 color: colors.textMuted,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.375rem',
+                gap: '0.25rem',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 padding: '0.25rem 0',
                 transition: 'color 0.15s ease',
               }}
-              className="journal-toggle"
             >
-              {/* Pen/writing icon */}
-              <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" />
-              </svg>
-              {resolution.journal && resolution.journal.length > 0 && (
-                <span style={{
-                  backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.1)',
-                  padding: '0.125rem 0.375rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.6875rem',
-                  fontWeight: 500,
-                }}>
-                  {resolution.journal.length}
-                </span>
-              )}
-              {expanded && (
-                <span style={{ fontSize: '0.75rem' }}>
-                  {resolution.journal && resolution.journal.length > 0 ? 'Journal' : 'Add note'}
-                </span>
-              )}
+              {expanded ? 'Less' : 'More'}
               <svg
                 style={{
-                  width: '0.75rem',
-                  height: '0.75rem',
+                  width: '0.625rem',
+                  height: '0.625rem',
                   transition: 'transform 0.2s',
                   transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                  opacity: 0.5,
+                  opacity: 0.6,
                 }}
                 fill="none"
                 stroke="currentColor"
@@ -1131,21 +1099,8 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-          ) : (
-            <div /> /* Empty placeholder for layout */
-          )}
-
-          {/* Notes indicator if notes exist and not expanded */}
-          {!expanded && resolution.notes && (
-            <span style={{
-              fontSize: '0.6875rem',
-              color: colors.textMuted,
-              opacity: 0.7,
-            }}>
-              Has notes
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {expanded && (
@@ -1177,179 +1132,6 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               Reminder: {resolution.reminder.frequency} at {resolution.reminder.time}
             </div>
           )}
-
-          {/* Journal Section - Lighter styling per design tokens */}
-          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: `1px solid ${colors.borderSubtle}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <h4 style={{ fontSize: '0.8125rem', fontWeight: 500, color: colors.textTertiary, margin: 0 }}>
-                Journal
-                {resolution.journal && resolution.journal.length > 0 && (
-                  <span style={{
-                    marginLeft: '0.5rem',
-                    fontSize: '0.75rem',
-                    color: colors.textDisabled,
-                  }}>
-                    ({resolution.journal.length})
-                  </span>
-                )}
-              </h4>
-              <button
-                onClick={() => setShowJournalForm(!showJournalForm)}
-                style={{
-                  padding: '0.375rem 0.625rem',
-                  fontSize: '0.8125rem',
-                  backgroundColor: 'transparent',
-                  color: showJournalForm ? colors.textTertiary : colors.accent,
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  cursor: 'pointer',
-                  fontWeight: 500,
-                }}
-              >
-                {showJournalForm ? 'Cancel' : '+ Add entry'}
-              </button>
-            </div>
-
-            {/* Add Journal Entry Form */}
-            {showJournalForm && (
-              <div
-                ref={journalFormRef}
-                style={{
-                  backgroundColor: colors.bg,
-                  padding: '0.875rem',
-                  borderRadius: '0.5rem',
-                  marginBottom: '0.75rem',
-                }}
-              >
-                <textarea
-                  value={journalContent}
-                  onChange={(e) => setJournalContent(e.target.value)}
-                  placeholder="How's it going? Write about your progress, challenges, or thoughts..."
-                  style={{
-                    width: '100%',
-                    minHeight: '70px',
-                    padding: '0.625rem 0.75rem',
-                    backgroundColor: colors.cardBg,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: '0.375rem',
-                    color: colors.text,
-                    fontSize: '0.875rem',
-                    resize: 'vertical',
-                    boxSizing: 'border-box',
-                  }}
-                />
-                {/* Mood selector row */}
-                <div style={{ marginTop: '0.625rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>Mood:</span>
-                  {(Object.entries(moodEmojis) as [NonNullable<JournalEntry['mood']>, string][]).map(([mood, emoji]) => (
-                    <button
-                      key={mood}
-                      onClick={() => setJournalMood(journalMood === mood ? undefined : mood)}
-                      style={{
-                        padding: '0.1875rem 0.375rem',
-                        fontSize: '0.9375rem',
-                        backgroundColor: journalMood === mood ? `${colors.accent}30` : 'transparent',
-                        border: journalMood === mood ? `1px solid ${colors.accent}` : `1px solid ${colors.border}`,
-                        borderRadius: '0.25rem',
-                        cursor: 'pointer',
-                      }}
-                      title={mood}
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                  <button
-                    onClick={handleAddJournalEntry}
-                    disabled={!journalContent.trim()}
-                    style={{
-                      marginLeft: 'auto',
-                      padding: '0.375rem 0.75rem',
-                      fontSize: '0.8125rem',
-                      fontWeight: 500,
-                      backgroundColor: journalContent.trim() ? colors.accent : colors.border,
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.375rem',
-                      cursor: journalContent.trim() ? 'pointer' : 'not-allowed',
-                    }}
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Journal Entries List */}
-            {resolution.journal && resolution.journal.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {resolution.journal.map((entry) => (
-                  <div
-                    key={entry.id}
-                    style={{
-                      backgroundColor: colors.bg,
-                      padding: '0.75rem',
-                      borderRadius: '0.5rem',
-                      borderLeft: `3px solid ${colors.accent}`,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                          {entry.mood && (
-                            <span title={entry.mood}>{moodEmojis[entry.mood]}</span>
-                          )}
-                          <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>
-                            {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit',
-                            })}
-                          </span>
-                        </div>
-                        <p style={{
-                          fontSize: '0.875rem',
-                          color: colors.text,
-                          margin: 0,
-                          whiteSpace: 'pre-wrap',
-                          lineHeight: 1.5,
-                        }}>
-                          {entry.content}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setJournalToDelete(entry.id)}
-                        style={{
-                          padding: '0.25rem',
-                          backgroundColor: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: colors.textMuted,
-                          opacity: 0.6,
-                        }}
-                        title="Delete entry"
-                      >
-                        <svg style={{ width: '0.875rem', height: '0.875rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : !showJournalForm && (
-              <p style={{
-                fontSize: '0.8125rem',
-                color: colors.textTertiary,
-                fontStyle: 'italic',
-                margin: 0,
-                padding: '0.5rem 0',
-              }}>
-                No journal entries yet — reflect after your first check-in.
-              </p>
-            )}
-          </div>
         </div>
       )}
 
@@ -1368,22 +1150,6 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         onCancel={() => setShowDeleteModal(false)}
       />
 
-      {/* Delete Journal Entry Modal */}
-      <ConfirmModal
-        isOpen={journalToDelete !== null}
-        title="Delete Journal Entry"
-        message="Are you sure you want to delete this journal entry? This action cannot be undone."
-        confirmLabel="Delete"
-        cancelLabel="Keep it"
-        variant="warning"
-        onConfirm={() => {
-          if (journalToDelete) {
-            deleteJournalEntry(resolution.id, journalToDelete);
-          }
-          setJournalToDelete(null);
-        }}
-        onCancel={() => setJournalToDelete(null)}
-      />
     </div>
 
     {/* Context menu - sheet on mobile, popover on desktop */}
@@ -1403,6 +1169,13 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
       onSave={(resolutionId, newValue) => {
         updateResolution(resolutionId, { currentValue: newValue });
       }}
+    />
+
+    {/* Journal Modal */}
+    <JournalModal
+      resolution={resolution}
+      isOpen={showJournalModal}
+      onClose={() => setShowJournalModal(false)}
     />
     </>
   );

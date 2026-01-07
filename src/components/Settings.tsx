@@ -17,6 +17,7 @@ import { Toggle } from './Toggle';
 import { lightTap } from '@/lib/haptics';
 import { resetOnboarding } from './SpotlightTutorial';
 import { HelpFeedback } from './HelpFeedback';
+import { Changelog } from './Changelog';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [testingSent, setTestingSent] = useState(false);
   const [showHelpFeedback, setShowHelpFeedback] = useState(false);
+  const [showChangelog, setShowChangelog] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -404,22 +406,56 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
               About
             </h3>
             <div style={{
-              padding: '1rem',
               backgroundColor: colors.bg,
               borderRadius: '0.75rem',
+              overflow: 'hidden',
             }}>
-              <div style={{ fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>
-                YearVow
+              <div style={{
+                padding: '1rem',
+                borderBottom: `1px solid ${colors.border}`,
+              }}>
+                <div style={{ fontWeight: 500, color: colors.text, marginBottom: '0.25rem' }}>
+                  YearVow
+                </div>
+                <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
+                  Version 1.2.0
+                </div>
               </div>
-              <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
-                Version 1.0.0
-              </div>
+              <button
+                onClick={() => { lightTap(); setShowChangelog(true); }}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <span style={{ fontSize: '1.5rem' }}>📋</span>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontWeight: 500, color: colors.text }}>
+                    What's New
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
+                    View changelog and updates
+                  </div>
+                </div>
+                <svg style={{ width: '1.25rem', height: '1.25rem', color: colors.textMuted }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
         {/* Help & Feedback Modal */}
         <HelpFeedback isOpen={showHelpFeedback} onClose={() => setShowHelpFeedback(false)} />
+
+        {/* Changelog Modal */}
+        <Changelog isOpen={showChangelog} onClose={() => setShowChangelog(false)} />
 
         <style jsx>{`
           @keyframes slideUp {
