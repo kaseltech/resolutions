@@ -283,13 +283,11 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         position: 'relative',
       }}
     >
-      {/* Tappable card header area - clicking expands journal/notes */}
+      {/* Card header area */}
       <div
-        onClick={() => setExpanded(!expanded)}
         style={{
           padding: '1.25rem',
           paddingBottom: '0',
-          cursor: 'pointer',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
@@ -971,21 +969,30 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
             })()}
           </div>
         ) : resolution.trackingType === 'reflection' ? (
-          // REFLECTION TRACKING: Show journal count only
+          // REFLECTION TRACKING: Show prompt to journal or last entry info
           <div style={{ marginTop: '1rem' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem',
-              backgroundColor: colors.bg,
-              borderRadius: '0.5rem',
-            }}>
-              <span style={{ fontSize: '1.25rem' }}>📝</span>
-              <span style={{ fontSize: '0.875rem', color: colors.textMuted }}>
-                {resolution.journal?.length || 0} journal {(resolution.journal?.length || 0) === 1 ? 'entry' : 'entries'}
+            <button
+              onClick={() => setShowJournalModal(true)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.625rem',
+                padding: '0.875rem 1rem',
+                backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.08)' : 'rgba(201, 167, 90, 0.12)',
+                border: `1px dashed ${theme === 'light' ? 'rgba(201, 167, 90, 0.3)' : 'rgba(201, 167, 90, 0.4)'}`,
+                borderRadius: '0.625rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <FeatherPenIcon size={18} color={colors.accent} />
+              <span style={{ fontSize: '0.875rem', color: colors.text, fontWeight: 500 }}>
+                {(resolution.journal?.length || 0) > 0
+                  ? `${resolution.journal!.length} ${resolution.journal!.length === 1 ? 'entry' : 'entries'} - Add more`
+                  : 'Start journaling'}
               </span>
-            </div>
+            </button>
           </div>
         ) : (
           // LEGACY/DEFAULT: Show percentage progress (for resolutions without trackingType)

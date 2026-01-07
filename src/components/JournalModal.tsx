@@ -5,7 +5,9 @@ import { createPortal } from 'react-dom';
 import { Resolution, JournalEntry } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { FeatherPenIcon } from './FeatherPenIcon';
 
+// Keep for displaying old entries that have moods
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, { emoji: string; label: string }> = {
   great: { emoji: '😄', label: 'Great' },
   good: { emoji: '🙂', label: 'Good' },
@@ -24,7 +26,6 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
   const { addJournalEntry, deleteJournalEntry } = useResolutions();
   const [mounted, setMounted] = useState(false);
   const [content, setContent] = useState('');
-  const [mood, setMood] = useState<JournalEntry['mood']>(undefined);
   const [isClosing, setIsClosing] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -44,7 +45,6 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
   useEffect(() => {
     if (!isOpen) {
       setContent('');
-      setMood(undefined);
       setIsClosing(false);
     }
   }, [isOpen]);
@@ -65,11 +65,9 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
 
     addJournalEntry(resolution.id, {
       content: content.trim(),
-      mood,
     });
 
     setContent('');
-    setMood(undefined);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -127,9 +125,19 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-              <span style={{ fontSize: '1.25rem' }}>📔</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{
+              width: '2.25rem',
+              height: '2.25rem',
+              borderRadius: '0.625rem',
+              backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.12)' : 'rgba(201, 167, 90, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <FeatherPenIcon size={20} color={colors.accent} filled />
+            </div>
+            <div>
               <h2 style={{
                 fontSize: '1.125rem',
                 fontWeight: 600,
@@ -138,18 +146,18 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
               }}>
                 Journal
               </h2>
+              <p style={{
+                fontSize: '0.8125rem',
+                color: colors.textMuted,
+                margin: 0,
+                maxWidth: '18rem',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {resolution.title}
+              </p>
             </div>
-            <p style={{
-              fontSize: '0.8125rem',
-              color: colors.textMuted,
-              margin: 0,
-              maxWidth: '20rem',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {resolution.title}
-            </p>
           </div>
           <button
             onClick={handleClose}
@@ -199,43 +207,35 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
             }}
           />
 
-          {/* Mood & Submit Row */}
+          {/* Submit Row */}
           <div style={{
             marginTop: '0.875rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '0.75rem',
           }}>
-            {/* Mood Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.8125rem', color: colors.textMuted }}>Feeling:</span>
-              <div style={{ display: 'flex', gap: '0.25rem' }}>
-                {(Object.entries(moodEmojis) as [NonNullable<JournalEntry['mood']>, { emoji: string; label: string }][]).map(([key, { emoji, label }]) => (
-                  <button
-                    key={key}
-                    onClick={() => setMood(mood === key ? undefined : key)}
-                    style={{
-                      padding: '0.375rem 0.5rem',
-                      fontSize: '1.125rem',
-                      backgroundColor: mood === key
-                        ? (theme === 'light' ? 'rgba(201, 167, 90, 0.15)' : 'rgba(201, 167, 90, 0.25)')
-                        : 'transparent',
-                      border: mood === key
-                        ? `1px solid ${colors.accent}`
-                        : `1px solid transparent`,
-                      borderRadius: '0.5rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
-                    title={label}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <p style={{
+              fontSize: '0.6875rem',
+              color: colors.textMuted,
+              margin: 0,
+              opacity: 0.7,
+            }}>
+              <kbd style={{
+                padding: '0.125rem 0.25rem',
+                backgroundColor: colors.bg,
+                borderRadius: '0.25rem',
+                border: `1px solid ${colors.border}`,
+                fontFamily: 'inherit',
+                fontSize: '0.625rem',
+              }}>Ctrl</kbd>+<kbd style={{
+                padding: '0.125rem 0.25rem',
+                backgroundColor: colors.bg,
+                borderRadius: '0.25rem',
+                border: `1px solid ${colors.border}`,
+                fontFamily: 'inherit',
+                fontSize: '0.625rem',
+              }}>Enter</kbd> to save
+            </p>
 
             {/* Submit Button */}
             <button
@@ -262,30 +262,6 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
               Add Entry
             </button>
           </div>
-
-          <p style={{
-            fontSize: '0.6875rem',
-            color: colors.textMuted,
-            marginTop: '0.75rem',
-            marginBottom: 0,
-            opacity: 0.7,
-          }}>
-            Press <kbd style={{
-              padding: '0.125rem 0.25rem',
-              backgroundColor: colors.bg,
-              borderRadius: '0.25rem',
-              border: `1px solid ${colors.border}`,
-              fontFamily: 'inherit',
-              fontSize: '0.625rem',
-            }}>Ctrl</kbd>+<kbd style={{
-              padding: '0.125rem 0.25rem',
-              backgroundColor: colors.bg,
-              borderRadius: '0.25rem',
-              border: `1px solid ${colors.border}`,
-              fontFamily: 'inherit',
-              fontSize: '0.625rem',
-            }}>Enter</kbd> to save
-          </p>
         </div>
 
         {/* Entries List */}

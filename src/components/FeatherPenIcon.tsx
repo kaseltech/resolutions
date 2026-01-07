@@ -4,10 +4,61 @@ interface FeatherPenIconProps {
   size?: number;
   color?: string;
   className?: string;
+  filled?: boolean;
 }
 
 // Gold feather pen icon - YearVow brand element
-export function FeatherPenIcon({ size = 20, color = '#C9A75A', className }: FeatherPenIconProps) {
+export function FeatherPenIcon({ size = 20, color = '#C9A75A', className, filled = false }: FeatherPenIconProps) {
+  if (filled) {
+    // Filled, elegant quill for modal headers
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        className={className}
+        style={{ display: 'block' }}
+      >
+        {/* Main feather body - filled */}
+        <path
+          d="M20.5 2C20.5 2 21 3 20 4.5C18.5 6.5 16 8 14 10C12 12 9 15 7 17C5.5 18.5 4 19.5 3 20.5L2.5 21L3 20C4 18 6 15 8 12C10 9 13 6 16 4C18 2.5 20 2 20.5 2Z"
+          fill={color}
+          opacity="0.9"
+        />
+        {/* Feather spine/rachis */}
+        <path
+          d="M20.5 2C18 4 14 8 10 13C7 17 4 19.5 3 20.5"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Quill tip */}
+        <path
+          d="M3 20.5L2 22L3.5 21L3 20.5Z"
+          fill={color}
+        />
+        {/* Barb details */}
+        <path
+          d="M18 4C16 5.5 14 7.5 12 10"
+          stroke="white"
+          strokeWidth="0.75"
+          strokeLinecap="round"
+          opacity="0.4"
+        />
+        <path
+          d="M15 6C13 8 10 11 8 14"
+          stroke="white"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          opacity="0.3"
+        />
+      </svg>
+    );
+  }
+
+  // Outline version for card buttons
   return (
     <svg
       width={size}
