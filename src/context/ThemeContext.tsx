@@ -1,8 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { Preferences } from '@capacitor/preferences';
 
 type ColorTheme = 'navy' | 'charcoal' | 'forest' | 'slate' | 'midnight' | 'plum' | 'coffee' | 'ocean';
+
+const THEME_STORAGE_KEY = 'yearvow_color_theme';
 
 interface ThemeContextType {
   colorTheme: ColorTheme;
@@ -316,20 +319,51 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [colorTheme, setColorThemeState] = useState<ColorTheme>('navy');
   const [mounted, setMounted] = useState(false);
 
+  // Load saved theme on mount
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem('colorTheme') as ColorTheme;
-    if (saved && COLOR_THEMES[saved]) {
-      setColorThemeState(saved);
+    async function loadTheme() {
+      let savedTheme: string | null = null;
+
+      // Try Capacitor Preferences first (for iOS)
+      try {
+        const { value } = await Preferences.get({ key: THEME_STORAGE_KEY });
+        if (value) savedTheme = value;
+      } catch {
+        // Preferences not available
+      }
+
+      // Also check localStorage (for web and as backup)
+      if (!savedTheme) {
+        savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      }
+
+      if (savedTheme && COLOR_THEMES[savedTheme as ColorTheme]) {
+        setColorThemeState(savedTheme as ColorTheme);
+      }
+      setMounted(true);
+    }
+    loadTheme();
+  }, []);
+
+  // Save theme when it changes - save to both storages
+  const saveTheme = useCallback(async (theme: ColorTheme) => {
+    // Always save to localStorage (works on web)
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+    // Also save to Capacitor Preferences (works on iOS)
+    try {
+      await Preferences.set({ key: THEME_STORAGE_KEY, value: theme });
+    } catch {
+      // Preferences not available on this platform
     }
   }, []);
 
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem('colorTheme', colorTheme);
+      saveTheme(colorTheme);
       document.documentElement.setAttribute('data-theme', colorTheme);
     }
-  }, [colorTheme, mounted]);
+  }, [colorTheme, mounted, saveTheme]);
 
   const setColorTheme = (theme: ColorTheme) => {
     setColorThemeState(theme);

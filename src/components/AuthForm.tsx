@@ -220,20 +220,18 @@ export function AuthForm() {
       />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-2">
             <Image
               src="/yearvow-wordmark.png"
               alt="YearVow 2026"
-              width={500}
-              height={160}
-              style={{ objectFit: 'contain', maxWidth: '85vw' }}
+              width={280}
+              height={90}
+              style={{ objectFit: 'contain', maxWidth: '80vw' }}
               priority
+              className="login-wordmark"
             />
           </div>
-          <p style={{ color: '#F5F1EA', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem', textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
-            Make your resolutions count
-          </p>
         </div>
 
         <style dangerouslySetInnerHTML={{ __html: inputFocusStyle }} />
