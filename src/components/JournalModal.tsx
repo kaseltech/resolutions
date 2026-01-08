@@ -631,7 +631,9 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
               padding: '2.5rem 1rem',
               color: colors.textMuted,
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem', opacity: 0.5 }}>📝</div>
+              <div style={{ marginBottom: '0.75rem', opacity: 0.5, display: 'flex', justifyContent: 'center' }}>
+                <YearVowIcon name="quill" size={56} />
+              </div>
               <p style={{ fontSize: '0.9375rem', margin: 0, marginBottom: '0.25rem' }}>No entries yet</p>
               <p style={{ fontSize: '0.8125rem', margin: 0, opacity: 0.7 }}>Start journaling your journey above</p>
             </div>

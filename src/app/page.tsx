@@ -14,6 +14,7 @@ import { Confetti } from '@/components/Confetti';
 import { Settings } from '@/components/Settings';
 import { SwipeableCard } from '@/components/SwipeableCard';
 import { SpotlightTutorial, hasSeenOnboarding } from '@/components/SpotlightTutorial';
+import { YearVowIcon } from '@/components/YearVowIcon';
 
 type SortOption = 'custom' | 'newest' | 'oldest' | 'progress-high' | 'progress-low' | 'deadline';
 
@@ -539,7 +540,9 @@ export default function Home() {
           </div>
         ) : view === 'all' ? (
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🎯</div>
+            <div style={{ marginBottom: '0.75rem', display: 'flex', justifyContent: 'center' }}>
+              <YearVowIcon name="target" size={64} />
+            </div>
             <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: colors.text, marginBottom: '0.5rem' }}>No goals yet</h2>
             <p style={{ color: colors.textMuted, marginBottom: '1rem', fontSize: '0.875rem' }}>
               Start your journey!

@@ -448,7 +448,7 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
                   cursor: 'pointer',
                 }}
               >
-                <span style={{ fontSize: '1.5rem' }}>📖</span>
+                <YearVowIcon name="book" size={32} />
                 <div style={{ flex: 1, textAlign: 'left' }}>
                   <div style={{ fontWeight: 500, color: colors.text }}>
                     View Tutorial
