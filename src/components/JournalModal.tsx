@@ -9,6 +9,7 @@ import { Resolution, JournalEntry } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { FeatherPenIcon } from './FeatherPenIcon';
+import { YearVowIcon } from './YearVowIcon';
 
 // Keep for displaying old entries that have moods
 const moodEmojis: Record<NonNullable<JournalEntry['mood']>, { emoji: string; label: string }> = {
@@ -421,17 +422,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{
-              width: '2.25rem',
-              height: '2.25rem',
-              borderRadius: '0.625rem',
-              backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.12)' : 'rgba(201, 167, 90, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <FeatherPenIcon size={20} color={colors.accent} filled />
-            </div>
+            <YearVowIcon name="quill-scroll" size={36} />
             <div>
               <h2 style={{
                 fontSize: '1.125rem',

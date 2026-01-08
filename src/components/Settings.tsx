@@ -18,6 +18,7 @@ import { lightTap } from '@/lib/haptics';
 import { resetOnboarding } from './SpotlightTutorial';
 import { HelpFeedback } from './HelpFeedback';
 import { Changelog } from './Changelog';
+import { YearVowIcon } from './YearVowIcon';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -142,14 +143,17 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
           padding: '0 1.5rem 1rem',
           borderBottom: `1px solid ${colors.border}`,
         }}>
-          <h2 style={{
-            fontSize: '1.25rem',
-            fontWeight: 600,
-            color: colors.text,
-            margin: 0,
-          }}>
-            Settings
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <YearVowIcon name="gear" size={32} />
+            <h2 style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: colors.text,
+              margin: 0,
+            }}>
+              Settings
+            </h2>
+          </div>
           <button
             onClick={onClose}
             style={{

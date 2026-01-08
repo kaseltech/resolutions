@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Resolution, CheckIn } from '@/types';
 import { useTheme } from '@/context/ThemeContext';
+import { YearVowIcon } from './YearVowIcon';
 
 interface CheckInCalendarModalProps {
   resolution: Resolution | null;
@@ -193,15 +194,17 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <div>
-            <h2 style={{
-              fontSize: '1.125rem',
-              fontWeight: 600,
-              color: colors.text,
-              margin: 0,
-            }}>
-              Check-in History
-            </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <YearVowIcon name="calendar" size={36} />
+            <div>
+              <h2 style={{
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                color: colors.text,
+                margin: 0,
+              }}>
+                Check-in History
+              </h2>
             <p style={{
               fontSize: '0.8125rem',
               color: colors.textMuted,
@@ -214,6 +217,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
             }}>
               {resolution.title}
             </p>
+            </div>
           </div>
           <button
             onClick={handleClose}
@@ -243,12 +247,15 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
           gap: '1.5rem',
         }}>
           <div style={{ textAlign: 'center', flex: 1 }}>
-            <div style={{
-              fontSize: '1.75rem',
-              fontWeight: 700,
-              color: currentStreak > 0 ? colors.accent : colors.textMuted,
-            }}>
-              {currentStreak}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              {currentStreak > 0 && <YearVowIcon name="flame" size={28} />}
+              <span style={{
+                fontSize: '1.75rem',
+                fontWeight: 700,
+                color: currentStreak > 0 ? colors.accent : colors.textMuted,
+              }}>
+                {currentStreak}
+              </span>
             </div>
             <div style={{ fontSize: '0.75rem', color: colors.textMuted, marginTop: '0.125rem' }}>
               Current Streak
