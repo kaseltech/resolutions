@@ -58,8 +58,9 @@
   --accent-hover: var(--accent-primary-hover);
 }
 
-[data-theme="dark"] {
-  /* Dark Theme */
+/* All themes are dark - these are now the default values */
+:root {
+  /* Dark Theme defaults (overriding light values above) */
   --bg-app: #0F2233;
   --bg-surface-1: #1A3550;
   --bg-surface-2: #162E45;
@@ -136,33 +137,23 @@ body {
 }
 
 /* Input styling - theme aware */
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
+/* All themes are dark */
+input,
+textarea,
+select {
   background-color: var(--input-bg);
   border-color: var(--input-border);
   color: var(--foreground);
 }
 
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #64748b;
 }
 
-/* Fix for date/time inputs in dark mode */
-[data-theme="dark"] input[type="date"],
-[data-theme="dark"] input[type="time"] {
-  color-scheme: dark;
-}
-
-/* Light mode date/time inputs */
+/* Dark mode date/time inputs */
 input[type="date"],
 input[type="time"] {
-  color-scheme: light;
-}
-
-[data-theme="dark"] input[type="date"],
-[data-theme="dark"] input[type="time"] {
   color-scheme: dark;
 }
 
@@ -324,22 +315,13 @@ input[type="number"] {
   transform: scale(0.92);
 }
 
+/* All themes are dark */
 .action-btn-danger:hover {
-  background-color: #fef2f2 !important;
-  color: #dc2626 !important;
-}
-
-[data-theme="dark"] .action-btn-danger:hover {
   background-color: rgba(239, 68, 68, 0.1) !important;
   color: #f87171 !important;
 }
 
 .action-btn-success:hover {
-  background-color: #f0fdf4 !important;
-  color: #16a34a !important;
-}
-
-[data-theme="dark"] .action-btn-success:hover {
   background-color: rgba(16, 185, 129, 0.1) !important;
   color: #4ade80 !important;
 }
@@ -386,10 +368,6 @@ input[type="number"] {
 
 @media (hover: hover) {
   .card-hover:hover {
-    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08), 0 8px 32px -8px rgba(0, 0, 0, 0.12);
-  }
-
-  [data-theme="dark"] .card-hover:hover {
     box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3), 0 8px 32px -8px rgba(0, 0, 0, 0.4);
   }
 }
@@ -425,20 +403,12 @@ input[type="number"] {
 
 @media (hover: hover) {
   .habit-row:hover {
-    background-color: rgba(31, 58, 90, 0.06) !important;
-  }
-
-  [data-theme="dark"] .habit-row:hover {
     background-color: rgba(255, 255, 255, 0.06) !important;
   }
 }
 
 @media (hover: none) {
   .habit-row:active {
-    background-color: rgba(31, 58, 90, 0.1) !important;
-  }
-
-  [data-theme="dark"] .habit-row:active {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
 }
@@ -459,26 +429,17 @@ input[type="number"] {
   background: var(--card-bg);
   border-radius: 1rem;
   border: 1px solid var(--card-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-theme="dark"] .card-premium {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Glass card style */
 .card-glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(30, 41, 59, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 1rem;
-}
-
-[data-theme="dark"] .card-glass {
-  background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
 }
 
 /* ============================================
