@@ -140,10 +140,69 @@ All themes are dark-only with gold accent (`#C9A75A` or similar).
 - **Style:** Flat, elegant, muted gold on navy
 - **Format:** Full-bleed square (iOS adds rounding)
 
+**ChatGPT Prompt for App Icon:**
+```
+iOS app icon design, perfectly square with NO rounded corners, full bleed.
+
+Solid dark navy blue background (#1F3A5A) filling entire canvas edge to edge.
+
+Large elegant serif letter "V" centered, in muted gold/champagne color (#C9A75A). Subtle gradient shading only - NOT overly metallic or 3D. Refined, understated elegance like a luxury brand logo.
+
+"2026" in matching gold serif font centered above the V, approximately 20-25% the height of the V.
+
+Style: Flat design with minimal depth. Premium and timeless, not flashy or overly glossy. Think high-end stationery or book embossing, not chrome text effect.
+
+No borders, no shadows, no decorative elements. Navy background extends completely to all four edges.
+```
+
 ### Custom Icons (YearVowIcon Component)
 Transparent gold icons generated via ChatGPT/DALL-E:
 - checkmark, flame, trophy, gear, compass, heart
 - calendar, quill, quill-scroll, book, target, coins
+
+**ChatGPT Prompt for Custom Icons:**
+```
+Create a set of simple, elegant icons with TRANSPARENT backgrounds (PNG with alpha channel).
+
+Style:
+- Muted gold/champagne color (#C9A75A)
+- Clean, minimalist line art or simple filled shapes
+- Consistent stroke weight across all icons
+- Subtle shading allowed but NOT overly 3D or metallic
+- Premium, refined aesthetic matching a luxury journaling app
+
+Icons needed:
+1. Checkmark - simple elegant check
+2. Flame - stylized fire/flame
+3. Trophy - achievement cup
+4. Gear - settings cog
+5. Compass - navigation/direction
+6. Heart - love/health
+7. Calendar - date/schedule
+8. Quill - writing feather pen
+9. Book - open or closed book
+10. Target - bullseye/goal
+11. Coins - stack of coins/money
+
+Each icon should be centered in a square canvas with generous padding. Transparent background is CRITICAL - no solid background color.
+```
+
+**Post-processing for icons:**
+Icons may need transparency fixes using Python PIL:
+```python
+from PIL import Image
+img = Image.open("icon.png").convert("RGBA")
+data = img.getdata()
+new_data = []
+for item in data:
+    # Make near-white pixels transparent
+    if item[0] > 200 and item[1] > 200 and item[2] > 200:
+        new_data.append((255, 255, 255, 0))
+    else:
+        new_data.append(item)
+img.putdata(new_data)
+img.save("icon.png")
+```
 
 Usage:
 ```tsx
