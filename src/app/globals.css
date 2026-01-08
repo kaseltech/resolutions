@@ -134,6 +134,23 @@ body {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Fix header overscroll bounce - extend background above viewport */
+  .app-header::before {
+    content: '';
+    position: absolute;
+    top: -100vh;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: inherit;
+    z-index: -1;
+  }
+}
+
+/* Header needs position relative for ::before */
+.app-header {
+  position: sticky;
 }
 
 /* Input styling - theme aware */

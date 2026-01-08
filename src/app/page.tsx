@@ -185,7 +185,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: colors.bg, paddingBottom: '5rem', transition: 'background-color 0.3s ease' }}>
       {/* Header - Mobile Optimized with safe area */}
-      <header style={{
+      <header className="app-header" style={{
         backgroundColor: colors.cardBg,
         borderBottom: `1px solid ${colors.border}`,
         position: 'sticky',
