@@ -7,15 +7,13 @@ export type IconName =
   | 'flame'
   | 'trophy'
   | 'gear'
-  | 'star'
   | 'compass'
   | 'heart'
   | 'calendar'
   | 'quill'
   | 'quill-scroll'
   | 'book'
-  | 'target'
-  | 'coins';
+  | 'target';
 
 interface YearVowIconProps {
   name: IconName;

@@ -22,7 +22,7 @@ interface ContextMenuProps {
 }
 
 export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosition }: ContextMenuProps) {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [isPositioned, setIsPositioned] = useState(false);
@@ -136,16 +136,12 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
         <div
           ref={menuRef}
           style={{
-            backgroundColor: theme === 'dark'
-              ? 'rgba(30, 41, 59, 0.95)'
-              : 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: 'rgba(30, 41, 59, 0.95)',
             borderRadius: '1rem',
             overflow: 'hidden',
             minWidth: '200px',
             maxWidth: '280px',
-            boxShadow: theme === 'dark'
-              ? '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-              : '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)',
             animation: 'scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
@@ -167,9 +163,7 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
                 border: 'none',
                 borderTop: item.dividerBefore ? `1px solid ${colors.border}` : 'none',
                 cursor: 'pointer',
-                color: item.variant === 'danger'
-                  ? (theme === 'dark' ? '#f87171' : '#dc2626')
-                  : colors.text,
+                color: item.variant === 'danger' ? '#f87171' : colors.text,
                 fontSize: '1rem',
                 fontWeight: 500,
                 textAlign: 'left',
@@ -199,9 +193,7 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
             style={{
               width: '100%',
               padding: '0.875rem 1.25rem',
-              backgroundColor: theme === 'dark'
-                ? 'rgba(255, 255, 255, 0.03)'
-                : 'rgba(0, 0, 0, 0.02)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               border: 'none',
               borderTop: `1px solid ${colors.border}`,
               cursor: 'pointer',
@@ -247,15 +239,11 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
           top: menuPosition.top,
           left: menuPosition.left,
           zIndex: 100,
-          backgroundColor: theme === 'dark'
-            ? 'rgba(30, 41, 59, 0.98)'
-            : 'rgba(255, 255, 255, 0.98)',
+          backgroundColor: 'rgba(30, 41, 59, 0.98)',
           borderRadius: '0.5rem',
           overflow: 'hidden',
           minWidth: '160px',
-          boxShadow: theme === 'dark'
-            ? '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08)'
-            : '0 4px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08)',
           // Hide until positioned to prevent flash at (0,0)
           opacity: isPositioned ? 1 : 0,
           visibility: isPositioned ? 'visible' : 'hidden',
@@ -281,18 +269,14 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
               marginTop: item.dividerBefore ? '0.25rem' : 0,
               paddingTop: item.dividerBefore ? '0.625rem' : '0.5rem',
               cursor: 'pointer',
-              color: item.variant === 'danger'
-                ? (theme === 'dark' ? '#f87171' : '#dc2626')
-                : colors.text,
+              color: item.variant === 'danger' ? '#f87171' : colors.text,
               fontSize: '0.8125rem',
               fontWeight: 400,
               textAlign: 'left',
               transition: 'background-color 0.1s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = theme === 'dark'
-                ? 'rgba(255, 255, 255, 0.06)'
-                : 'rgba(0, 0, 0, 0.04)';
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -305,9 +289,7 @@ export function ContextMenu({ isOpen, onClose, items, mode = 'sheet', anchorPosi
               alignItems: 'center',
               justifyContent: 'center',
               opacity: item.variant === 'danger' ? 0.9 : 0.5,
-              color: item.variant === 'danger'
-                ? (theme === 'dark' ? '#f87171' : '#dc2626')
-                : colors.textMuted,
+              color: item.variant === 'danger' ? '#f87171' : colors.textMuted,
             }}>
               {item.icon}
             </span>

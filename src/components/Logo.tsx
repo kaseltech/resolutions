@@ -24,8 +24,8 @@ const sizes = {
 };
 
 export function Logo({ size = 'md', className = '', animated = false }: LogoProps) {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  // All themes are dark-only
+  const isDark = true;
 
   const { fontSize } = sizes[size];
 

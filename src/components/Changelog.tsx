@@ -27,6 +27,22 @@ interface ChangelogEntry {
 // Changelog data - add new entries at the top
 const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.3.0',
+    date: 'January 7-8, 2026',
+    title: 'Rich Text Editor & Color Themes',
+    changes: [
+      { type: 'added', description: 'Rich text journal editor with bold, italic, headers, bullet lists, and links' },
+      { type: 'added', description: '8 dark color themes: Navy, Charcoal, Midnight, Forest, Slate, Plum, Coffee, and Ocean' },
+      { type: 'added', description: 'Custom gold icons designed specifically for YearVow' },
+      { type: 'added', description: 'Theme picker in Settings to personalize your experience' },
+      { type: 'improved', description: 'Larger, more visible icons throughout the app' },
+      { type: 'improved', description: 'Gold-accented scrollbars that match the theme' },
+      { type: 'improved', description: 'Transparent icon backgrounds for seamless integration with all themes' },
+      { type: 'changed', description: 'Removed light mode - all themes now feature elegant dark backgrounds' },
+      { type: 'fixed', description: 'Theme colors now properly update across all components' },
+    ],
+  },
+  {
     version: '1.2.0',
     date: 'January 6, 2026',
     title: 'Journal Modal & Checklist Tracking',
@@ -97,7 +113,7 @@ const CHANGELOG: ChangelogEntry[] = [
       { type: 'added', description: 'Progress tracking with visual progress bars' },
       { type: 'added', description: 'Journal entries with mood tracking' },
       { type: 'added', description: 'Milestones to break down big goals' },
-      { type: 'added', description: 'Dark and light theme support' },
+      { type: 'added', description: 'Dark theme with gold accents' },
       { type: 'added', description: 'Biometric authentication (Face ID / Touch ID)' },
       { type: 'added', description: 'Push notification reminders' },
       { type: 'added', description: 'Drag and drop reordering' },
@@ -121,7 +137,7 @@ interface ChangelogProps {
 }
 
 export function Changelog({ isOpen, onClose }: ChangelogProps) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -148,7 +164,8 @@ export function Changelog({ isOpen, onClose }: ChangelogProps) {
 
   if (!mounted || !isOpen) return null;
 
-  const isDark = theme === 'dark';
+  // All themes are now dark-only
+  const isDark = true;
 
   const modalContent = (
     <div
