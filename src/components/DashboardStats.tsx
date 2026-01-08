@@ -106,20 +106,33 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
       });
   }, [resolutions]);
 
-  // Only show "falling behind" for frequency goals significantly behind (missed 2+ expected)
+  // Only show "falling behind" if it's mathematically difficult to catch up
+  // More forgiving: focuses on remaining possibility rather than past misses
   const fallingBehind = useMemo(() => {
     const now = new Date();
     return frequencyProgress.filter(({ resolution, count, target }) => {
       const period = resolution.frequencyPeriod || 'week';
-      if (period === 'week') {
-        const dayOfWeek = now.getDay();
-        const expectedByNow = Math.floor((target / 7) * (dayOfWeek + 1));
-        return count < expectedByNow - 1 && dayOfWeek >= 4; // 2+ behind, after Thursday
+
+      if (period === 'day') {
+        // Daily: never show "behind" - it's just today's check-in or not
+        return false;
+      } else if (period === 'week') {
+        const dayOfWeek = now.getDay(); // 0 = Sunday
+        const daysLeftInWeek = 6 - dayOfWeek; // Including today for check-in opportunity
+        const maxPossible = count + daysLeftInWeek + 1; // +1 for today if not checked in
+
+        // Only show behind if:
+        // 1. It's impossible to reach the goal even with perfect remaining days
+        // 2. AND we're past the midpoint of the week (Thursday+)
+        return maxPossible < target && dayOfWeek >= 4;
       } else if (period === 'month') {
         const dayOfMonth = now.getDate();
         const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        const expectedByNow = Math.floor((target / daysInMonth) * dayOfMonth);
-        return count < expectedByNow * 0.5; // 50% behind pace
+        const daysLeftInMonth = daysInMonth - dayOfMonth + 1; // +1 includes today
+        const maxPossible = count + daysLeftInMonth;
+
+        // Only behind if impossible to reach goal AND past the 20th
+        return maxPossible < target && dayOfMonth >= 20;
       }
       return false;
     });

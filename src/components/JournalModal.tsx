@@ -268,6 +268,16 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
   const [mounted, setMounted] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [viewingEntry, setViewingEntry] = useState<JournalEntry | null>(null);
+  const [editorHasContent, setEditorHasContent] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  // Detect desktop viewport
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   // Initialize Tiptap editor
   const editor = useEditor({
@@ -282,6 +292,10 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
       }),
     ],
     content: '',
+    onUpdate: ({ editor }) => {
+      // Update state when content changes to trigger re-render
+      setEditorHasContent(!editor.isEmpty);
+    },
     editorProps: {
       attributes: {
         class: 'journal-editor',
@@ -291,20 +305,6 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           font-size: 0.9375rem;
           line-height: 1.7;
         `,
-      },
-      handleKeyDown: (view, event) => {
-        // Auto-capitalize after sentence endings
-        if (event.key === ' ') {
-          const { state } = view;
-          const { from } = state.selection;
-          const textBefore = state.doc.textBetween(Math.max(0, from - 3), from, ' ');
-
-          if (/[.!?]\s?$/.test(textBefore)) {
-            // The next character typed should be capitalized
-            // This is handled naturally by the browser's autocapitalize
-          }
-        }
-        return false;
       },
     },
     // Re-create editor when modal opens
@@ -330,6 +330,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
   useEffect(() => {
     if (!isOpen && editor) {
       editor.commands.clearContent();
+      setEditorHasContent(false);
       setIsClosing(false);
     }
   }, [isOpen, editor]);
@@ -355,6 +356,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
     });
 
     editor.commands.clearContent();
+    setEditorHasContent(false);
   }, [editor, resolution, addJournalEntry]);
 
   // Handle keyboard shortcuts
@@ -377,7 +379,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
   if (!mounted || !isOpen || !resolution) return null;
 
   const entries = resolution.journal || [];
-  const hasContent = editor && !editor.isEmpty;
+  const hasContent = editorHasContent;
 
   const modalContent = (
     <div
@@ -401,7 +403,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           backgroundColor: theme === 'light' ? '#FDFCFA' : colors.cardBg,
           borderRadius: '1.25rem',
           width: '100%',
-          maxWidth: '32rem',
+          maxWidth: isDesktop ? '42rem' : '32rem',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
