@@ -362,6 +362,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (mounted) {
       saveTheme(colorTheme);
       document.documentElement.setAttribute('data-theme', colorTheme);
+      // Update body background for iOS overscroll
+      document.body.style.backgroundColor = COLOR_THEMES[colorTheme].colors.cardBg;
+      document.documentElement.style.backgroundColor = COLOR_THEMES[colorTheme].colors.cardBg;
     }
   }, [colorTheme, mounted, saveTheme]);
 
