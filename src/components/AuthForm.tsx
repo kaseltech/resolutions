@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Logo } from './Logo';
 import {
@@ -192,94 +192,39 @@ export function AuthForm() {
     }
   `;
 
-  // Generate stable stars using useMemo to avoid hydration mismatch
-  const loginStars = useMemo(() => {
-    return Array.from({ length: 30 }, (_, i) => ({
-      x: (i * 37 + 13) % 100,
-      y: ((i * 23 + 7) % 60),
-      size: 1 + (i % 3),
-      opacity: 0.2 + (i % 4) * 0.1,
-    }));
-  }, []);
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(180deg, #152838 0%, #1E3A5F 40%, #1E3A5F 100%)',
       position: 'relative',
       overflow: 'hidden',
       paddingTop: 'calc(1rem + env(safe-area-inset-top))',
       paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))',
     }}>
-      {/* Stars background - static, low opacity */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {loginStars.map((star, i) => (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              backgroundColor: '#F5F1EA',
-              borderRadius: '50%',
-              opacity: star.opacity,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Mountain layers */}
-      <svg
+      {/* Background image - constellation night sky */}
+      <div
         style={{
           position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          width: '100%',
-          height: '45%',
+          inset: 0,
+          backgroundImage: 'url(/login-bg.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
-        viewBox="0 0 100 45"
-        preserveAspectRatio="none"
-      >
-        {/* Back mountains - darkest */}
-        <path
-          d="M0,45 L0,30 L15,18 L25,25 L35,12 L50,22 L60,15 L75,20 L85,10 L100,20 L100,45 Z"
-          fill="#0D1C28"
-        />
-        {/* Peak highlights - back */}
-        <path
-          d="M35,12 L36,13 L34,13 Z M85,10 L86,11 L84,11 Z"
-          fill="#1A3045"
-        />
-        {/* Mid-ground mountains */}
-        <path
-          d="M0,45 L0,35 L10,28 L20,32 L30,22 L45,30 L55,20 L70,28 L80,18 L95,28 L100,25 L100,45 Z"
-          fill="#152838"
-        />
-        {/* Peak highlights - mid */}
-        <path
-          d="M30,22 L31,23.5 L29,23.5 Z M55,20 L56,21.5 L54,21.5 Z M80,18 L81,19.5 L79,19.5 Z"
-          fill="#1E3A50"
-        />
-        {/* Foreground mountains - lightest */}
-        <path
-          d="M0,45 L0,38 L12,32 L25,38 L40,28 L55,35 L65,30 L78,36 L90,30 L100,35 L100,45 Z"
-          fill="#1E3A5F"
-        />
-        {/* Peak highlights - foreground */}
-        <path
-          d="M40,28 L41.5,30 L38.5,30 Z M65,30 L66.5,32 L63.5,32 Z M90,30 L91.5,32 L88.5,32 Z"
-          fill="#264A6F"
-        />
-      </svg>
+      />
+
+      {/* Dark overlay for form readability */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(15, 28, 46, 0.4) 0%, rgba(15, 28, 46, 0.6) 100%)',
+        }}
+      />
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Logo size="xl" />
           </div>
-          <p style={{ color: '#94a3b8', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem' }}>
+          <p style={{ color: '#F5F1EA', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem', textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
             Make your resolutions count
           </p>
         </div>
