@@ -320,7 +320,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                         display: 'flex',
                         alignItems: 'center',
                       }}>
-                        <YearVowIcon name={TRACKING_TYPE_ICONS[type.value as TrackingType]} size={18} />
+                        <YearVowIcon name={TRACKING_TYPE_ICONS[type.value as TrackingType]} size={40} />
                       </span>
                       <div>
                         <div style={{

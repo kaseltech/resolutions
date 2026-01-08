@@ -144,7 +144,7 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
           borderBottom: `1px solid ${colors.border}`,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <YearVowIcon name="gear" size={32} />
+            <YearVowIcon name="gear" size={64} />
             <h2 style={{
               fontSize: '1.25rem',
               fontWeight: 600,

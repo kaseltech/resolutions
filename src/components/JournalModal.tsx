@@ -423,7 +423,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <YearVowIcon name="quill-scroll" size={36} />
+            <YearVowIcon name="quill-scroll" size={72} />
             <div>
               <h2 style={{
                 fontSize: '1.125rem',

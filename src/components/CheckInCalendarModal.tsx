@@ -195,7 +195,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
           justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <YearVowIcon name="calendar" size={36} />
+            <YearVowIcon name="calendar" size={72} />
             <div>
               <h2 style={{
                 fontSize: '1.125rem',
@@ -248,7 +248,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
         }}>
           <div style={{ textAlign: 'center', flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              {currentStreak > 0 && <YearVowIcon name="flame" size={28} />}
+              {currentStreak > 0 && <YearVowIcon name="flame" size={56} />}
               <span style={{
                 fontSize: '1.75rem',
                 fontWeight: 700,

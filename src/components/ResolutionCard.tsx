@@ -383,7 +383,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
               }}
               title="Journal"
             >
-              <YearVowIcon name="quill" size={18} />
+              <YearVowIcon name="quill" size={44} />
               {(resolution.journal?.length || 0) > 0 && (
                 <span style={{
                   fontSize: '0.625rem',
@@ -1012,7 +1012,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 transition: 'all 0.15s ease',
               }}
             >
-              <YearVowIcon name="quill" size={18} />
+              <YearVowIcon name="quill" size={44} />
               <span style={{ fontSize: '0.875rem', color: colors.text, fontWeight: 500 }}>
                 {(resolution.journal?.length || 0) > 0
                   ? `${resolution.journal!.length} ${resolution.journal!.length === 1 ? 'entry' : 'entries'} - Add more`

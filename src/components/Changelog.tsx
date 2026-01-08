@@ -204,7 +204,7 @@ export function Changelog({ isOpen, onClose }: ChangelogProps) {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <YearVowIcon name="book" size={22} />
+              <YearVowIcon name="book" size={48} />
             </div>
             <div>
               <h2 style={{
