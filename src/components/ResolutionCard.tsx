@@ -12,7 +12,7 @@ import { ContextMenu, useLongPress } from './ContextMenu';
 import { QuickUpdateModal } from './QuickUpdateModal';
 import { JournalModal } from './JournalModal';
 import { CheckInCalendarModal } from './CheckInCalendarModal';
-import { FeatherPenIcon } from './FeatherPenIcon';
+import { YearVowIcon } from './YearVowIcon';
 
 // Helper to get local date string (YYYY-MM-DD) in user's timezone
 function getLocalDateString(date: Date = new Date()): string {
@@ -377,24 +377,21 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 borderRadius: '0.375rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
               }}
               title="Journal"
             >
-              <FeatherPenIcon
-                size={18}
-                color={(resolution.journal?.length || 0) > 0 ? colors.accent : (theme === 'light' ? '#B8A070' : '#8A7A5A')}
-              />
+              <YearVowIcon name="quill" size={18} />
               {(resolution.journal?.length || 0) > 0 && (
                 <span style={{
-                  position: 'absolute',
-                  top: '0.125rem',
-                  right: '0.125rem',
-                  width: '0.5rem',
-                  height: '0.5rem',
-                  backgroundColor: colors.accent,
-                  borderRadius: '50%',
-                }} />
+                  fontSize: '0.625rem',
+                  fontWeight: 500,
+                  color: colors.textMuted,
+                }}>
+                  {resolution.journal!.length}
+                </span>
               )}
             </button>
             {/* Menu button */}
@@ -1015,7 +1012,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 transition: 'all 0.15s ease',
               }}
             >
-              <FeatherPenIcon size={18} color={colors.accent} />
+              <YearVowIcon name="quill" size={18} />
               <span style={{ fontSize: '0.875rem', color: colors.text, fontWeight: 500 }}>
                 {(resolution.journal?.length || 0) > 0
                   ? `${resolution.journal!.length} ${resolution.journal!.length === 1 ? 'entry' : 'entries'} - Add more`

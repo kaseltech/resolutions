@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTheme } from '@/context/ThemeContext';
-import { FeatherPenIcon } from './FeatherPenIcon';
+import { YearVowIcon } from './YearVowIcon';
 
 // YearVow brand colors
 const BRAND = {
@@ -204,7 +204,7 @@ export function Changelog({ isOpen, onClose }: ChangelogProps) {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <FeatherPenIcon size={22} color={BRAND.gold} />
+              <YearVowIcon name="book" size={22} />
             </div>
             <div>
               <h2 style={{

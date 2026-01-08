@@ -8,7 +8,6 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Resolution, JournalEntry } from '@/types';
 import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
-import { FeatherPenIcon } from './FeatherPenIcon';
 import { YearVowIcon } from './YearVowIcon';
 
 // Keep for displaying old entries that have moods

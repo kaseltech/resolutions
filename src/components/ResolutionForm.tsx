@@ -6,6 +6,16 @@ import { useResolutions } from '@/context/ResolutionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { CategoryIcon } from './CategoryIcon';
 import { Toggle } from './Toggle';
+import { YearVowIcon, IconName } from './YearVowIcon';
+
+// Map tracking types to YearVow icons
+const TRACKING_TYPE_ICONS: Record<TrackingType, IconName> = {
+  frequency: 'calendar',
+  cumulative: 'coins',
+  target: 'target',
+  checklist: 'checkmark',
+  reflection: 'quill',
+};
 
 // Subtle accent colors for each tracking type (muted, ~10% opacity effect)
 const TYPE_ACCENTS = {
@@ -306,10 +316,12 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                       <span style={{
-                        fontSize: '1rem',
-                        filter: isSelected ? 'none' : 'grayscale(40%)',
-                        opacity: isSelected ? 1 : 0.6,
-                      }}>{type.icon}</span>
+                        opacity: isSelected ? 1 : 0.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}>
+                        <YearVowIcon name={TRACKING_TYPE_ICONS[type.value as TrackingType]} size={18} />
+                      </span>
                       <div>
                         <div style={{
                           fontSize: '0.8125rem',
