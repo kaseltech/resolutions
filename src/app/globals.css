@@ -655,3 +655,171 @@ input[type="number"] {
 .animate-slide-up {
   animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* ============================================
+   Tiptap Rich Text Editor Styles
+   ============================================ */
+
+/* Editor container */
+.journal-editor {
+  color: var(--foreground);
+}
+
+.journal-editor:focus {
+  outline: none;
+}
+
+/* Placeholder */
+.journal-editor p.is-editor-empty:first-child::before {
+  color: var(--muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Headings */
+.journal-editor h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem 0;
+  color: var(--foreground);
+}
+
+.journal-editor h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.375rem 0;
+  color: var(--foreground);
+}
+
+/* Paragraphs */
+.journal-editor p {
+  margin: 0 0 0.5rem 0;
+}
+
+.journal-editor p:last-child {
+  margin-bottom: 0;
+}
+
+/* Bold and Italic */
+.journal-editor strong {
+  font-weight: 600;
+}
+
+.journal-editor em {
+  font-style: italic;
+}
+
+/* Lists */
+.journal-editor ul,
+.journal-editor ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.journal-editor li {
+  margin: 0.25rem 0;
+}
+
+.journal-editor ul li {
+  list-style-type: disc;
+}
+
+.journal-editor ol li {
+  list-style-type: decimal;
+}
+
+/* Blockquote */
+.journal-editor blockquote {
+  margin: 0.75rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--accent-primary);
+  background: var(--accent-primary-muted);
+  border-radius: 0 0.375rem 0.375rem 0;
+  font-style: italic;
+}
+
+/* Code */
+.journal-editor code {
+  background: var(--card-border);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.875em;
+}
+
+/* Horizontal rule */
+.journal-editor hr {
+  border: none;
+  border-top: 1px solid var(--border-default);
+  margin: 1rem 0;
+}
+
+/* Entry content display (for viewing saved entries) */
+.journal-entry-content {
+  word-wrap: break-word;
+}
+
+.journal-entry-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem 0;
+}
+
+.journal-entry-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.375rem 0;
+}
+
+.journal-entry-content p {
+  margin: 0 0 0.5rem 0;
+}
+
+.journal-entry-content p:last-child {
+  margin-bottom: 0;
+}
+
+.journal-entry-content strong {
+  font-weight: 600;
+}
+
+.journal-entry-content em {
+  font-style: italic;
+}
+
+.journal-entry-content ul,
+.journal-entry-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.journal-entry-content li {
+  margin: 0.25rem 0;
+}
+
+.journal-entry-content ul li {
+  list-style-type: disc;
+}
+
+.journal-entry-content ol li {
+  list-style-type: decimal;
+}
+
+.journal-entry-content blockquote {
+  margin: 0.75rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid var(--accent-primary);
+  background: var(--accent-primary-muted);
+  border-radius: 0 0.375rem 0.375rem 0;
+  font-style: italic;
+}
+
+.journal-entry-content code {
+  background: var(--card-border);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.875em;
+}
