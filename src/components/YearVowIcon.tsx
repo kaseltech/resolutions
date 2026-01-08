@@ -13,7 +13,8 @@ export type IconName =
   | 'quill'
   | 'quill-scroll'
   | 'book'
-  | 'target';
+  | 'target'
+  | 'coins';
 
 interface YearVowIconProps {
   name: IconName;

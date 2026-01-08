@@ -11,7 +11,7 @@ import { YearVowIcon, IconName } from './YearVowIcon';
 // Map tracking types to YearVow icons
 const TRACKING_TYPE_ICONS: Record<TrackingType, IconName> = {
   frequency: 'calendar',
-  cumulative: 'trophy',
+  cumulative: 'coins',
   target: 'target',
   checklist: 'checkmark',
   reflection: 'quill',

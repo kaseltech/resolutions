@@ -161,15 +161,15 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
       {/* Daily Inspiration */}
       <div style={{
         ...cardStyle,
-        background: '#0F1C2E',
-        borderColor: 'transparent',
+        background: colors.cardBgInset,
+        borderColor: colors.borderSubtle,
         padding: isMobile ? '0.625rem 0.75rem' : '0.75rem 0.875rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
           <span style={{
             fontFamily: 'Georgia, serif',
             fontSize: '1.125rem',
-            color: '#C9A75A',
+            color: colors.accent,
             lineHeight: 1,
             marginTop: '-0.0625rem',
           }}>"</span>
@@ -177,7 +177,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
             <p style={{
               fontSize: '0.75rem',
               fontStyle: 'italic',
-              color: '#F5F1EA',
+              color: colors.text,
               margin: 0,
               lineHeight: 1.5,
               opacity: 0.9,
@@ -186,7 +186,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
             </p>
             <p style={{
               fontSize: '0.5rem',
-              color: 'rgba(201, 167, 90, 0.6)',
+              color: colors.accentMuted,
               margin: '0.1875rem 0 0 0.25rem',
               fontWeight: 300,
               letterSpacing: '0.02em',
@@ -201,7 +201,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: 'rgba(245, 241, 234, 0.3)',
+              color: colors.textTertiary,
               borderRadius: '0.25rem',
               transition: 'color 0.15s ease',
             }}
