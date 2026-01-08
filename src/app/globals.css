@@ -168,22 +168,22 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - gold accent, minimal */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--card-bg);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--card-border);
-  border-radius: 4px;
+  background: rgba(201, 167, 90, 0.3);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: rgba(201, 167, 90, 0.5);
 }
 
 /* Selection color */
