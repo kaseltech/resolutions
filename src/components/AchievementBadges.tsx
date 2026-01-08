@@ -7,7 +7,7 @@ import { calculateAchievements, getUnlockedCount, getTotalAchievements, Achievem
 
 export function AchievementBadges() {
   const { resolutions } = useResolutions();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const [showAll, setShowAll] = useState(false);
 
   const achievements = calculateAchievements(resolutions);
@@ -93,7 +93,7 @@ export function AchievementBadges() {
 }
 
 function AchievementBadge({ achievement }: { achievement: Achievement }) {
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -106,7 +106,7 @@ function AchievementBadge({ achievement }: { achievement: Achievement }) {
         padding: '0.75rem 0.5rem',
         borderRadius: '0.5rem',
         backgroundColor: achievement.unlocked
-          ? (theme === 'light' ? `${colors.accent}10` : `${colors.accent}20`)
+          ? `${colors.accent}20`
           : colors.bg,
         opacity: achievement.unlocked ? 1 : 0.5,
         cursor: 'pointer',
@@ -142,8 +142,8 @@ function AchievementBadge({ achievement }: { achievement: Achievement }) {
           transform: 'translateX(-50%)',
           marginBottom: '0.5rem',
           padding: '0.5rem 0.75rem',
-          backgroundColor: theme === 'light' ? '#1e293b' : '#f1f5f9',
-          color: theme === 'light' ? '#f1f5f9' : '#1e293b',
+          backgroundColor: '#f1f5f9',
+          color: '#1e293b',
           borderRadius: '0.375rem',
           fontSize: '0.75rem',
           whiteSpace: 'nowrap',
@@ -160,7 +160,7 @@ function AchievementBadge({ achievement }: { achievement: Achievement }) {
             height: 0,
             borderLeft: '6px solid transparent',
             borderRight: '6px solid transparent',
-            borderTop: `6px solid ${theme === 'light' ? '#1e293b' : '#f1f5f9'}`,
+            borderTop: `6px solid #f1f5f9`,
           }} />
         </div>
       )}
@@ -171,7 +171,7 @@ function AchievementBadge({ achievement }: { achievement: Achievement }) {
 // Compact version for dashboard
 export function AchievementProgress() {
   const { resolutions } = useResolutions();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
 
   const unlockedCount = getUnlockedCount(resolutions);
   const totalCount = getTotalAchievements();
@@ -201,7 +201,7 @@ export function AchievementProgress() {
         </div>
         <div style={{
           height: '0.375rem',
-          backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
           borderRadius: '9999px',
           overflow: 'hidden',
         }}>

@@ -25,7 +25,7 @@ export function SwipeableCard({
   rightColor,
   disabled = false,
 }: SwipeableCardProps) {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const [offsetX, setOffsetX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(0);
@@ -99,8 +99,8 @@ export function SwipeableCard({
     setOffsetX(0);
   };
 
-  const defaultLeftColor = theme === 'light' ? '#3b82f6' : '#60a5fa';
-  const defaultRightColor = theme === 'light' ? '#10b981' : '#34d399';
+  const defaultLeftColor = '#60a5fa';
+  const defaultRightColor = '#34d399';
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.75rem' }}>

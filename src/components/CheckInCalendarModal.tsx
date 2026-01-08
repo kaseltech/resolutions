@@ -94,7 +94,7 @@ function calculateLongestStreak(checkIns: CheckIn[] | undefined): number {
 }
 
 export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCalendarModalProps) {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
@@ -173,14 +173,12 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
     >
       <div
         style={{
-          backgroundColor: theme === 'light' ? '#FDFCFA' : colors.cardBg,
+          backgroundColor: colors.cardBg,
           borderRadius: '1.25rem',
           width: '100%',
           maxWidth: '24rem',
-          boxShadow: theme === 'light'
-            ? '0 25px 80px -20px rgba(0, 0, 0, 0.25), 0 10px 40px -15px rgba(0, 0, 0, 0.1)'
-            : '0 25px 80px -20px rgba(0, 0, 0, 0.5)',
-          border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : colors.border}`,
+          boxShadow: '0 25px 80px -20px rgba(0, 0, 0, 0.5)',
+          border: `1px solid ${colors.border}`,
           transform: isClosing ? 'scale(0.95)' : 'scale(1)',
           transition: 'transform 0.2s ease',
           overflow: 'hidden',
@@ -242,7 +240,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
         {/* Streak Stats */}
         <div style={{
           padding: '1rem 1.5rem',
-          backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.06)' : 'rgba(201, 167, 90, 0.1)',
+          backgroundColor: 'rgba(201, 167, 90, 0.1)',
           display: 'flex',
           gap: '1.5rem',
         }}>
@@ -404,9 +402,9 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
                     borderRadius: '0.375rem',
                     position: 'relative',
                     backgroundColor: hasCheckIn
-                      ? (theme === 'light' ? 'rgba(92, 139, 111, 0.15)' : 'rgba(92, 139, 111, 0.25)')
+                      ? 'rgba(92, 139, 111, 0.25)'
                       : isMissed
-                      ? (theme === 'light' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.15)')
+                      ? 'rgba(239, 68, 68, 0.15)'
                       : 'transparent',
                     border: isToday ? `2px solid ${colors.accent}` : 'none',
                   }}
@@ -416,9 +414,9 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
                     fontSize: '0.8125rem',
                     fontWeight: isToday ? 600 : 400,
                     color: hasCheckIn
-                      ? (theme === 'light' ? '#2d5a3d' : '#4ade80')
+                      ? '#4ade80'
                       : isMissed
-                      ? (theme === 'light' ? '#dc2626' : '#f87171')
+                      ? '#f87171'
                       : isFuture
                       ? colors.textMuted
                       : colors.text,
@@ -439,7 +437,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
                         style={{
                           width: '0.625rem',
                           height: '0.625rem',
-                          color: theme === 'light' ? '#2d5a3d' : '#4ade80',
+                          color: '#4ade80',
                         }}
                         fill="currentColor"
                         viewBox="0 0 24 24"
@@ -461,7 +459,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
                         width: '0.25rem',
                         height: '0.25rem',
                         borderRadius: '50%',
-                        backgroundColor: theme === 'light' ? '#dc2626' : '#f87171',
+                        backgroundColor: '#f87171',
                       }} />
                     </div>
                   )}
@@ -484,7 +482,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
               width: '0.75rem',
               height: '0.75rem',
               borderRadius: '0.25rem',
-              backgroundColor: theme === 'light' ? 'rgba(92, 139, 111, 0.15)' : 'rgba(92, 139, 111, 0.25)',
+              backgroundColor: 'rgba(92, 139, 111, 0.25)',
             }} />
             <span style={{ fontSize: '0.6875rem', color: colors.textMuted }}>Checked in</span>
           </div>
@@ -494,7 +492,7 @@ export function CheckInCalendarModal({ resolution, isOpen, onClose }: CheckInCal
                 width: '0.75rem',
                 height: '0.75rem',
                 borderRadius: '0.25rem',
-                backgroundColor: theme === 'light' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.15)',
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
               }} />
               <span style={{ fontSize: '0.6875rem', color: colors.textMuted }}>Missed</span>
             </div>

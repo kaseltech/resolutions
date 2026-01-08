@@ -92,7 +92,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const milestoneInputRef = useRef<HTMLInputElement>(null);
   const { deleteResolution, updateProgress, addCheckIn, removeCheckIn, updateResolution, toggleMilestone, updateMilestone } = useResolutions();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
 
   // Detect touch device
   useEffect(() => {
@@ -260,10 +260,10 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
   const borderColor = isCompleted
     ? colors.accent
     : isOverdue
-    ? (theme === 'light' ? '#C4A0A0' : '#f87171')
+    ? '#f87171'
     : colors.border;
 
-  const completedBg = theme === 'light' ? '#F0F2EE' : '#1a2e1a';
+  const completedBg = '#1a2e1a';
 
   return (
     <>
@@ -275,9 +275,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         borderRadius: '0.875rem',
         overflow: 'hidden',
         borderLeft: `4px solid ${borderColor}`,
-        boxShadow: theme === 'light'
-          ? '0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06)'
-          : '0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3)',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         WebkitUserSelect: 'none',
         userSelect: 'none',
@@ -302,9 +300,9 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                   fontSize: '0.6875rem',
                   fontWeight: 500,
                   letterSpacing: '0.01em',
-                  color: theme === 'light' ? 'rgba(31, 58, 90, 0.85)' : 'rgba(255, 255, 255, 0.85)',
-                  backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)',
-                  borderLeft: `2px solid ${theme === 'light' ? `${categoryInfo.color}70` : `${categoryInfo.darkColor}70`}`,
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  borderLeft: `2px solid ${categoryInfo.darkColor}70`,
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.375rem',
@@ -322,7 +320,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                   fontSize: '0.75rem',
                   fontWeight: 500,
                   backgroundColor: `${colors.accent}30`,
-                  color: theme === 'light' ? '#6A7A60' : '#4ade80',
+                  color: '#4ade80',
                 }}>
                   Completed
                 </span>
@@ -521,7 +519,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       <div style={{
                         width: `${Math.min(100, (count / target) * 100)}%`,
                         height: '100%',
-                        backgroundColor: isMetGoal ? colors.accent : (theme === 'light' ? '#1e40af' : '#60a5fa'),
+                        backgroundColor: isMetGoal ? colors.accent : '#60a5fa',
                         borderRadius: '9999px',
                         transition: 'width 0.3s ease',
                       }} />
@@ -548,7 +546,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                       style={{
                         marginTop: '0.75rem',
                         padding: '0.625rem 0.75rem',
-                        backgroundColor: theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)',
+                        backgroundColor: 'rgba(92, 139, 111, 0.15)',
                         borderRadius: '0.5rem',
                         display: 'flex',
                         alignItems: 'center',
@@ -772,7 +770,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                               style={{
                                 padding: '0.5rem 0.625rem',
                                 backgroundColor: isItemComplete
-                                  ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
+                                  ? 'rgba(92, 139, 111, 0.15)'
                                   : colors.bg,
                                 borderRadius: '0.375rem',
                               }}
@@ -800,7 +798,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                                     height: '1.25rem',
                                     borderRadius: '50%',
                                     backgroundColor: isItemComplete ? colors.accent : 'transparent',
-                                    border: isItemComplete ? 'none' : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
+                                    border: isItemComplete ? 'none' : `2px solid rgba(255, 255, 255, 0.25)`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -884,7 +882,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                                       fontSize: '0.75rem',
                                       fontWeight: 500,
                                       color: isItemComplete ? colors.textMuted : colors.accent,
-                                      backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.08)' : 'rgba(201, 167, 90, 0.15)',
+                                      backgroundColor: 'rgba(201, 167, 90, 0.15)',
                                       border: 'none',
                                       borderRadius: '0.25rem',
                                       cursor: 'pointer',
@@ -904,7 +902,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                               {/* Mini progress bar */}
                               <div style={{
                                 height: '3px',
-                                backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 borderRadius: '2px',
                                 overflow: 'hidden',
                               }}>
@@ -931,7 +929,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                               gap: '0.5rem',
                               padding: '0.5rem 0.625rem',
                               backgroundColor: milestone.completed
-                                ? (theme === 'light' ? 'rgba(92, 139, 111, 0.08)' : 'rgba(92, 139, 111, 0.15)')
+                                ? 'rgba(92, 139, 111, 0.15)'
                                 : colors.bg,
                               borderRadius: '0.375rem',
                               border: 'none',
@@ -948,7 +946,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                               borderRadius: '0.25rem',
                               border: milestone.completed
                                 ? 'none'
-                                : `2px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.25)' : 'rgba(255, 255, 255, 0.25)'}`,
+                                : `2px solid rgba(255, 255, 255, 0.25)`,
                               backgroundColor: milestone.completed ? colors.accent : 'transparent',
                               display: 'flex',
                               alignItems: 'center',
@@ -1005,8 +1003,8 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 alignItems: 'center',
                 gap: '0.625rem',
                 padding: '0.875rem 1rem',
-                backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.08)' : 'rgba(201, 167, 90, 0.12)',
-                border: `1px dashed ${theme === 'light' ? 'rgba(201, 167, 90, 0.3)' : 'rgba(201, 167, 90, 0.4)'}`,
+                backgroundColor: 'rgba(201, 167, 90, 0.12)',
+                border: `1px dashed rgba(201, 167, 90, 0.4)`,
                 borderRadius: '0.625rem',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
@@ -1081,7 +1079,7 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
         <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem' }}>
           {resolution.deadline && (
             <span style={{
-              color: isOverdue ? (theme === 'light' ? '#C4A0A0' : '#f87171') : colors.textMuted,
+              color: isOverdue ? '#f87171' : colors.textMuted,
               fontWeight: isOverdue ? 500 : 400
             }}>
               {isOverdue

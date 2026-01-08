@@ -45,7 +45,7 @@ interface ResolutionFormProps {
 
 export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   const { addResolution, updateResolution } = useResolutions();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const isMobile = useIsMobile();
   const isEditing = !!resolution;
   const formRef = useRef<HTMLFormElement>(null);
@@ -160,13 +160,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
   };
 
   // Lighter input backgrounds for better contrast against modal
-  const inputBgColor = theme === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.08)';
+  const inputBgColor = 'rgba(255, 255, 255, 0.08)';
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '0.75rem 1rem',
     backgroundColor: inputBgColor,
-    border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.1)'}`,
+    border: `1px solid rgba(255, 255, 255, 0.1)`,
     borderRadius: '0.5rem',
     color: colors.text,
     fontSize: '1rem',
@@ -203,13 +203,11 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
       <div
         ref={modalRef}
         style={{
-          backgroundColor: theme === 'light' ? '#F8F6F2' : colors.cardBg,  // Slightly darker modal bg
-          boxShadow: theme === 'light'
-            ? '0 25px 60px -15px rgba(0, 0, 0, 0.2), 0 10px 30px -10px rgba(0, 0, 0, 0.1)'
-            : '0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 10px 30px -10px rgba(0, 0, 0, 0.3)',  // Softer, more diffused shadow
+          backgroundColor: colors.cardBg,  // Slightly darker modal bg
+          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 10px 30px -10px rgba(0, 0, 0, 0.3)',  // Softer, more diffused shadow
           width: '100%',
           maxWidth: isMobile ? '100%' : '28rem',
-          border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.1)' : colors.border}`,
+          border: `1px solid ${colors.border}`,
           borderRadius: isMobile ? '1.5rem 1.5rem 0 0' : '1.25rem',  // Slightly larger corner radius
           maxHeight: isMobile ? '90vh' : '85vh',
           overflowY: 'auto',
@@ -284,7 +282,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
               style={{
                 ...inputStyle,
                 resize: 'none',
-                backgroundColor: theme === 'light' ? '#FDFCFA' : 'rgba(255, 255, 255, 0.06)',
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
                 lineHeight: 1.5,
               }}
             />
@@ -305,9 +303,9 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     style={{
                       padding: '0.5rem 0.625rem',
                       borderRadius: '0.5rem',
-                      border: `1px solid ${isSelected ? `${accentColor}50` : theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)'}`,
+                      border: `1px solid ${isSelected ? `${accentColor}50` : 'rgba(255, 255, 255, 0.08)'}`,
                       backgroundColor: isSelected
-                        ? (theme === 'light' ? `${accentColor}12` : `${accentColor}20`)
+                        ? `${accentColor}20`
                         : inputBgColor,
                       cursor: 'pointer',
                       textAlign: 'left',
@@ -342,7 +340,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           {formData.trackingType === 'frequency' && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
@@ -375,7 +373,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           {formData.trackingType === 'cumulative' && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
@@ -430,7 +428,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           {formData.trackingType === 'target' && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
@@ -511,7 +509,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           {formData.trackingType === 'reflection' && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
@@ -525,7 +523,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           {formData.trackingType === 'checklist' && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.03)' : 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
               borderRadius: '0.5rem',
               border: `1px solid ${colors.border}`,
             }}>
@@ -543,7 +541,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                         fontSize: '0.75rem',
                         backgroundColor: formData.unit === u
                           ? colors.accent
-                          : (theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)'),
+                          : 'rgba(255, 255, 255, 0.08)',
                         color: formData.unit === u ? 'white' : colors.textMuted,
                         border: 'none',
                         borderRadius: '0.25rem',
@@ -672,7 +670,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                         padding: '0.5rem 0.625rem',
                         backgroundColor: inputBgColor,
                         borderRadius: '0.375rem',
-                        border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : 'rgba(255, 255, 255, 0.08)'}`,
+                        border: `1px solid rgba(255, 255, 255, 0.08)`,
                       }}
                     >
                       <span style={{ fontSize: '0.75rem', color: colors.textMuted, minWidth: '1.25rem' }}>
@@ -744,13 +742,13 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
           <div style={{
             padding: '1rem',
             margin: '0 -1.25rem',
-            backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.02)' : 'rgba(255, 255, 255, 0.02)',
+            backgroundColor: 'rgba(255, 255, 255, 0.02)',
           }}>
             <label style={{ ...labelStyle, marginBottom: '0.5rem', paddingLeft: '0.25rem' }}>Category</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
               {CATEGORIES.map((cat) => {
                 const isSelected = formData.category === cat.value;
-                const catColor = theme === 'light' ? cat.color : cat.darkColor;
+                const catColor = cat.darkColor;
                 return (
                   <button
                     key={cat.value}
@@ -764,11 +762,11 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                       border: 'none',  // No border by default
                       cursor: 'pointer',
                       backgroundColor: isSelected
-                        ? (theme === 'light' ? `${catColor}18` : `${catColor}25`)
-                        : (theme === 'light' ? 'rgba(31, 58, 90, 0.04)' : 'rgba(255, 255, 255, 0.05)'),
+                        ? `${catColor}25`
+                        : 'rgba(255, 255, 255, 0.05)',
                       color: isSelected
                         ? catColor
-                        : (theme === 'light' ? 'rgba(31, 58, 90, 0.7)' : 'rgba(255, 255, 255, 0.7)'),
+                        : 'rgba(255, 255, 255, 0.7)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.375rem',
@@ -812,7 +810,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                 value={formData.deadline}
                 onChange={(e) => setFormData(prev => ({ ...prev, deadline: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
-                style={{ ...inputStyle, colorScheme: theme }}
+                style={{ ...inputStyle, colorScheme: 'dark' }}
               />
             )}
           </div>
@@ -850,7 +848,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                     type="time"
                     value={formData.reminderTime}
                     onChange={(e) => setFormData(prev => ({ ...prev, reminderTime: e.target.value }))}
-                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: theme }}
+                    style={{ ...inputStyle, padding: '0.5rem 0.75rem', fontSize: '0.875rem', colorScheme: 'dark' }}
                   />
                 </div>
               </div>
@@ -868,7 +866,7 @@ export function ResolutionForm({ resolution, onClose }: ResolutionFormProps) {
                 border: 'none',
                 color: colors.textMuted,
                 borderRadius: '0.5rem',
-                backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.06)' : 'rgba(255, 255, 255, 0.08)',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
                 cursor: 'pointer',
                 fontSize: '0.875rem',
                 fontWeight: 500,

@@ -13,7 +13,7 @@ interface QuickUpdateModalProps {
 }
 
 export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickUpdateModalProps) {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const [value, setValue] = useState('');
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -208,7 +208,7 @@ export function QuickUpdateModal({ resolution, isOpen, onClose, onSave }: QuickU
           {value && !isNaN(parseFloat(value)) && (
             <div style={{
               padding: '0.75rem',
-              backgroundColor: theme === 'light' ? 'rgba(31, 58, 90, 0.05)' : 'rgba(255, 255, 255, 0.05)',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
               borderRadius: '0.5rem',
               marginBottom: '1rem',
               textAlign: 'center',

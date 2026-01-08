@@ -20,7 +20,7 @@ type SortOption = 'custom' | 'newest' | 'oldest' | 'progress-high' | 'progress-l
 export default function Home() {
   const { resolutions, loading, getResolutionsByCategory, reorderResolutions, updateProgress, showCelebration, celebrationMessage, dismissCelebration } = useResolutions();
   const { signOut } = useAuth();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
 
   const [showForm, setShowForm] = useState(false);
   const [editingResolution, setEditingResolution] = useState<Resolution | null>(null);
@@ -190,7 +190,7 @@ export default function Home() {
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        boxShadow: theme === 'light' ? '0 1px 3px rgba(0,0,0,0.05)' : '0 1px 3px rgba(0,0,0,0.2)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
         transition: 'background-color 0.3s ease, border-color 0.3s ease',
         paddingTop: 'env(safe-area-inset-top)',
       }}>
@@ -371,9 +371,7 @@ export default function Home() {
                     backgroundColor: colors.cardBg,
                     border: `1px solid ${colors.border}`,
                     borderRadius: '0.75rem',
-                    boxShadow: theme === 'light'
-                      ? '0 4px 16px rgba(0,0,0,0.1)'
-                      : '0 4px 16px rgba(0,0,0,0.3)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
                     zIndex: 50,
                     minWidth: '200px',
                     overflow: 'hidden',
@@ -519,8 +517,8 @@ export default function Home() {
                   onSwipeRight={() => handleAddJournal(resolution)}
                   leftLabel="Edit"
                   rightLabel="Journal"
-                  leftColor={theme === 'light' ? '#3b82f6' : '#60a5fa'}
-                  rightColor={theme === 'light' ? '#8b5cf6' : '#a78bfa'}
+                  leftColor="#60a5fa"
+                  rightColor="#a78bfa"
                   disabled={!isTouchDevice}
                 >
                   <ResolutionCard

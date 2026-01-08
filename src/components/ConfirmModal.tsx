@@ -24,7 +24,7 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -66,8 +66,8 @@ export function ConfirmModal({
           <line x1="9" y1="9" x2="15" y2="15" />
         </svg>
       ),
-      iconBg: theme === 'light' ? '#fef2f2' : '#450a0a',
-      iconColor: theme === 'light' ? '#dc2626' : '#f87171',
+      iconBg: '#450a0a',
+      iconColor: '#f87171',
       buttonBg: '#dc2626',
       buttonHover: '#b91c1c',
     },
@@ -79,8 +79,8 @@ export function ConfirmModal({
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       ),
-      iconBg: theme === 'light' ? '#fffbeb' : '#451a03',
-      iconColor: theme === 'light' ? '#d97706' : '#fbbf24',
+      iconBg: '#451a03',
+      iconColor: '#fbbf24',
       buttonBg: '#d97706',
       buttonHover: '#b45309',
     },
@@ -92,8 +92,8 @@ export function ConfirmModal({
           <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
       ),
-      iconBg: theme === 'light' ? '#eff6ff' : '#1e3a5f',
-      iconColor: theme === 'light' ? '#2563eb' : '#60a5fa',
+      iconBg: '#1e3a5f',
+      iconColor: '#60a5fa',
       buttonBg: '#2563eb',
       buttonHover: '#1d4ed8',
     },
@@ -192,7 +192,7 @@ export function ConfirmModal({
         {/* Actions */}
         <div style={{
           padding: '1rem 1.5rem',
-          backgroundColor: theme === 'light' ? '#f8fafc' : '#0f172a',
+          backgroundColor: '#0f172a',
           borderTop: `1px solid ${colors.border}`,
           display: 'flex',
           gap: '0.75rem',

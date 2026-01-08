@@ -43,7 +43,7 @@ interface DashboardStatsProps {
 
 export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
   const { resolutions } = useResolutions();
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const totalCount = resolutions.length;
 
   const [isMobile, setIsMobile] = useState(false);
@@ -161,7 +161,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
       {/* Daily Inspiration */}
       <div style={{
         ...cardStyle,
-        background: theme === 'light' ? '#1F3A5A' : '#0F1C2E',
+        background: '#0F1C2E',
         borderColor: 'transparent',
         padding: isMobile ? '0.625rem 0.75rem' : '0.75rem 0.875rem',
       }}>
@@ -270,7 +270,7 @@ export function DashboardStats({ onEditResolution }: DashboardStatsProps) {
                         <span style={{
                           marginLeft: '0.375rem',
                           fontSize: '0.625rem',
-                          color: theme === 'light' ? '#C4A0A0' : '#f87171',
+                          color: '#f87171',
                           fontWeight: 500,
                         }}>
                           behind

@@ -71,14 +71,12 @@ function EntryViewerModal({
   onClose,
   onDelete,
   colors,
-  theme,
 }: {
   entry: JournalEntry | null;
   isOpen: boolean;
   onClose: () => void;
   onDelete: () => void;
   colors: ReturnType<typeof useTheme>['colors'];
-  theme: string;
 }) {
   const [isClosing, setIsClosing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -113,7 +111,7 @@ function EntryViewerModal({
     >
       <div
         style={{
-          backgroundColor: theme === 'light' ? '#FDFCFA' : colors.cardBg,
+          backgroundColor: colors.cardBg,
           borderRadius: '1rem',
           width: '100%',
           maxWidth: '28rem',
@@ -262,7 +260,7 @@ function EntryViewerModal({
 }
 
 export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps) {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const { addJournalEntry, deleteJournalEntry } = useResolutions();
   const [mounted, setMounted] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -399,17 +397,15 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
     >
       <div
         style={{
-          backgroundColor: theme === 'light' ? '#FDFCFA' : colors.cardBg,
+          backgroundColor: colors.cardBg,
           borderRadius: '1.25rem',
           width: '100%',
           maxWidth: isDesktop ? '42rem' : '32rem',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: theme === 'light'
-            ? '0 25px 80px -20px rgba(0, 0, 0, 0.25), 0 10px 40px -15px rgba(0, 0, 0, 0.1)'
-            : '0 25px 80px -20px rgba(0, 0, 0, 0.5)',
-          border: `1px solid ${theme === 'light' ? 'rgba(31, 58, 90, 0.08)' : colors.border}`,
+          boxShadow: '0 25px 80px -20px rgba(0, 0, 0, 0.5)',
+          border: `1px solid ${colors.border}`,
           transform: isClosing ? 'scale(0.95)' : 'scale(1)',
           transition: 'transform 0.2s ease',
         }}
@@ -470,7 +466,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
         <div style={{
           padding: '1rem 1.5rem',
           borderBottom: `1px solid ${colors.border}`,
-          backgroundColor: theme === 'light' ? 'rgba(201, 167, 90, 0.03)' : 'rgba(201, 167, 90, 0.05)',
+          backgroundColor: 'rgba(201, 167, 90, 0.05)',
         }}>
           {/* Formatting Toolbar */}
           <div style={{
@@ -555,7 +551,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           {/* Editor */}
           <div
             style={{
-              backgroundColor: theme === 'light' ? '#FFFFFF' : colors.bg,
+              backgroundColor: colors.bg,
               border: `1px solid ${colors.border}`,
               borderRadius: '0.75rem',
               padding: '1rem',
@@ -664,9 +660,7 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = colors.accent;
-                      e.currentTarget.style.backgroundColor = theme === 'light'
-                        ? 'rgba(201, 167, 90, 0.05)'
-                        : 'rgba(201, 167, 90, 0.1)';
+                      e.currentTarget.style.backgroundColor = 'rgba(201, 167, 90, 0.1)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = colors.border;
@@ -740,7 +734,6 @@ export function JournalModal({ resolution, isOpen, onClose }: JournalModalProps)
           }
         }}
         colors={colors}
-        theme={theme}
       />
     </div>
   );
