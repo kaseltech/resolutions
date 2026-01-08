@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme, COLOR_SCHEMES, ColorScheme } from '@/context/ThemeContext';
 import {
   isBiometricAvailable,
   isBiometricLoginEnabled,
@@ -27,7 +27,7 @@ interface SettingsProps {
 }
 
 export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
-  const { colors } = useTheme();
+  const { theme, colorScheme, toggleTheme, setColorScheme, colors } = useTheme();
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [biometricOn, setBiometricOn] = useState(false);
   const [biometryType, setBiometryType] = useState('Face ID');
@@ -172,6 +172,106 @@ export function Settings({ isOpen, onClose, onShowOnboarding }: SettingsProps) {
 
         {/* Content */}
         <div style={{ padding: '1.5rem' }}>
+          {/* Appearance Section */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: colors.textMuted,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: '0 0 1rem',
+            }}>
+              Appearance
+            </h3>
+
+            <div
+              style={{
+                padding: '1rem',
+                backgroundColor: colors.bg,
+                borderRadius: '0.75rem',
+              }}
+            >
+              {/* Light/Dark Mode Toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '1.5rem' }}>{theme === 'light' ? '☀️' : '🌙'}</span>
+                  <div>
+                    <div style={{ fontWeight: 500, color: colors.text }}>
+                      {theme === 'light' ? 'Light Mode' : 'Dark Mode'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: colors.textMuted }}>
+                      Switch appearance
+                    </div>
+                  </div>
+                </div>
+                <Toggle
+                  enabled={theme === 'dark'}
+                  onChange={() => { lightTap(); toggleTheme(); }}
+                  size="md"
+                />
+              </div>
+
+              {/* Color Scheme Picker */}
+              <div>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: colors.text, marginBottom: '0.625rem' }}>
+                  Color Scheme
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                  {(Object.entries(COLOR_SCHEMES) as [ColorScheme, typeof COLOR_SCHEMES[ColorScheme]][]).map(([key, scheme]) => {
+                    const isSelected = colorScheme === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => { lightTap(); setColorScheme(key); }}
+                        style={{
+                          padding: '0.625rem 0.75rem',
+                          borderRadius: '0.5rem',
+                          border: isSelected ? `2px solid ${colors.accent}` : `1px solid ${colors.border}`,
+                          backgroundColor: isSelected ? colors.cardBg : 'transparent',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        {/* Color preview dots */}
+                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                          <div style={{
+                            width: '1rem',
+                            height: '1rem',
+                            borderRadius: '50%',
+                            backgroundColor: scheme.darkBg,
+                            border: '1px solid rgba(255,255,255,0.2)',
+                          }} />
+                          <div style={{
+                            width: '1rem',
+                            height: '1rem',
+                            borderRadius: '50%',
+                            backgroundColor: scheme.accent,
+                          }} />
+                        </div>
+                        <span style={{
+                          fontSize: '0.8125rem',
+                          fontWeight: isSelected ? 600 : 500,
+                          color: isSelected ? colors.text : colors.textMuted,
+                        }}>
+                          {scheme.name}
+                        </span>
+                        {isSelected && (
+                          <svg style={{ width: '0.875rem', height: '0.875rem', color: colors.accent, marginLeft: 'auto' }} fill="currentColor" viewBox="0 0 24 24">
+                            <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Notifications Section */}
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{
