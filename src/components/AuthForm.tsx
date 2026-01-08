@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Logo } from './Logo';
+import Image from 'next/image';
 import {
   isBiometricAvailable,
   isBiometricLoginEnabled,
@@ -222,7 +222,14 @@ export function AuthForm() {
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Logo size="xl" />
+            <Image
+              src="/yearvow-wordmark.png"
+              alt="YearVow 2026"
+              width={220}
+              height={70}
+              style={{ objectFit: 'contain' }}
+              priority
+            />
           </div>
           <p style={{ color: '#F5F1EA', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem', textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
             Make your resolutions count

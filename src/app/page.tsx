@@ -9,7 +9,7 @@ import { ResolutionCard } from '@/components/ResolutionCard';
 import { ResolutionForm } from '@/components/ResolutionForm';
 import { DashboardStats } from '@/components/DashboardStats';
 import { CategoryFilter } from '@/components/CategoryFilter';
-import { Logo } from '@/components/Logo';
+import Image from 'next/image';
 import { Confetti } from '@/components/Confetti';
 import { Settings } from '@/components/Settings';
 import { SwipeableCard } from '@/components/SwipeableCard';
@@ -198,7 +198,14 @@ export default function Home() {
         <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '0.75rem 1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Logo size="lg" />
+              <Image
+                src="/yearvow-wordmark.png"
+                alt="YearVow 2026"
+                width={140}
+                height={40}
+                style={{ objectFit: 'contain' }}
+                priority
+              />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {/* Settings button - 60% opacity */}
