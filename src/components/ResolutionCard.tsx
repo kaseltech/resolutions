@@ -366,6 +366,37 @@ export function ResolutionCard({ resolution, onEdit, openJournalOnMount, onJourn
                 </svg>
               </div>
             )}
+            {/* Journal button */}
+            <button
+              onClick={() => setShowJournalModal(true)}
+              className="action-btn"
+              style={{
+                padding: '0.5rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                position: 'relative',
+              }}
+              title="Journal"
+            >
+              <FeatherPenIcon
+                size={18}
+                color={(resolution.journal?.length || 0) > 0 ? colors.accent : (theme === 'light' ? '#B8A070' : '#8A7A5A')}
+              />
+              {(resolution.journal?.length || 0) > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '0.125rem',
+                  right: '0.125rem',
+                  width: '0.5rem',
+                  height: '0.5rem',
+                  backgroundColor: colors.accent,
+                  borderRadius: '50%',
+                }} />
+              )}
+            </button>
             {/* Menu button */}
             <button
               ref={menuButtonRef}
