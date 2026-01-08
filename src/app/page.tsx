@@ -184,6 +184,17 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: colors.bg, paddingBottom: '5rem', transition: 'background-color 0.3s ease' }}>
+      {/* iOS overscroll background - covers bounce area above header */}
+      <div style={{
+        position: 'fixed',
+        top: '-100vh',
+        left: 0,
+        right: 0,
+        height: '100vh',
+        backgroundColor: colors.cardBg,
+        zIndex: 39,
+        pointerEvents: 'none',
+      }} />
       {/* Header - Mobile Optimized with safe area */}
       <header className="app-header" style={{
         backgroundColor: colors.cardBg,
