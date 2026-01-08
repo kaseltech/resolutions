@@ -201,8 +201,8 @@ export default function Home() {
               <Image
                 src="/yearvow-wordmark.png"
                 alt="YearVow 2026"
-                width={120}
-                height={32}
+                width={142}
+                height={40}
                 style={{ objectFit: 'contain' }}
                 priority
               />

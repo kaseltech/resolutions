@@ -225,9 +225,9 @@ export function AuthForm() {
             <Image
               src="/yearvow-wordmark.png"
               alt="YearVow 2026"
-              width={560}
-              height={180}
-              style={{ objectFit: 'contain', width: '100%', maxWidth: 'min(560px, 85vw)', height: 'auto' }}
+              width={428}
+              height={121}
+              style={{ objectFit: 'contain', width: '100%', maxWidth: 'min(428px, 85vw)', height: 'auto' }}
               priority
               className="login-wordmark"
             />
