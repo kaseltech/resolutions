@@ -225,16 +225,22 @@ export function AuthForm() {
             <Image
               src="/yearvow-wordmark.png"
               alt="YearVow 2026"
-              width={280}
-              height={90}
-              style={{ objectFit: 'contain', maxWidth: '80vw' }}
+              width={560}
+              height={180}
+              style={{ objectFit: 'contain', width: '100%', maxWidth: 'min(560px, 85vw)', height: 'auto' }}
               priority
               className="login-wordmark"
             />
           </div>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: inputFocusStyle }} />
+        <style dangerouslySetInnerHTML={{ __html: inputFocusStyle + `
+          @media (min-width: 768px) {
+            .login-wordmark {
+              max-width: 400px !important;
+            }
+          }
+        ` }} />
         <div style={{
           backgroundColor: 'rgba(30, 41, 59, 0.9)',
           backdropFilter: 'blur(12px)',
