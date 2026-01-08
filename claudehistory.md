@@ -558,3 +558,165 @@ Also patched `~/Fooocus/modules/upscaler.py` to handle RuntimeError gracefully (
 - Undo check-in functionality
 - Weekly/monthly progress summaries
 - Achievement badges for streaks
+
+---
+
+## Session: January 7-8, 2026
+
+### Overview
+Major visual refresh with new ChatGPT-generated transparent gold icons, multiple dark color themes, illustrated backgrounds, YearVow wordmark integration, and various iOS fixes.
+
+---
+
+### Changes Made
+
+#### 1. New Transparent Gold Icons
+**Files:** `public/icons/*.png`, `src/components/YearVowIcon.tsx`
+
+- Replaced old icon set with ChatGPT/DALL-E generated transparent gold icons
+- Icons: checkmark, flame, trophy, gear, compass, heart, calendar, quill, quill-scroll, book, target, coins
+- Fixed icon transparency issues (calendar interior, book pages made transparent via PIL)
+- Updated YearVowIcon component with new icon types
+- Changed cumulative tracking icon from 'trophy' to 'coins'
+
+#### 2. Multiple Dark Color Themes
+**Files:** `src/context/ThemeContext.tsx`
+
+Removed light mode entirely, added 8 dark themes with gold accent:
+
+| Theme | Preview Color | Description |
+|-------|---------------|-------------|
+| Navy | `#0F2233` | Default, deep navy blue |
+| Charcoal | `#1A1A1A` | Pure dark gray |
+| Midnight | `#08080A` | Near-black |
+| Forest | `#0D1A14` | Dark green tones |
+| Slate | `#0F172A` | Blue-gray |
+| Plum | `#1A0F1F` | Purple-tinted dark |
+| Coffee | `#1A1410` | Warm brown tones |
+| Ocean | `#0A1520` | Deep teal-blue |
+
+Each theme has complete color definitions: bg, cardBg, text, accent, border, category colors, etc.
+
+#### 3. Illustrated Backgrounds
+**Files:**
+- `public/splash-bg.png` - Golden path through mountains
+- `public/login-bg.png` - Constellation night sky
+- `src/components/AnimatedSplash.tsx`
+- `src/components/AuthForm.tsx`
+
+- Replaced SVG mountain backgrounds with illustrated images
+- Splash: Golden winding path through mountainous terrain
+- Login: Night sky with constellations and stars
+
+#### 4. YearVow Wordmark Integration
+**Files:**
+- `public/yearvow-wordmark.png`
+- `src/app/page.tsx`
+- `src/components/AuthForm.tsx`
+
+- ChatGPT-generated "YearVow 2026" text wordmark
+- Cropped from 1534x1024 to 857x242 (removed excess padding)
+- Header: 142x40 compact size
+- Login: 428x121 with responsive scaling (85vw max on mobile, 400px max on desktop)
+
+#### 5. iOS Native Splash Screen
+**Files:**
+- `ios/App/App/Assets.xcassets/Splash.imageset/*.png`
+- `ios/App/App/Base.lproj/LaunchScreen.storyboard`
+
+- Generated new 2732x2732 splash images from splash-bg.png
+- Updated LaunchScreen.storyboard background color to match
+
+#### 6. App Icon Fixes
+**Files:** `public/icons/icon-1024.png`, iOS icon assets
+
+- Fixed white border issue (iOS needs full-bleed squares)
+- Extended navy background to edges
+- Zoomed V and laurel wreath for better visibility
+
+#### 7. Theme Persistence Fix
+**Files:** `src/context/ThemeContext.tsx`
+
+- **Problem:** Theme wasn't persisting on iOS or web
+- **Solution:** Save to BOTH localStorage AND Capacitor Preferences
+- Theme now persists across app restarts on all platforms
+
+#### 8. iOS Overscroll Fix
+**Files:**
+- `src/app/layout.tsx`
+- `src/context/ThemeContext.tsx`
+- `src/app/globals.css`
+
+- **Problem:** Scrolling to top revealed gap above header
+- **Solution:** Set body/html background to match header color
+- ThemeContext dynamically updates body background on theme change
+- Initial body color set to navy cardBg (`#1A3550`)
+
+#### 9. Theme-Aware UI Fixes
+**Files:** Various
+
+- Quote section: Changed hardcoded navy to `colors.cardBgInset`
+- Placeholder text: Changed from navy slate to `rgba(255, 255, 255, 0.4)`
+- Removed `theme === 'dark'` checks (all themes are dark now)
+- Fixed components: Changelog.tsx, ContextMenu.tsx, Logo.tsx
+
+#### 10. Emoji Replacements
+**Files:** `src/app/page.tsx`, `src/components/ResolutionForm.tsx`, `src/components/Settings.tsx`
+
+Replaced emojis with YearVowIcon components:
+- Journal empty state: 📝 → quill icon (56px)
+- No goals empty state: 🎯 → target icon (64px)
+- Settings tutorial: 📖 → book icon (32px)
+
+---
+
+### Key Commits
+| Commit | Description |
+|--------|-------------|
+| `a693d06` | Update app icon and add wordmark to header/login |
+| `f3a6779` | Fix quote section theming and add coins icon |
+| `ff7fa2c` | Fix wordmark sizing and theme persistence |
+| `49a85d1` | Crop wordmark to actual content bounds |
+| `a32be04` | Fix iOS overscroll by setting body/html background |
+
+---
+
+### Technical Notes
+
+**Image Processing (PIL):**
+- Used Python PIL for icon transparency fixes
+- Cropped wordmark to content bounds with `getbbox()`
+- Made white/cream pixels transparent for icons
+
+**Theme Storage:**
+```typescript
+// Save to both for cross-platform persistence
+localStorage.setItem(key, theme);
+await Preferences.set({ key, value: theme });
+```
+
+**iOS Overscroll Fix:**
+```typescript
+// In ThemeContext useEffect
+document.body.style.backgroundColor = colors.cardBg;
+document.documentElement.style.backgroundColor = colors.cardBg;
+```
+
+---
+
+### Files Added/Modified
+| File | Changes |
+|------|---------|
+| `public/icons/*.png` | New transparent gold icons |
+| `public/yearvow-wordmark.png` | Text wordmark asset |
+| `public/splash-bg.png` | Illustrated splash background |
+| `public/login-bg.png` | Constellation login background |
+| `src/context/ThemeContext.tsx` | 8 dark themes, persistence fix |
+| `src/app/page.tsx` | Wordmark in header, icon replacements |
+| `src/components/AuthForm.tsx` | Wordmark, background image |
+| `src/components/AnimatedSplash.tsx` | Background image |
+| `src/components/YearVowIcon.tsx` | Added 'coins' icon type |
+| `src/app/layout.tsx` | Body background color |
+| `src/app/globals.css` | Placeholder text color, iOS fixes |
+
+---
