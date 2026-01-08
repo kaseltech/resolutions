@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import Image from 'next/image';
+import { Logo } from '@/components/Logo';
 import {
   isBiometricAvailable,
   isBiometricLoginEnabled,
@@ -220,27 +220,16 @@ export function AuthForm() {
       />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-2">
-            <Image
-              src="/yearvow-wordmark.png"
-              alt="YearVow 2026"
-              width={428}
-              height={121}
-              style={{ objectFit: 'contain', width: '100%', maxWidth: 'min(428px, 85vw)', height: 'auto' }}
-              priority
-              className="login-wordmark"
-            />
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <Logo size="xl" />
           </div>
+          <p style={{ color: '#F5F1EA', fontSize: '1rem', fontWeight: '400', marginTop: '0.75rem', textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)' }}>
+            Make your resolutions count
+          </p>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: inputFocusStyle + `
-          @media (min-width: 768px) {
-            .login-wordmark {
-              max-width: 400px !important;
-            }
-          }
-        ` }} />
+        <style dangerouslySetInnerHTML={{ __html: inputFocusStyle }} />
         <div style={{
           backgroundColor: 'rgba(30, 41, 59, 0.9)',
           backdropFilter: 'blur(12px)',
